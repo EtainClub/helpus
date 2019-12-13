@@ -9,6 +9,7 @@ import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-community/async-storage';
 // import custom libraries
 import ResolveAuthScreen from './screens/ResolveAuthScreen';
+import IntroScreen from './screens/IntroScreen';
 import SigninScreen from './screens/SigninScreen';
 import SignupScreen from './screens/SignupScreen';
 import AskScreen from './screens/AskScreen';
@@ -88,6 +89,7 @@ settingFlow.navigationOptions = ({ screenProps: { t } }) => ({
 });
 
 const switchNavigator = createSwitchNavigator({
+  Intro: IntroScreen,
   ResolveAuth: ResolveAuthScreen,
   loginFlow: createStackNavigator({
     Signin: SigninScreen,

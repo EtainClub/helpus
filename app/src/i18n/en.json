@@ -1,6 +1,8 @@
 {
   "translation": {
     "title": "helpus",
+    "startApp": "Start",
+    "subtitle": "Help it Forward in Our Town",
     "yes": "Yes",
     "no": "No",
     "minute": "Minute",
@@ -31,8 +33,8 @@
       "permissionErrorText": "Failed to get permission to send messages."
     },
     "SigninScreen": {
-      "header": "Sign In",
-      "email": "E-mail",
+      "header": "Sign Up/Sign In",
+      "phone": "Phone Number",
       "password": "Password",
       "confirm_password": "Confirm password",
       "button": "Sign in",

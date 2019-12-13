@@ -1,6 +1,9 @@
 {
   "translation": {
     "title": "helpus",
+    "startApp": "시작하기",
+    "subtitle": "우리 동네 도움 선순환 운동",
+    "and": " 및 ",
     "yes": "예",
     "no": "아니오",
     "minute": "분",
@@ -31,12 +34,14 @@
       "permissionErrorText": "메시지 전송 허가 실패하였습니다."
     },
     "SigninScreen": {
-      "header": "로그인",
-      "email": "이메일",
-      "password": "암호",
-      "confirm_password": "암호확인",
-      "button": "로그인",
-      "SignupMsg": "계정이 없으신가요? 가입하기",
+      "header": "회원가입/로그인",
+      "guideMsg": "가이드 메시지",
+      "phone": "전화번호",
+      "verifyButton": "인증문자 받기",
+      "verifyNumber": "인증번호 입력",
+      "terms": "이용약관",
+      "privacyPolicy": "개인정보 취급방침",
+      "start": "동의하고 시작하기",
     },
     "SignupScreen": {
       "header": "가입하기",

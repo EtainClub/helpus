@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native'; 
+import { StyleSheet, TouchableOpacity, View } from 'react-native'; 
 import AsyncStorage from '@react-native-community/async-storage';
-import { NavigationEvents, SafeAreaView} from 'react-navigation';
+import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Text, Input, Button } from 'react-native-elements';
+import { Text, Input, Card, Button } from 'react-native-elements';
 import SplashScreen from 'react-native-splash-screen';
 // custom libraries
 import { Context as AuthContext } from '../context/AuthContext';
@@ -42,13 +42,18 @@ const SigninScreen = ({ navigation }) => {
       <Spacer>
         <Text h3>{t('SigninScreen.header')}</Text>
       </Spacer>
+      <Card>
+        <Text style={{ fontSize: 16, marginBottom: 10}}>
+          휴대폰 번호로 가입합니다. 번호는 안전하게 보관되며 어디에도 공개되지 않습니다.
+        </Text>
+      </Card>
       <Spacer>
-        <Input label={t('SigninScreen.email')}
+        <Input label={t('SigninScreen.phone')}
           inputStyle={{ paddingLeft: 10 }} 
           leftIcon={
             <Icon
-              name='envelope-o'
-              size={24}
+              name='phone'
+              size={25}
               color='black'
             />
           }
@@ -56,38 +61,53 @@ const SigninScreen = ({ navigation }) => {
           onChangeText={setEmail}
           autoCapitalize="none"
           autoCorrect={false}
+          keyboardType='numeric'
         />
       </Spacer>
       <Spacer>
-        <Input label={t('SigninScreen.password')}  
-          inputStyle={{ paddingLeft: 10 }} 
-          leftIcon={
-            <Icon
-              name='lock'
-              size={24}
-              color='black'
-            />
-          }
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
+        <Button
+            buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+            titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
+            title={t('SigninScreen.verifyButton')}
+            loading={state.loading}
+            onPress={() => console.log('phone verification')}
+          />
+      </Spacer>
+
+      <Spacer></Spacer>
+      <Spacer></Spacer>
+
+      <Spacer>
+        <Input label={t('SigninScreen.verifyNumber')}
+          inputStyle={{ paddingLeft: 10, borderWidth: 2 }} 
+          value={email}
+          onChangeText={setEmail}
           autoCapitalize="none"
           autoCorrect={false}
+          keyboardType='numeric'
         />
       </Spacer>
-      {state.errorMessage ? <Text style={styles.errorMessage}>{state.errorMessage}</Text> : null}
+        
+      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
+        </TouchableOpacity>
+        <Text style={{ fontSize: 20 }}>{t('and')}</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
+        </TouchableOpacity>
+      </View>
+
       <Spacer>
-        <Button title={t('SigninScreen.button')} 
-          titleStyle={{ fontSize: 24, fontWeight: 'bold' }}
-          loading={state.loading}
-          onPress={() => {signin({ email, password, navigation })} }
-        />
+        <Button
+            buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+            titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
+            title={t('SigninScreen.start')}
+            loading={state.loading}
+            onPress={() => console.log('phone verification')}
+          />
       </Spacer>
-      <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-        <Spacer>
-          <Text style={styles.textLink}>{t('SigninScreen.SignupMsg')}</Text>
-        </Spacer>
-      </TouchableOpacity>
+
     </SafeAreaView>
   );  
 };
