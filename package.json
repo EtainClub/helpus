@@ -16,6 +16,7 @@
     "react": "16.8.6",
     "react-i18next": "10.13.0",
     "react-native": "0.60.6",
+    "react-native-country-picker-modal": "^1.9.8",
     "react-native-device-info": "3.1.4",
     "react-native-dotenv": "0.2.0",
     "react-native-draggable-flatlist": "1.1.9",

@@ -35,7 +35,7 @@
     },
     "SigninScreen": {
       "header": "회원가입/로그인",
-      "guideMsg": "가이드 메시지",
+      "guideMsg": "휴대폰 번호로 가입합니다. 전화번호를 입력하고, 문자로 수신한 코드를 입력하세요. 번호는 안전하게 보관되며 어디에도 공개되지 않습니다. ",
       "phone": "전화번호",
       "verifyButton": "인증문자 받기",
       "verifyNumber": "인증번호 입력",
@@ -56,7 +56,8 @@
       "SignupError": "가입 중에 오류가 발생했습니다.",
       "SigninError": "로그인 중에 오류가 발생했습니다.",
       "SigninTokenError": "로그인 에러(Token 획득 실패",
-      "getPushTokenError": "메시지 푸시 토큰 획득 실패"
+      "getPushTokenError": "메시지 푸시 토큰 획득 실패",
+      "SigninConfirmError": "입력한 코드가 일치하지 않습니다",
     },
     "AccountScreen": {
       "header": "사용자 정보",

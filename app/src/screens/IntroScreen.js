@@ -22,6 +22,7 @@ const IntroScreen = ({ navigation }) => {
 
   // use effect
   useEffect(() => {
+    // @todo call other function using admin's account?
     getAppStatus();
   }, []);
 
