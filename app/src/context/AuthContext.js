@@ -70,6 +70,7 @@ const validatePhoneNumber = (phoneNumber) => {
 const signinPhoneNumber = dispatch => {
   const { t } = useTranslation();
   return async ({ phoneNumber }) => {
+    console.log('[signinPhoneNumber] phoneNumber', phoneNumber);
     // check validity of the phone number
     let valid = validatePhoneNumber(phoneNumber);
     if (!valid) {
@@ -193,7 +194,7 @@ const processSignin = ({ dispatch, user, navigation }) => {
       console.log('getPushToken', error);
       dispatch({
         type: 'add_error',
-        payload: t('AuthContext.getPushTokenError') + '. ' + error,
+        payload: i18next.t('AuthContext.getPushTokenError') + '. ' + error,
       });
     });
   }) // end of token
@@ -201,7 +202,7 @@ const processSignin = ({ dispatch, user, navigation }) => {
     console.log('getToken', error);
     dispatch({
       type: 'add_error',
-      payload: t('AuthContext.SigninTokenError') + '. ' + error,
+      payload: i18next.t('AuthContext.SigninTokenError') + '. ' + error,
     });
   });
 };

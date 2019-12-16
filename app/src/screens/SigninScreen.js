@@ -22,10 +22,11 @@ const SigninScreen = ({ navigation }) => {
   const { state, signinPhoneNumber, confirmVerificationCode, signin, clearError } = useContext( AuthContext );
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
+  const [country, setCountry] = useState('');
  
   useEffect(() => {
     // get phone number from storage
-    getPhoneNumberFromStorage();
+    // getPhoneNumberFromStorage();
     // auth change listener for android only
     let unsubscribe = null;
     if (Platform.OS === 'android') {
@@ -57,6 +58,10 @@ const SigninScreen = ({ navigation }) => {
 
   const onSelect = (country) => {
     console.log('country', country);
+    setCountry(country);
+  };
+
+  const buildPhoneNumber = (phone) => {
   };
 
   return (
@@ -72,78 +77,107 @@ const SigninScreen = ({ navigation }) => {
           {t('SigninScreen.guideMsg')}
         </Text>
       </Card>
-      <CountryPicker
-        countryCode={'KR'}
-        withFlag
-        withAlphaFilter
-        onSelect={(country) => { console.log('onSelect'); onSelect(country)}}
-      />
       <Spacer>
-        <Input label={t('SigninScreen.phone')}
-          inputStyle={{ paddingLeft: 10 }} 
-          leftIcon={
-            <Icon
-              name='phone'
-              size={25}
-              color='black'
-            />
-          }
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType='numeric'
-        />
+        <View style={{ flexDirection: 'row' }}>
+          <Icon
+            style={{ paddingTop: 20, paddingLeft: 10 }}
+            name='phone'
+            size={25}
+            color='black'
+          />
+          <Input
+            containerStyle={{ width: 150 }}
+            leftIcon={
+              <CountryPicker
+                countryCode={country.cca2}
+                withFlag
+                withFilter
+                withAlphaFilter
+                withCallingCode
+                withCallingCodeButton
+                onSelect={(country) => { console.log('onSelect'); onSelect(country)}}
+              />  
+            } 
+          />
+          <Input
+            containerStyle={{ paddingRight: 10 }}
+            inputStyle={{ paddingLeft: 10 }} 
+            placeholder={t('SigninScreen.phone')}
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType='numeric'
+          />
+        </View>
       </Spacer>
       {state.errorMessage ? <Text style={styles.errorMessage}>{state.errorMessage}</Text> : null}
+      
       <Spacer>
-        <Button
-            buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-            titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
-            title={t('SigninScreen.verifyButton')}
-            loading={state.loading}
-            onPress={() => signinPhoneNumber({ phoneNumber })}
-          />
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
+          </TouchableOpacity>
+          <Text style={{ fontSize: 20 }}>{t('and')}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
+          </TouchableOpacity>
+        </View>
       </Spacer>
-
-      <Spacer></Spacer>
-      <Spacer></Spacer>
-
-      <Spacer>
-        <Input label={t('SigninScreen.verifyNumber')}
-          inputStyle={{ paddingLeft: 10, borderWidth: 2 }} 
-          value={code}
-          onChangeText={setCode}
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType='numeric'
-        />
-      </Spacer>
-        
-      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
-        </TouchableOpacity>
-        <Text style={{ fontSize: 20 }}>{t('and')}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
-        </TouchableOpacity>
-      </View>
 
       <Spacer>
         <Button
             buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
             titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
-            title={t('SigninScreen.start')}
+            title={Platform.OS === 'android' ? t('SigninScreen.androidStart') : t('SigninScreen.verifyButton')}
             loading={state.loading}
-            onPress={() => confirmVerificationCode({ 
-              phoneNumber, 
-              code, 
-              confirmResult: state.confirmResult,
-              navigation })}
+            onPress={() => signinPhoneNumber({ phoneNumber: '+' + country.callingCode[0]+phoneNumber })}
           />
       </Spacer>
 
+      <Spacer></Spacer>
+      <Spacer></Spacer>
+      {
+        Platform.OS === 'ios' ?
+        <View>
+          <Spacer>
+            <Input label={t('SigninScreen.verifyNumber')}
+              inputStyle={{ paddingLeft: 10, borderWidth: 2 }} 
+              value={code}
+              onChangeText={setCode}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType='numeric'
+            />
+          </Spacer>
+            
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+              <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
+            </TouchableOpacity>
+            <Text style={{ fontSize: 20 }}>{t('and')}</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+              <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Spacer>
+            <Button
+                buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+                titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
+                title={t('SigninScreen.start')}
+                loading={state.loading}
+                onPress={() => confirmVerificationCode({ 
+                  phoneNumber, 
+                  code, 
+                  confirmResult: state.confirmResult,
+                  navigation })}
+              />
+          </Spacer>
+        </View>
+        :
+        <View></View>
+      }
     </SafeAreaView>
   );  
 };
