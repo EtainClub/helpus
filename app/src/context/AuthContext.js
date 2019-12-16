@@ -98,101 +98,19 @@ const signinPhoneNumber = dispatch => {
   };
 }
 
-// verify phone number
+// verify phone number for ios
 const confirmVerificationCode = dispatch => {
   const { t } = useTranslation();
   return async ({ phoneNumber, code, confirmResult, navigation }) => {
     console.log('[confirmVerificationCode] code', code);
     console.log('[confirmVerificationCode] confirmResult', confirmResult);
 
-    /*
-    let credential = firebase.auth().PhoneAuthProvider.credential(confirmResult.verificationId, code);
-    firebase.auth().signInWithCredential(credential)
-    .then((auth) => {
-      console.log(auth);
-    })
-    .catch(err => console.log(err));
-    return;
-    */
-
     // verify the confirm result and code that your input exists
     if (confirmResult && code.length) {
       // confirm
       confirmResult.confirm(code)
       .then(user => {
-        user.getIdToken(/* forceRefresh */ true)
-        .then(async idToken => {
-          // save the phone number in storage
-          await AsyncStorage.setItem('phoneNumber', phoneNumber);
-          // store id token for login/logout
-          await AsyncStorage.setItem('idToken', idToken);
-          console.log('sigin user id', user.uid);
-          //// get message push token
-          // request permission
-          firebase.messaging().requestPermission();
-          // get the device push token
-          firebase
-          .messaging()
-          .getToken()
-          .then(async pushToken => {
-            console.log('push token', pushToken);
-            // store push token 
-            await AsyncStorage.setItem('fcmToken', pushToken);
-            //// create a new user doc or update push token if the user exists
-            const userRef = firebase.firestore().collection('users').doc(user.uid);
-            userRef.get()
-            .then(docSnapshot => {
-              console.log('[confirmVerificationCode] doc snapshot', docSnapshot);
-              if (docSnapshot.exists) {
-                console.log('[confirmVerificationCode] doc exist');
-                userRef.update({pushToken});
-              } else {
-                console.log('[confirmVerificationCode] doc does not exist');
-                // create a user info
-                userRef.set({ 
-                  pushToken,
-                  name: '',
-                  avatarUrl: '',
-                  askCount: 0,
-                  helpCount: 0,
-                  votes: 0,
-                  regions: [],
-                  languages: [i18next.language]
-                })
-                .then(() => {
-                  // create initial profile on firebase
-                  console.log('[confirmVerificationCode] creating initial profile');
-                  createInitialProfile({ userId: user.uid });
-                })
-                .catch(error => console.log('failed to create a user info', error));
-              }
-              // update the state with
-              dispatch({
-                type: 'signin',
-                payload: { idToken, pushToken },
-              });
-              // navigate to the main flow
-              navigation.navigate('mainFlow'); 
-            }) // end of get user doc
-            .catch(error => {
-              console.log('[confirmVerificationCode] cannot get user doc', error);
-            });
-          }) // end of pushToken
-          .catch(error => {
-            console.log('getPushToken', error);
-            dispatch({
-              type: 'add_error',
-              payload: t('AuthContext.getPushTokenError') + '. ' + error,
-            });
-          });
-        }) // end of token
-        .catch(error => {
-          console.log('getToken', error);
-          dispatch({
-            type: 'add_error',
-            payload: t('AuthContext.SigninTokenError') + '. ' + error,
-          });
-        });
+        processSignin({ dispatch, user, phoneNumber, navigation });
       }) // end of confirm code
       .catch(error => {
         console.log('confirm code', error);
@@ -203,6 +121,89 @@ const confirmVerificationCode = dispatch => {
       });
     } // end of if (confirm && code.length)
   };
+};
+
+const signin = dispatch => {
+  return async ({ user, navigation }) => {
+    processSignin({ dispatch, user, navigation });
+  }
+};
+
+// process signin
+const processSignin = ({ dispatch, user, navigation }) => {
+  user.getIdToken(/* forceRefresh */ true)
+  .then(async idToken => {
+    // save the phone number in storage
+    await AsyncStorage.setItem('phoneNumber', user.phoneNumber);
+    // store id token for login/logout
+    await AsyncStorage.setItem('idToken', idToken);
+    console.log('sigin user id', user.uid);
+    //// get message push token
+    // request permission
+    firebase.messaging().requestPermission();
+    // get the device push token
+    firebase
+    .messaging()
+    .getToken()
+    .then(async pushToken => {
+      console.log('push token', pushToken);
+      // store push token 
+      await AsyncStorage.setItem('fcmToken', pushToken);
+      //// create a new user doc or update push token if the user exists
+      const userRef = firebase.firestore().collection('users').doc(user.uid);
+      userRef.get()
+      .then(docSnapshot => {
+        console.log('[processSignin] doc snapshot', docSnapshot);
+        if (docSnapshot.exists) {
+          console.log('[processSignin] doc exist');
+          userRef.update({pushToken});
+        } else {
+          console.log('[processSignin] doc does not exist');
+          // create a user info
+          userRef.set({ 
+            pushToken,
+            name: '',
+            avatarUrl: '',
+            askCount: 0,
+            helpCount: 0,
+            votes: 0,
+            regions: [],
+            languages: [i18next.language]
+          })
+          .then(() => {
+            // create initial profile on firebase
+            console.log('[processSignin] creating initial profile');
+            createInitialProfile({ userId: user.uid });
+          })
+          .catch(error => console.log('failed to create a user info', error));
+        }
+        // update the state with
+        dispatch({
+          type: 'signin',
+          payload: { idToken, pushToken },
+        });
+        // navigate to the main flow
+        navigation.navigate('mainFlow'); 
+      }) // end of get user doc
+      .catch(error => {
+        console.log('[processSignin] cannot get user doc', error);
+      });
+    }) // end of pushToken
+    .catch(error => {
+      console.log('getPushToken', error);
+      dispatch({
+        type: 'add_error',
+        payload: t('AuthContext.getPushTokenError') + '. ' + error,
+      });
+    });
+  }) // end of token
+  .catch(error => {
+    console.log('getToken', error);
+    dispatch({
+      type: 'add_error',
+      payload: t('AuthContext.SigninTokenError') + '. ' + error,
+    });
+  });
 };
 
 const createInitialProfile = ({ userId }) => {
@@ -298,7 +299,7 @@ const signout = dispatch => {
 
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { signinPhoneNumber, confirmVerificationCode, signout, clearError, trySigninWithToken },
+  { signinPhoneNumber, signin, confirmVerificationCode, signout, clearError, trySigninWithToken },
   { token: null, pushToken: null, errorMessage: '', loading: false, confirmResult: null }
 );
 

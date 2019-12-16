@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Text, Input, Card, Button } from 'react-native-elements';
 import SplashScreen from 'react-native-splash-screen';
 import CountryPicker from 'react-native-country-picker-modal';
+import firebase from 'react-native-firebase'; 
 // custom libraries
 import { Context as AuthContext } from '../context/AuthContext';
 import Spacer from '../components/Spacer';
@@ -18,13 +19,32 @@ const SigninScreen = ({ navigation }) => {
   const { t } = useTranslation();
 
   // use auth context; state, action, default value
-  const { state, signinPhoneNumber, confirmVerificationCode, clearError } = useContext( AuthContext );
+  const { state, signinPhoneNumber, confirmVerificationCode, signin, clearError } = useContext( AuthContext );
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
  
   useEffect(() => {
     // get phone number from storage
     getPhoneNumberFromStorage();
+    // auth change listener for android only
+    let unsubscribe = null;
+    if (Platform.OS === 'android') {
+      unsubscribe = firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          console.log('[onAuthStateChanged] user', user);
+          // sign in
+          signin({ user, navigation });
+        } else {
+          console.log('[onAuthStateChanged]');
+        }
+      });
+    }
+
+    return () => {
+      // unsubscribe the auth chnage
+      if (Platform.OS === 'android')
+        unsubscribe();
+    };
   }, []);
 
   const getPhoneNumberFromStorage = async () => {
