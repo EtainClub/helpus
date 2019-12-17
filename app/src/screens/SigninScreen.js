@@ -9,6 +9,7 @@ import { Text, Input, Card, Button } from 'react-native-elements';
 import SplashScreen from 'react-native-splash-screen';
 import CountryPicker from 'react-native-country-picker-modal';
 import firebase from 'react-native-firebase'; 
+import * as RNLocalize from 'react-native-localize';
 // custom libraries
 import { Context as AuthContext } from '../context/AuthContext';
 import Spacer from '../components/Spacer';
@@ -23,10 +24,13 @@ const SigninScreen = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
   const [country, setCountry] = useState('');
- 
+  const [countryCode, setCountryCode] = useState('');
+
   useEffect(() => {
     // get phone number from storage
     // getPhoneNumberFromStorage();
+    // get device country based on language setting not based on timezone
+    setCountryCode(RNLocalize.getCountry());
     // auth change listener for android only
     let unsubscribe = null;
     if (Platform.OS === 'android') {
@@ -56,12 +60,10 @@ const SigninScreen = ({ navigation }) => {
     setPhoneNumber(phone);
   };
 
-  const onSelect = (country) => {
+  const onCountrySelect = (country) => {
     console.log('country', country);
     setCountry(country);
-  };
-
-  const buildPhoneNumber = (phone) => {
+    setCountryCode(country.cca2);
   };
 
   return (
@@ -86,21 +88,21 @@ const SigninScreen = ({ navigation }) => {
             color='black'
           />
           <Input
-            containerStyle={{ width: 150 }}
+            containerStyle={{ width: 130 }}
             leftIcon={
               <CountryPicker
-                countryCode={country.cca2}
+                countryCode={countryCode}
                 withFlag
                 withFilter
                 withAlphaFilter
                 withCallingCode
                 withCallingCodeButton
-                onSelect={(country) => { console.log('onSelect'); onSelect(country)}}
+                onSelect={(country) => { console.log('onSelect'); onCountrySelect(country)}}
               />  
             } 
           />
           <Input
-            containerStyle={{ paddingRight: 10 }}
+            containerStyle={{ width: '55%' }}
             inputStyle={{ paddingLeft: 10 }} 
             placeholder={t('SigninScreen.phone')}
             value={phoneNumber}
