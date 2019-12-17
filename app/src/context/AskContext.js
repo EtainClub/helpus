@@ -46,30 +46,43 @@ const getAppStatus = dispatch => {
   return async () => {
     // get number of users
     const usersRef = firebase.firestore().collection('users');
+    const statRef = firebase.firestore().doc('stat/0');
     let totalUsers = 0;
-    await usersRef.get()
-      .then(snapshot => {
-        totalUsers = snapshot.size;
-      })
-      .catch(error => {
-        console.log('Error getting the cases', error);
+    usersRef.get()
+    .then(snapshot => {
+      totalUsers = snapshot.size;
+      // update stat
+      statRef.update({
+        users: totalUsers
       });
+      // update state
+      dispatch({
+        type: 'update_app_status',
+        payload: { totalUsers, totalCases }
+      });
+    })
+    .catch(error => {
+      console.log('Error getting the cases', error);
+    });
 
     // get number of cases
     const casesRef = firebase.firestore().collection('cases');
     let totalCases = 0;
-    await casesRef.get()
-      .then(snapshot => {
-        totalCases = snapshot.size;
-      })
-      .catch(error => {
-        console.log('Error getting the cases', error);
+    casesRef.get()
+    .then(snapshot => {
+      totalCases = snapshot.size;
+      // update stat 
+      statRef.update({
+        cases: totalCases
       });
-    
-    // update state
-    dispatch({
-      type: 'update_app_status',
-      payload: {totalUsers, totalCases}
+      // update state
+      dispatch({
+        type: 'update_app_status',
+        payload: { totalUsers, totalCases }
+      });
+    })
+    .catch(error => {
+      console.log('Error getting the cases', error);
     });
   };
 };

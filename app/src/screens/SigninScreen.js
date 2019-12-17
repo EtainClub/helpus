@@ -29,8 +29,13 @@ const SigninScreen = ({ navigation }) => {
   useEffect(() => {
     // get phone number from storage
     // getPhoneNumberFromStorage();
+    // load country data 
+    const countryData = require('react-native-country-picker-modal/lib/assets/data/countries-emoji.json');
     // get device country based on language setting not based on timezone
-    setCountryCode(RNLocalize.getCountry());
+    const code = RNLocalize.getCountry();
+    setCountryCode(code);
+    // set initial country from country code
+    setCountry(countryData[code]);
     // auth change listener for android only
     let unsubscribe = null;
     if (Platform.OS === 'android') {

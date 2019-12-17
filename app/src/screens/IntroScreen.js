@@ -7,6 +7,7 @@ import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import SplashScreen from 'react-native-splash-screen';
+import firebase from 'react-native-firebase'; 
 // custom libraries
 import {Context as AskContext} from '../context/AskContext';
 
@@ -15,16 +16,31 @@ const IntroScreen = ({ navigation }) => {
   console.log('IntroScreen');
   // setup language
   const { t } = useTranslation();
-  // use auth context; state, action, default value
-  const {state, getAppStatus} = useContext(AskContext);
   // state
   const [message, setMessage] = useState('');
+  const [stat, setStat] = useState({ users: 0, cases: 0 });
 
   // use effect
   useEffect(() => {
-    // @todo call other function using admin's account?
-    getAppStatus();
+    // get app stat
+    getAppStat();
   }, []);
+
+  // get numbers of current users and cases
+  const getAppStat = () => {
+    // stat doc ref
+    const statRef = firebase.firestore().doc('stat/0');
+    console.log('[getAppStat] stat ref', statRef);
+    statRef.get()
+    .then(doc => {
+      console.log('[getAppStat] doc', doc);
+      const newStat = { users: doc.data().users, cases: doc.data().cases };
+      setStat(newStat);
+    })
+    .catch(error => {
+      console.log('Error getting the app stat', error);
+    }); 
+  };
 
   return (
     <SafeAreaView>
@@ -37,7 +53,7 @@ const IntroScreen = ({ navigation }) => {
             name='user'
             size={30}
           />
-          <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{state.totalUsers}</Text>
+          <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{stat.users}</Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
           <Icon2
@@ -45,7 +61,7 @@ const IntroScreen = ({ navigation }) => {
             name='hands-helping'
             size={30}
           />
-          <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{state.totalCases}</Text>
+          <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{stat.cases}</Text>
         </View>
       </Card>
 

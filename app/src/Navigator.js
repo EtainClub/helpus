@@ -89,8 +89,8 @@ settingFlow.navigationOptions = ({ screenProps: { t } }) => ({
 });
 
 const switchNavigator = createSwitchNavigator({
-  Intro: IntroScreen,
   ResolveAuth: ResolveAuthScreen,
+  Intro: IntroScreen,
   loginFlow: createStackNavigator({
     Signin: SigninScreen,
     Signup: SignupScreen,

@@ -35,7 +35,7 @@ const authReducer = (state, action) => {
 };
 
 //// actions
-// local login
+// skip login if the token exists
 const trySigninWithToken = dispatch => {
   return async () => {
     // get id token from storage
