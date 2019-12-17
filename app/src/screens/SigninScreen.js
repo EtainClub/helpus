@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native'; 
+import { StyleSheet, TouchableOpacity, View, Linking } from 'react-native'; 
 import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import i18next from 'i18next';
@@ -18,6 +18,13 @@ const SigninScreen = ({ navigation }) => {
   SplashScreen.hide();
   // setup language
   const { t } = useTranslation();
+  // urls
+  let termsUrl = "https://etain.club/terms";
+  let privacyUrl = "https://etain.club/privacy";
+  if (i18next.language == 'en') {
+    let termsUrl = "https://etain.club/terms-en";
+    let privacyUrl = "https://etain.club/privacy-en";  
+  }
 
   // use auth context; state, action, default value
   const { state, signinPhoneNumber, confirmVerificationCode, signin, clearError } = useContext( AuthContext );
@@ -122,11 +129,11 @@ const SigninScreen = ({ navigation }) => {
       
       <Spacer>
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <TouchableOpacity onPress={() => Linking.openURL(termsUrl)}>
             <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
           </TouchableOpacity>
           <Text style={{ fontSize: 20 }}>{t('and')}</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <TouchableOpacity onPress={() => Linking.openURL(privacyUrl)}>
             <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
           </TouchableOpacity>
         </View>
