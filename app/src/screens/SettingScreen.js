@@ -41,7 +41,7 @@ const SettingScreen = ({ navigation }) => {
     },
     {
       title: t('SettingScreen.github'),
-      url: 'https://github.com/EtainClub/etainclub',
+      url: 'https://github.com/EtainClub/helpus',
     },
     {
       title: t('SettingScreen.terms'),

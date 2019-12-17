@@ -86,7 +86,7 @@ const IntroScreen = ({ navigation }) => {
           buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
           titleStyle={{fontSize: 25, fontWeight: 'bold', paddingLeft: 7 }}
           title={t('startApp')}
-          onPress={() => navigation.navigate('ResolveAuth')}
+          onPress={() => navigation.navigate('Signin')}
         />
       </Card>
     </SafeAreaView>
