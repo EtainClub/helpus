@@ -22,8 +22,13 @@ const SigninScreen = ({ navigation }) => {
   let termsUrl = "https://etain.club/terms";
   let privacyUrl = "https://etain.club/privacy";
   if (i18next.language == 'en') {
-    let termsUrl = "https://etain.club/terms-en";
-    let privacyUrl = "https://etain.club/privacy-en";  
+    termsUrl = "https://etain.club/terms-en";
+    privacyUrl = "https://etain.club/privacy-en";  
+    console.log('[signinscreen] language is english');
+  }
+
+  if (i18next.language == 'ko') {
+    console.log('[signinscreen] language is korean');
   }
 
   // use auth context; state, action, default value
@@ -151,6 +156,7 @@ const SigninScreen = ({ navigation }) => {
 
       <Spacer></Spacer>
       <Spacer></Spacer>
+
       {
         Platform.OS === 'ios' ?
         <View>
@@ -221,3 +227,25 @@ const styles = StyleSheet.create({
 });
 
 export default SigninScreen;
+
+
+/*
+      {
+        __DEV__ ? 
+      <Spacer>
+            <Button
+                buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+                titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
+                title={t('SigninScreen.start')}
+                loading={state.loading}
+                onPress={() => confirmVerificationCode({ 
+                  phoneNumber, 
+                  code: '123456', 
+                  confirmResult: state.confirmResult,
+                  navigation })}
+              />
+          </Spacer>
+          : 
+          null
+      }
+*/

@@ -93,6 +93,12 @@ const IntroScreen = ({ navigation }) => {
   );
 };
 
+IntroScreen.navigationOptions = () => {
+  return {
+    header: null
+  }
+};
+
 // styles
 const styles = StyleSheet.create({
   statusContainer: {
