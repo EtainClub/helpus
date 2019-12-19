@@ -86,8 +86,8 @@ helpus는 우리가 도움을 주고 받는 의미의 help us와 도움을 주�
  - [아이폰] 이용약관, 개인정보 처리방침에 동의하고 시작하기 버튼을 누르면, 앱 사용이 가능합니다.
 
 사용법은 매우 간단합니다. 카카오택시나 우버앱처럼 메시지를 다수에게 보내고 그 중 가장 먼저 응답한 사람과 1:1 채팅으로 연결되는 방식입니다.
-![](https://etain.club/static/media/client_1.1ca8112b.png)
-![](https://etain.club/static/media/client_3-3.529dc51a.png)
+![](https://ipfs.busy.org/ipfs/QmXP6by9AL5CGUx5TwoqRCvWpowKJVxDa62t9MJxxFKR6Y)
+![](https://ipfs.busy.org/ipfs/QmeqFDCYFWcTjQ3WEUJxsiFCYSFDbZNxsPgcPgvaW96vFR)
 
 1. [요청자] 도움 요청 메시지를 작성하고 전송
 2. [요청자] 요청이 수락될 때까지 대기하거나 요청 취소합니다.
