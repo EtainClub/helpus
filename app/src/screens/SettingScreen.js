@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, Linking, Alert, Share } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import { Text, SearchBar, ListItem, Divider } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import i18next from 'i18next';
@@ -40,9 +41,6 @@ const SettingScreen = ({ navigation }) => {
       title: t('SettingScreen.app'),
     },
     {
-      title: t('SettingScreen.evaluate'),
-    },
-    {
       title: t('SettingScreen.signout'),
     },
     {
@@ -54,23 +52,38 @@ const SettingScreen = ({ navigation }) => {
     {
       title: t('SettingScreen.howto'),
       url: 'http://etain.club/howto',
+      icon: 'question'
     },
     {
       title: t('SettingScreen.facebookGroup'),
       url: 'https://www.facebook.com/groups/497453057500529/',
+      icon: 'facebook-official'
     },
     {
       title: t('SettingScreen.github'),
       url: 'https://github.com/EtainClub/helpus',
+      icon: 'github'
+    },
+    {
+      title: t('SettingScreen.feedback'),
+      url: 'https://github.com/EtainClub/helpus',
+      icon: 'commenting-o'
+    },
+    {
+      title: t('SettingScreen.evaluate'),
+      url: '',
+      icon: 'star-o'
     },
     {
       title: t('SettingScreen.terms'),
       url: 'https://etain.club/terms',
+      icon: 'file-text-o',
       lang: i18next.language
     },
     {
       title: t('SettingScreen.privacy'),
       url: 'https://etain.club/privacy',
+      icon: 'file-text-o',
       lang: i18next.language
     },
   ];
@@ -167,26 +180,14 @@ const SettingScreen = ({ navigation }) => {
       case 2:
         await Share.share({
           title: t('SettingScreen.shareTitle'),
-          message: 'http://etain.club/download',
+          message: 'http://etain.club',
         });
         break;
       // app version
       case 3:
         Linking.openSettings();
         break;
-      // app evaluation
       case 4:
-        Alert.alert(
-          t('SettingScreen.evaluationTitle'),
-          t('SettingScreen.evaluationText'),
-          [
-            { text: t('no'), style: 'cancel' },
-            { text: t('yes') }
-          ],
-          { cancelable: true },
-        );
-        break;  
-      case 5:
         Alert.alert(
           t('SettingScreen.signoutTitle'),
           t('SettingScreen.signoutText'),
@@ -197,7 +198,7 @@ const SettingScreen = ({ navigation }) => {
           { cancelable: true },
         );
         break;  
-      case 6:
+      case 5:
           Alert.alert(
             t('SettingScreen.deleteTitle'),
             t('SettingScreen.deleteText'),
@@ -210,7 +211,6 @@ const SettingScreen = ({ navigation }) => {
       default:
     }
   };
-
   // update swith state when a user clicks the DND time switch
   const onDNDValueChange = async (value) => {
     console.log('[onDNDValueChange] value', value);
@@ -334,7 +334,7 @@ const SettingScreen = ({ navigation }) => {
   }
 
   // link press handler
-  const onLinkPress = (url, lang) => {
+  const onLinkPress = async (url, lang, icon) => {
     // if there is language option
     let newUrl = url;
     if (lang) {
@@ -342,7 +342,15 @@ const SettingScreen = ({ navigation }) => {
       newUrl += '-' + lang;
       console.log('[onLinkPress] newUrl', newUrl);
     }
-    Linking.openURL(newUrl);  
+    // handle feedback
+    if (icon === 'commenting-o') {
+      await Share.share({
+        title: t('SettingScreen.feedbackTitle'),
+        message: t('SettingScreen.feedbackMsg'),
+      });
+    } else {
+      Linking.openURL(newUrl);  
+    }
   };
 
   return (
@@ -400,10 +408,10 @@ const SettingScreen = ({ navigation }) => {
             <ListItem
               key={i}
               title={item.title}
-/*              leftIcon={{ name: item.icon}} */
+              leftIcon={{ type: 'font-awesome', name: item.icon }} 
 /*              leftAvatar={{ placeholderStyle: {backgroundColor: 'white'}, rounded: false, source: { uri: item.icon_url } }} */
               chevron
-              onPress={() => onLinkPress(item.url, item.lang)}
+              onPress={() => onLinkPress(item.url, item.lang, item.icon)}
             />
           ))
         }

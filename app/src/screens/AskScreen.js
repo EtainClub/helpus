@@ -33,6 +33,7 @@ const AskScreen = ({navigation}) => {
       return (
         <Icon
           style={{ left: 30, top: 5 }} 
+          reverse
           name='close'
           size={20}
           color={'#353535'}
