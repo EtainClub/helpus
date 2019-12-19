@@ -155,6 +155,25 @@ const SigninScreen = ({ navigation }) => {
       </Spacer>
 
       <Spacer></Spacer>
+      
+      {
+        __DEV__ ? 
+      <Spacer>
+            <Button
+                buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+                titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
+                title={t('confirm')}
+                onPress={() => confirmVerificationCode({ 
+                  phoneNumber, 
+                  code: '123456', 
+                  confirmResult: state.confirmResult,
+                  navigation })}
+              />
+          </Spacer>
+          : 
+          null
+      }
+
       <Spacer></Spacer>
 
       {
@@ -229,23 +248,3 @@ const styles = StyleSheet.create({
 export default SigninScreen;
 
 
-/*
-      {
-        __DEV__ ? 
-      <Spacer>
-            <Button
-                buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-                titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
-                title={t('SigninScreen.start')}
-                loading={state.loading}
-                onPress={() => confirmVerificationCode({ 
-                  phoneNumber, 
-                  code: '123456', 
-                  confirmResult: state.confirmResult,
-                  navigation })}
-              />
-          </Spacer>
-          : 
-          null
-      }
-*/

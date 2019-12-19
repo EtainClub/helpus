@@ -25,30 +25,7 @@ const SettingScreen = ({ navigation }) => {
   */
 
   //// initial values
-  // item list
-  const linkList = [
-    {
-      title: t('SettingScreen.howto'),
-      url: 'http://etain.club',
-    },
-    {
-      title: t('SettingScreen.facebookGroup'),
-      url: 'https://www.facebook.com/groups/497453057500529/',
-    },
-    {
-      title: t('SettingScreen.naverCafe'),
-      url: 'https://cafe.naver.com/etainclub',
-    },
-    {
-      title: t('SettingScreen.github'),
-      url: 'https://github.com/EtainClub/helpus',
-    },
-    {
-      title: t('SettingScreen.terms'),
-      url: 'https://etain.club/terms',
-    },
-  ];
-
+  // setting list
   const settingList = [
     {
       title: t('SettingScreen.donotdisturb'),
@@ -72,6 +49,32 @@ const SettingScreen = ({ navigation }) => {
       title: t('SettingScreen.deleteAccount'),
     },
   ];  
+  // link list
+  const linkList = [
+    {
+      title: t('SettingScreen.howto'),
+      url: 'http://etain.club/howto',
+    },
+    {
+      title: t('SettingScreen.facebookGroup'),
+      url: 'https://www.facebook.com/groups/497453057500529/',
+    },
+    {
+      title: t('SettingScreen.github'),
+      url: 'https://github.com/EtainClub/helpus',
+    },
+    {
+      title: t('SettingScreen.terms'),
+      url: 'https://etain.club/terms',
+      lang: i18next.language
+    },
+    {
+      title: t('SettingScreen.privacy'),
+      url: 'https://etain.club/privacy',
+      lang: i18next.language
+    },
+  ];
+  
   // get user doc
   const { currentUser } = firebase.auth();
   let userId = null;
@@ -148,10 +151,6 @@ const SettingScreen = ({ navigation }) => {
     const minutes = date.minutes();
     const time = hour*60 + minutes + UTC_OFFSET_IN_MINUTES;
     return time;
-  };
-
-  const onLinkPress = url => {
-    Linking.openURL(url);  
   };
   
   const onSettingPress = async (id) => {
@@ -334,25 +333,21 @@ const SettingScreen = ({ navigation }) => {
     );
   }
 
+  // link press handler
+  const onLinkPress = (url, lang) => {
+    // if there is language option
+    let newUrl = url;
+    if (lang) {
+      // append lanuage
+      newUrl += '-' + lang;
+      console.log('[onLinkPress] newUrl', newUrl);
+    }
+    Linking.openURL(newUrl);  
+  };
+
   return (
     <SafeAreaView>
       <ScrollView>
-      <Spacer>  
-        <Text style={styles.listHeaderText}>{t('SettingScreen.links')}</Text>
-        {
-          linkList.map((item, i) => (
-            <ListItem
-              key={i}
-              title={item.title}
-/*              leftIcon={{ name: item.icon}} */
-/*              leftAvatar={{ placeholderStyle: {backgroundColor: 'white'}, rounded: false, source: { uri: item.icon_url } }} */
-              chevron
-              onPress={() => onLinkPress(item.url)}
-            />
-          ))
-        }
-      </Spacer>
-      <Divider />
       <Spacer>
         <Text style={styles.listHeaderText}>{t('SettingScreen.setting')}</Text>
         {
@@ -394,6 +389,22 @@ const SettingScreen = ({ navigation }) => {
                 chevron
                 onPress={() => onSettingPress(i)}
               />
+          ))
+        }
+      </Spacer>
+      <Divider />
+      <Spacer>  
+        <Text style={styles.listHeaderText}>{t('SettingScreen.links')}</Text>
+        {
+          linkList.map((item, i) => (
+            <ListItem
+              key={i}
+              title={item.title}
+/*              leftIcon={{ name: item.icon}} */
+/*              leftAvatar={{ placeholderStyle: {backgroundColor: 'white'}, rounded: false, source: { uri: item.icon_url } }} */
+              chevron
+              onPress={() => onLinkPress(item.url, item.lang)}
+            />
           ))
         }
       </Spacer>

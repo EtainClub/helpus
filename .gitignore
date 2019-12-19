@@ -1,5 +1,11 @@
 # root
 android/app/google-services.json
+android/install
+
+# keys, env
+.env
+.firebaserc
+*.lock
 
 # firebase cloud functions
 functions/node_modules
