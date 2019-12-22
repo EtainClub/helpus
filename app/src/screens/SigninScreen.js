@@ -37,6 +37,7 @@ const SigninScreen = ({ navigation }) => {
   const [code, setCode] = useState('');
   const [country, setCountry] = useState('');
   const [countryCode, setCountryCode] = useState('');
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     // get phone number from storage

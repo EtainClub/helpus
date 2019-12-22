@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { NavigationEvents, SafeAreaView} from 'react-navigation';
 import { Text, Button, Card} from 'react-native-elements';
+import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import i18next from 'i18next';
@@ -17,7 +18,6 @@ const IntroScreen = ({ navigation }) => {
   // setup language
   const { t } = useTranslation();
   // state
-  const [message, setMessage] = useState('');
   const [stat, setStat] = useState({ users: 0, cases: 0 });
 
   // use effect
@@ -40,6 +40,17 @@ const IntroScreen = ({ navigation }) => {
     .catch(error => {
       console.log('Error getting the app stat', error);
     }); 
+  };
+
+  const introImage = () => {
+    return (
+    <FastImage
+      source={{
+        uri: 'https://facebook.github.io/react/img/logo_og.png',
+        priority: FastImage.priority.normal
+      }}
+    />
+    );
   };
 
   return (
@@ -69,7 +80,7 @@ const IntroScreen = ({ navigation }) => {
         containerStyle={styles.container}
         title='helpus'
         titleStyle={{ fontSize: 50 }}
-        image={require('../../../assets/splash.png')}
+        image={require('../../../assets/intro.png')}
         imageStyle={{ height: '60%' }}
       >
         <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>

@@ -1,6 +1,6 @@
 {
   "name": "helpus",
-  "version": "0.2.4",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -21,6 +21,7 @@
     "react-native-dotenv": "0.2.0",
     "react-native-draggable-flatlist": "1.1.9",
     "react-native-elements": "1.2.1",
+    "react-native-fast-image": "7.0.2",
     "react-native-firebase": "5.5.6",
     "react-native-geocoding": "0.4.0",
     "react-native-gesture-handler": "1.4.1",

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, FlatList, StyleSheet, Alert } from 'react-native';
 import { Button, Text, Card, Divider, Overlay, Badge } from 'react-native-elements';
 import { SafeAreaView, NavigationEvents } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
