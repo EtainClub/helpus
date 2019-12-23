@@ -10,7 +10,7 @@ import firebase from 'react-native-firebase';
 import ImagePicker from 'react-native-image-picker';
 import uuid from 'uuid/v4'; // Import UUID to generate UUID
 
-const ChatScreen = ({navigation}) => {
+const ChatScreen = ({ navigation }) => {
   console.log('chat screen');
   // setup language
   const { t } = useTranslation();
@@ -23,8 +23,8 @@ const ChatScreen = ({navigation}) => {
   const [imageUrl, setImageUrl] = useState('');
   const [imgLoading, setImgLoading] = useState(false);
   const [imgAttached, setImgAttached] = useState(false);
+//  const [unsubscribeChat, setUnsubscribeChat] = useState(null);
 
-  
   // get params
   const caseId = navigation.getParam('caseId');
 
@@ -35,18 +35,25 @@ const ChatScreen = ({navigation}) => {
   const { currentUser } = firebase.auth();
   const userId = currentUser.uid;
 
-  let unsubscribe;
+  let unsubscribe = null;
 
   // use effect
   useEffect(() => {
-    console.log('[chatScreen] caseId', caseId);
-    getUserInfo();
-    listenToChat();
+//    console.log('[chatScreen] caseId', caseId);
+//    getUserInfo();
+//    listenToChat();
     return () => {
       console.log('unsubscribe message listener');
       unsubscribe();
     }
   }, []);
+
+  // initialize the component -> componentDidMount
+  const onWillFocus = async payload => {
+    console.log('[ChatScreen] onWillFocus Event, paylod', payload);
+    getUserInfo();
+    listenToChat();
+  };
 
   const getUserInfo = async () => {
     const userRef = firebase.firestore().doc(`users/${userId}`);
@@ -237,16 +244,21 @@ const ChatScreen = ({navigation}) => {
 
   
   return (
-    <GiftedChat
-      messages={chats}
-      onSend={messages => onSend(messages)}
-      user={{
-        _id: userId,
-        name: userInfo.name,
-        avatar: userInfo.avatarUrl
-      }}
-      renderActions={this.renderCustomActions}
-    />
+    <View style={{ flex: 1 }}>
+      <NavigationEvents
+        onWillFocus={payload => onWillFocus(payload)}
+      />
+      <GiftedChat
+        messages={chats}
+        onSend={messages => onSend(messages)}
+        user={{
+          _id: userId,
+          name: userInfo.name,
+          avatar: userInfo.avatarUrl
+        }}
+        renderActions={this.renderCustomActions}
+      />
+      </View>
   );
 }
 
@@ -321,7 +333,7 @@ onVotePress = async ({ caseId, helperId }) => {
   });
 }
 
-ChatScreen.navigationOptions = ({navigation}) => {
+ChatScreen.navigationOptions = ({ navigation }) => {
   const caseId = navigation.getParam('caseId');
   const helperId = navigation.getParam('helperId');
 

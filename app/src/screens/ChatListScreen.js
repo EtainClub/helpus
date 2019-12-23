@@ -56,7 +56,7 @@ const ChatListScreen = ({navigation}) => {
           if (!docItem.accepted) {
             console.log('Warning the case is not accepted!!!', docItem);
           } else {
-            console.log('[ChatListScreen] docItem', docItem);
+            //console.log('[ChatListScreen] docItem', docItem);
             docItem.docId = doc.id;
             docItem.createdAt = moment(docItem.createdAt.toDate()).format('ll');
             matchedCases.push(docItem);
