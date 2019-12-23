@@ -12,17 +12,24 @@ import { ScrollView } from 'react-native-gesture-handler';
 const ChatListScreen = ({navigation}) => {
   console.log('chatlist screen');
   // setup language
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   // state
   const [search, setSearch] = useState('');
   const [askCases, setAskCases] = useState([]);
   const [helpCases, setHelpCases] = useState([]);
-  // set navigation params
+  // componentDidMount
   useEffect(() => {
+    // set navigation params
+    navigation.setParams({ updateChatList });
     //
-    updateChatList();
-    navigation.setParams({updateChatList});
+//    updateChatList();
   }, []);
+
+  // initialize the component -> componentDidMount
+  const onWillFocus = async payload => {
+    console.log('[ChatListScreen] onWillFocus Event, paylod', payload);
+    updateChatList();
+  };
 
   const updateChatList = () => {
     // get chat list of sender
@@ -118,6 +125,9 @@ const ChatListScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <NavigationEvents
+        onWillFocus={payload => onWillFocus(payload)}
+      />
       <View style={{alignItems: 'center', backgroundColor: 'lightgrey'}}>
         <Text style={{fontSize: 20, fontWeight: 'bold'}}>{i18next.t('ChatListScreen.askCases')}</Text>
       </View>

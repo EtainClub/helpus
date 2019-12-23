@@ -337,8 +337,8 @@ ChatScreen.navigationOptions = ({ navigation }) => {
   const caseId = navigation.getParam('caseId');
   const helperId = navigation.getParam('helperId');
 
-  console.log('[ChatScreen] caseId, helperId', caseId, helperId);
-  console.log('navigation', navigation);
+//  console.log('[ChatScreen] caseId, helperId', caseId, helperId);
+//  console.log('navigation', navigation);
   
   return {
     title: i18next.t('ChatScreen.header'),
