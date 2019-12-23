@@ -3,16 +3,24 @@ const admin = require('firebase-admin');
 const i18next = require('i18next');
 const moment = require('moment');
 
+
+// initialize app
+//admin.initializeApp();
+
 /*
-var serviceAccount = require("path/to/serviceAccountKey.json");
+const key_path = "/home/etain/devel/helpus/keys/firebase-admin/helpus-206eb-firebase-adminsdk-cvynd-b7571746bf.json";
+var serviceAccount = require(key_path);
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://etainclub-896c9.firebaseio.com"
+  databaseURL: "https://helpus-206eb.firebaseio.com"
 });
 */
 
-// initialize app
-admin.initializeApp();
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+  databaseURL: "https://helpus-206eb.firebaseio.com"
+});
 
 // send push notification
 exports.sendMessage = functions.firestore
@@ -43,7 +51,7 @@ exports.sendMessage = functions.firestore
           },
           en: {
             "translation": {
-              "header": '[helpus] help wanted',
+              "header": '[helpus] HELP WANTED',
             },
           },
         },
@@ -65,10 +73,41 @@ exports.sendMessage = functions.firestore
       },
     };
 
+    // case reference
+    const caseRef = admin.firestore().collection('cases').doc(`${caseId}`);
+    console.log('caseRef', caseRef);    
+    let accepted = false;
+    // set listener and unsubcribe when it is done
+    const unsubscribe = caseRef
+    .onSnapshot(async (docSnapshot) => {
+      console.log('case snapshot', docSnapshot);
+      console.log('case snapshot data', docSnapshot.data());
+      // check if the data exists
+      if (!docSnapshot.exists)
+      {
+        console.log('doc snapshot data is empty');
+        return;
+      }
+      if (docSnapshot.data().accepted) {
+        accpted = true;
+        console.log('request accepted. accpted', accpted);
+        // unsubscribe
+        unsubscribe();
+      }
+    }, error => {
+      console.log('Encountered error on listening to accepted field change', error);
+    });
+
     // send message to users who prefer the language of the message
     // users.where('languages', 'array-contains', language).get()
     await users.get()
     .then(snapshot => {
+      // check if the request has been accepted
+      if (accepted) {
+        console.log('the request has been accpted. so no more sending message', accepted);
+        return 'the request has been accpted. so no more sending message';
+      }
+
       snapshot.forEach(doc => {
         console.log('doc id', doc.id);
         console.log('doc languages', doc.data().languages);
