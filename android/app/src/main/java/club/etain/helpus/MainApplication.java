@@ -20,6 +20,7 @@ import io.invertase.firebase.functions.RNFirebaseFunctionsPackage;
 import io.invertase.firebase.storage.RNFirebaseStoragePackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 
+import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
           packages.add(new RNFirebaseFunctionsPackage());
           packages.add(new RNFirebaseStoragePackage());
           packages.add(new RNFirebaseCrashlyticsPackage());
+          packages.add(new RNFusedLocationPackage());
           return packages;
         }
 

@@ -109,7 +109,7 @@ const requestHelp = dispatch => {
 };
 
 // send message
-const sendMessage = async ({dispatch, message, navigation}) => {
+const sendMessage = async ({ dispatch, message, navigation }) => {
   //// get user info
   // get user language
   const language = i18next.language;

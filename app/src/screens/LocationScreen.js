@@ -109,7 +109,7 @@ const LocationScreen = ({ navigation }) => {
         city: city,
         state: state,
         country: country,
-        display: display,
+        display: display.substring(0, 25),
         coordinate: [latitude, longitude]
       };
       setAddress(addr);
@@ -134,10 +134,10 @@ const LocationScreen = ({ navigation }) => {
        let display = '';
        switch (language) {
          case 'ko':
-           display = (district + ' ' + name).substring(25);
+           display = district + ' ' + name;
            break;
          default:
-           display = (name + ', ' + district).substring(25);
+           display = name + ', ' + district;
            break;
        }
        const addr = {
@@ -146,7 +146,7 @@ const LocationScreen = ({ navigation }) => {
          city: city,
          state: state,
          country: country,
-         display: display,
+         display: display.substring(0, 25),
          coordinate: [latitude, longitude]
        };
        setAddress(addr); 

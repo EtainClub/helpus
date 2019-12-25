@@ -86,7 +86,7 @@ const HelpScreen = ({ navigation }) => {
     // make modal invisible
     setShowModal(false);
     // handle the acceptance
-    acceptRequest({caseId: state.caseId, navigation});
+    acceptRequest({ caseId: state.caseId, navigation });
   };
 
   // when a user declines the request

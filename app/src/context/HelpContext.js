@@ -63,12 +63,12 @@ const acceptRequest = dispatch => {
   // use multi language
   const { t } = useTranslation();
 
-  return async ({caseId, navigation}) => {
+  return async ({ caseId, navigation }) => {
     if (__DEV__) console.log('acceptRequest dispatch caseId', caseId);
     // case ref
     const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`)
     // get user id
-    const {currentUser} = firebase.auth();
+    const { currentUser } = firebase.auth();
     const userId = currentUser.uid;
 
     // check if someone else has accepted the request first
@@ -124,7 +124,7 @@ const acceptRequest = dispatch => {
 
     // update the cases db with caseId
     // new approach: save helperid and time in case doc
-    // save the user language
+    // record user's region coordinate in string
     await caseRef
       .update({ accepted: true, helperId: userId, acceptedAt: new Date() })
       .then(async () => {

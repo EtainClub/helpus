@@ -1,13 +1,13 @@
-import React, {useContext, useState, useEffect} from 'react';
-import {View, StyleSheet, TextInput, Platform, TouchableOpacity} from 'react-native';
-import {NavigationEvents, SafeAreaView} from 'react-navigation';
-import {Text, Button, Input, Card} from 'react-native-elements';
+import React, { useContext, useState, useEffect } from 'react';
+import { View, StyleSheet, TextInput, Platform, PermissionsAndroid, Alert } from 'react-native';
+import { NavigationEvents, SafeAreaView } from 'react-navigation';
+import { Text, Button, Input, Card } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import i18next from 'i18next';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import SplashScreen from 'react-native-splash-screen';
-
+import Geolocation from 'react-native-geolocation-service';
 
 // custom libraries
 import {Context as AskContext} from '../context/AskContext';
@@ -26,7 +26,45 @@ const AskScreen = ({navigation}) => {
   // use effect
   useEffect(() => {
     getAppStatus();
+    Geolocation.requestAuthorization();
+    console.log('Geolocation service1', Geolocation.getCurrentPosition((position)=>{console.log(position)}));
+    // get user's coordinate
+    getCoordinate();
   }, []);
+
+  const getCoordinate = async () => {
+    // get location permission for android device
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) { 
+          if (__DEV__) Alert.alert("Location Permission Granted.");
+          // get location
+          Geolocation.getCurrentPosition((position) => {
+            console.log('[AskScreen|getCoordinate] position', position);
+          },
+          (error) => {
+            console.log(error.code, error.message);
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }); 
+        }
+        else {
+          Alert.alert(
+            t('LocationScreen.permissionFail'),
+            t('LocationScreen.permissionFailText'),
+            [
+              { text: t('confirm') }
+            ],
+            { cancelable: true },
+          );
+        }
+      } catch (err) {
+        console.warn(err);
+      }  
+    } else if (Platform.OS == 'ios') {
+      // @todo get permission for ios
+    }
+  };
 
   const showRemoveIcon = () => {
 //    if (message !== '') {
