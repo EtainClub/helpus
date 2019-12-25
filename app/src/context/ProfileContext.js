@@ -24,22 +24,13 @@ const INIT_LOCATION = {
   state: '',
   country: '',
   display: '',
+  coordinate: [],
   votes: 0
 }
 // populate array with the initial state
 const INIT_LOCATIONS = new Array(2).fill(INIT_LOCATION).map((item) => ({ 
   ...item, id: Math.random().toString()
 }));
-
-const INIT_USER = {
-  avatar: '',
-  name: '',
-  skill: '',
-  got: 0,
-  helped: 0,
-  votes: 0,
-  location: ''
-}
 
 //// reducer
 const profileReducer = (state, action) => {
@@ -74,6 +65,7 @@ const profileReducer = (state, action) => {
             state: action.payload.address.state,
             country: action.payload.address.country,
             display: action.payload.address.display,
+            coordinate: action.payload.address.coordinate,
             votes: location.votes + 1            
           } 
           : location
@@ -93,6 +85,7 @@ const profileReducer = (state, action) => {
             state: action.payload.address.state,
             country: action.payload.address.country,
             display: action.payload.address.display,
+            coordinate: action.payload.address.coordinate,
             votes: action.payload.address.votes            
           } 
           : location
@@ -141,7 +134,7 @@ const findUsers = dispatch => {
     }
     
     const usersRef = firebase.firestore().collection('users');
-    // @todo consider the multi languages. need to find both en and ko regions
+    // consider the multi languages. need to find both en and ko regions
     // react-native-firebase v5 does not support array-contains-any
     await usersRef.where('regions', 'array-contains', district).get()
     .then(async snapshot => {
@@ -235,6 +228,7 @@ const updateSkill = dispatch => {
   }
 };
 
+/*
 // update location with id
 const updateLocation = dispatch => {
   return ({ id, address, userId }) => {
@@ -257,14 +251,17 @@ const updateLocation = dispatch => {
       city: address.city,
       state: address.state,
       country: address.country,
-      display: address.display
+      display: address.display,
+      coordinate: address.coordinate
     });
-    // update the regions
+    // update the region and its coordinate
     userRef.update({
-      regions: firebase.firestore.FieldValue.arrayUnion(address.district)
+      regions: firebase.firestore.FieldValue.arrayUnion(address.district),
+      coordinates: firebase.firestore.FieldValue.arrayUnion(address.coordinate)
     });
   }
 };
+*/
 
 // verify location with id and update on DB
 const verifyLocation = dispatch => {
@@ -289,11 +286,16 @@ const verifyLocation = dispatch => {
       state: address.state,
       country: address.country,
       display: address.display, 
+      coordinate: address.coordinate,
       votes: firebase.firestore.FieldValue.increment(1)
     });
-    // update the regions
+    
+    //// update the region and its coordinate
+    // convert the coordinate to a string
+    const coordinateStr = `${address.coordinate[0]},${address.coordinate[1]}`;
     userRef.update({
-      regions: firebase.firestore.FieldValue.arrayUnion(address.district)
+      regions: firebase.firestore.FieldValue.arrayUnion(address.district),
+      coordinates: firebase.firestore.FieldValue.arrayUnion(coordinateStr)
     });    
   }
 };
@@ -318,6 +320,7 @@ const deleteLocation = dispatch => {
           state: '',
           country: '',
           display: '',
+          coordinate: [],
           votes: 0,
         } 
       }
@@ -330,18 +333,24 @@ const deleteLocation = dispatch => {
     .then(snapshot => {
       console.log('delete location snapshot data', snapshot.data());
       const district = snapshot.data().district;
+      const coordinate = snapshot.data().coordinate;
       userRef.collection('locations').doc(`${id}`).update({
         name: '',
         district: '',
         city: '',
         state: '',
         country: '',  
-        display: '',    
+        display: '', 
+        coordinate: [],   
         votes: 0
       });
-      // update the regions too
+
+      //// update the region and its coordinate too
+      // convert the coordinate to a string
+      const coordinateStr = `${coordinate[0]},${coordinate[1]}`;
       userRef.update({
-        regions: firebase.firestore.FieldValue.arrayRemove(district)
+        regions: firebase.firestore.FieldValue.arrayRemove(district),
+        coordinates: firebase.firestore.FieldValue.arrayRemove(coordinateStr)
       });  
     })
     .catch(error => {
@@ -539,7 +548,7 @@ export const { Provider, Context } = createDataContext(
   profileReducer,
   { updateContract,
     updateUserInfoState, updateAccount, updateAvatarState,
-    updateSkill, updateLocation, verifyLocation, updateProfileInfo,
+    updateSkill, verifyLocation, updateProfileInfo,
     updateSkills, updateSkillsDB, updateLocations, deleteLocation,
     findUsers,
   },
