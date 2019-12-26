@@ -175,7 +175,7 @@ const AccountScreen = ({ navigation }) => {
                 size={20}
               />
               <Text style={{ fontSize: 16, marginLeft: 7 }}>{ state.locations[0].name ? 
-                state.locations[0].name
+                state.locations[0].name.substring(0,20)
                 : t('AccountScreen.locationPlaceholder')}</Text>
               </View>
             </Spacer>

@@ -107,7 +107,8 @@ const UsersScreen = ({ navigation }) => {
         city: city,
         state: state,
         country: country,
-        display: display
+        display: display,
+        coordinate: [region.latitude, region.longitude]
       };
       setAddress(addr);
 
@@ -189,7 +190,8 @@ const UsersScreen = ({ navigation }) => {
         city: city,
         state: state,
         country: country,
-        display: display
+        display: display,
+        coordinate: [newLat, newLong]
       };
       setAddress(addr);
     })

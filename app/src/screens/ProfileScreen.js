@@ -21,7 +21,7 @@ const ProfileScreen = ({ navigation }) => {
   // use context
   const { 
     state, 
-    updateContract, updateSkill, updateLocation, 
+    updateContract, updateSkill, 
     updateSkills, updateSkillsDB, updateLocations, deleteLocation
   } = useContext( ProfileContext );
 
@@ -158,13 +158,6 @@ const ProfileScreen = ({ navigation }) => {
     );
   };
 
-  // handle location state change
-  handleLocationStateChange = (id, value) => {
-    console.log('handleLocationStateChange', id, value);
-    // update location state
-    updateLocation({ id, locationName: value });
-  }
-
   // show location edit section
   showLocationEdit = () => {
     // show skill edit section 
@@ -176,7 +169,7 @@ const ProfileScreen = ({ navigation }) => {
           id={id}
           navigation={navigation}
           placeholder={t('ProfileScreen.locationPlaceholder')} 
-          handleStateChange={handleLocationStateChange} />
+        />
       );
     }
   }

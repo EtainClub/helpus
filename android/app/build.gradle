@@ -139,8 +139,8 @@ android {
         applicationId "club.etain.helpus"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0.4"
+        versionCode 3
+        versionName "1.0.5"
         multiDexEnabled true
         resConfigs "ko", "en"
         manifestPlaceholders = [googleMapApiKey:googleMapApiKey]
@@ -226,7 +226,8 @@ dependencies {
     implementation "com.google.firebase:firebase-firestore:19.0.0"
     implementation "com.google.firebase:firebase-functions:17.0.0"
     implementation "com.google.firebase:firebase-storage:17.0.0"
-        implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
+//    implementation project(':react-native-geolocation-service')
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
         transitive = true
     }
     

@@ -90,7 +90,7 @@ const getAppStatus = dispatch => {
 // ask help
 const requestHelp = dispatch => {
   console.log('[requestHelp]');
-  return async ({ message, navigation }) => {
+  return async ({ message, coordinate, navigation }) => {
     // do not request if the message is empty
     if (message === '') {
       console.log('[Ask] message is empty');
@@ -104,12 +104,12 @@ const requestHelp = dispatch => {
     console.log('[requestHelp] before sending message');
 
     // initial request message becomes the first all the time
-    sendMessage({ dispatch, message, navigation });
+    sendMessage({ dispatch, message, coordinate, navigation });
   };
 };
 
 // send message
-const sendMessage = async ({dispatch, message, navigation}) => {
+const sendMessage = async ({ dispatch, message, coordinate, navigation }) => {
   //// get user info
   // get user language
   const language = i18next.language;
@@ -144,6 +144,8 @@ const sendMessage = async ({dispatch, message, navigation}) => {
   const hour = date.getHours();
   const minutes = date.getMinutes();
   const messagingTime = hour*60 + minutes + timeOffset;
+  // position coordinate
+  const coordinateStr = `${coordinate.latitude},${coordinate.longitude}`;
   // add a new document with auto generated doc id
   await casesRef.add({
     senderId: userId,
@@ -152,7 +154,8 @@ const sendMessage = async ({dispatch, message, navigation}) => {
     voted: false,
     language,
     createdAt: new Date(),
-    messagingTime
+    messagingTime,
+    coordinate: coordinateStr
   })
   .then(async docRef => {
     console.log('case generated with doc id: ', docRef.id);

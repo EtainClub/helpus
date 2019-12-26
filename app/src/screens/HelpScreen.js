@@ -28,13 +28,13 @@ const HelpScreen = ({ navigation }) => {
 
   // update the notification
   const handleFocus = payload => {
-    console.log('[HelpScreen] onWillFocus Event, paylod', payload)
+    if(__DEV__) console.log('[HelpScreen] onWillFocus Event, paylod', payload)
 
     // get navigation params
     const notificationBody = navigation.getParam('notificationBody');
     const senderId = notificationBody.data.senderId;
 
-    console.log('[HelpScreen] onWillFocus Event, notificationBody', notificationBody)
+    if(__DEV__) console.log('[HelpScreen] onWillFocus Event, notificationBody', notificationBody)
 
     // update the notification
     askReceived(notificationBody);
@@ -86,7 +86,7 @@ const HelpScreen = ({ navigation }) => {
     // make modal invisible
     setShowModal(false);
     // handle the acceptance
-    acceptRequest({caseId: state.caseId, navigation});
+    acceptRequest({ caseId: state.caseId, navigation });
   };
 
   // when a user declines the request

@@ -169,7 +169,8 @@ const processSignin = ({ dispatch, user, navigation }) => {
             helpCount: 0,
             votes: 0,
             regions: [],
-            languages: [i18next.language]
+            languages: [i18next.language],
+            coordinates: [],
           })
           .then(() => {
             // create initial profile on firebase
