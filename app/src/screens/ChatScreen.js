@@ -50,7 +50,7 @@ const ChatScreen = ({ navigation }) => {
 
   // initialize the component -> componentDidMount
   const onWillFocus = async payload => {
-    console.log('[ChatScreen] onWillFocus Event, paylod', payload);
+    if (__DEV__) console.log('[ChatScreen] onWillFocus Event, paylod', payload);
     getUserInfo();
     listenToChat();
   };

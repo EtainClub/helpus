@@ -93,7 +93,7 @@ const signinPhoneNumber = dispatch => {
       console.log('[signinPhoneNumber] Error!', error);
       dispatch({
         type: 'add_error',
-        payload: t('AuthContext.SigninTokenError') + '. ' + error,
+        payload: t('AuthContext.SigninError')
       });
     });
   };
@@ -117,7 +117,7 @@ const confirmVerificationCode = dispatch => {
         console.log('confirm code', error);
         dispatch({
           type: 'add_error',
-          payload: t('AuthContext.SigninConfirmError') + '. ' + error,
+          payload: t('AuthContext.SigninConfirmError')
         });
       });
     } // end of if (confirm && code.length)
@@ -195,7 +195,7 @@ const processSignin = ({ dispatch, user, navigation }) => {
       console.log('getPushToken', error);
       dispatch({
         type: 'add_error',
-        payload: i18next.t('AuthContext.getPushTokenError') + '. ' + error,
+        payload: i18next.t('AuthContext.getPushTokenError')
       });
     });
   }) // end of token
@@ -203,7 +203,7 @@ const processSignin = ({ dispatch, user, navigation }) => {
     console.log('getToken', error);
     dispatch({
       type: 'add_error',
-      payload: i18next.t('AuthContext.SigninTokenError') + '. ' + error,
+      payload: i18next.t('AuthContext.SigninTokenError')
     });
   });
 };

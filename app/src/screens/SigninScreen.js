@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View, Linking } from 'react-native'; 
+import { StyleSheet, TouchableOpacity, View, Linking, Platform } from 'react-native'; 
 import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import i18next from 'i18next';
@@ -94,7 +94,15 @@ const SigninScreen = ({ navigation }) => {
       </Spacer>
       <Card>
         <Text style={{ fontSize: 16, marginBottom: 10}}>
-          {t('SigninScreen.guideMsg')}
+          {
+            Platform.OS === 'android' ?
+              t('SigninScreen.guideMsgAndroid')
+              :
+              t('SigninScreen.guideMsgIOS')
+          }
+        </Text>
+        <Text style={{ fontSize: 16, marginBottom: 10}}>
+          {t('SigninScreen.guideMsgSample')}
         </Text>
       </Card>
       <Spacer>

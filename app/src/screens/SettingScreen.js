@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Linking, Alert, Share } from 'react-native';
+import { View, StyleSheet, Linking, Alert, Share, Platform } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import { Text, SearchBar, ListItem, Divider } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -71,7 +71,7 @@ const SettingScreen = ({ navigation }) => {
     },
     {
       title: t('SettingScreen.evaluate'),
-      url: '',
+      url: 'https://play.google.com/store/apps/details?id=club.etain.helpus',
       icon: 'star-o'
     },
     {
@@ -180,7 +180,10 @@ const SettingScreen = ({ navigation }) => {
       case 2:
         await Share.share({
           title: t('SettingScreen.shareTitle'),
-          message: 'http://etain.club',
+          message: Platform.OS === 'android' ? 
+            'https://play.google.com/store/apps/details?id=club.etain.helpus' 
+            : 
+            null
         });
         break;
       // app version
