@@ -22,12 +22,14 @@ const AskScreen = ({navigation}) => {
   const {state, requestHelp, getAppStatus} = useContext(AskContext);
   // state
   const [message, setMessage] = useState('');
+  // coordinate
+  const [coordinate, setCoordinate] = useState(null);
 
-  // use effect
+  // use effect: componentDidMount
   useEffect(() => {
     getAppStatus();
-    Geolocation.requestAuthorization();
-    console.log('Geolocation service1', Geolocation.getCurrentPosition((position)=>{console.log(position)}));
+//    Geolocation.requestAuthorization();
+//    console.log('Geolocation service1', Geolocation.getCurrentPosition((position)=>{console.log(position)}));
     // get user's coordinate
     getCoordinate();
   }, []);
@@ -41,7 +43,9 @@ const AskScreen = ({navigation}) => {
           if (__DEV__) Alert.alert("Location Permission Granted.");
           // get location
           Geolocation.getCurrentPosition((position) => {
-            console.log('[AskScreen|getCoordinate] position', position);
+            if (__DEV__) console.log('[AskScreen|getCoordinate] position', position);
+            // update the coordinate
+            setCoordinate(position.coords);
           },
           (error) => {
             console.log(error.code, error.message);
@@ -123,14 +127,14 @@ const AskScreen = ({navigation}) => {
       </Card>
       <Spacer>
         <Button
-          buttonStyle={{height: 100}} 
-          titleStyle={{fontSize: 30, fontWeight: 'bold'}}
+          buttonStyle={{ height: 100 }} 
+          titleStyle={{ fontSize: 30, fontWeight: 'bold' }}
           title={t('AskScreen.button')}
           loading={state.loading}
           onPress={() => {
             // prohibit the double requesting
             if (!state.loading) {
-              requestHelp({message, navigation});
+              requestHelp({ message, coordinate, navigation });
             }
           }}
         />

@@ -27,7 +27,7 @@ const ChatListScreen = ({navigation}) => {
 
   // initialize the component -> componentDidMount
   const onWillFocus = async payload => {
-    console.log('[ChatListScreen] onWillFocus Event, paylod', payload);
+    if (__DEV__) console.log('[ChatListScreen] onWillFocus Event, paylod', payload);
     updateChatList();
   };
 

@@ -80,7 +80,6 @@ exports.sendMessage = functions.firestore
     // set listener and unsubcribe when it is done
     const unsubscribe = caseRef
     .onSnapshot(async (docSnapshot) => {
-      console.log('case snapshot', docSnapshot);
       console.log('case snapshot data', docSnapshot.data());
       // check if the data exists
       if (!docSnapshot.exists)
