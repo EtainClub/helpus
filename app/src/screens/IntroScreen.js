@@ -11,7 +11,6 @@ import SplashScreen from 'react-native-splash-screen';
 import firebase from 'react-native-firebase'; 
 import { ScrollView } from 'react-native-gesture-handler';
 // custom libraries
-import {Context as AskContext} from '../context/AskContext';
 
 const IntroScreen = ({ navigation }) => {
   SplashScreen.hide();
@@ -28,9 +27,6 @@ const IntroScreen = ({ navigation }) => {
 
   // use effect
   useEffect(() => {
-//    console.log('screen width', Dimensions.get('window').width);
-//    console.log('screen height', Dimensions.get('window').height);
-
     // get app stat
     getAppStat();
   }, []);
