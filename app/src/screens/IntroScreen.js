@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet, Platform, Dimensions } from 'react-native';
 import { NavigationEvents, SafeAreaView} from 'react-navigation';
-import { Text, Button, Card} from 'react-native-elements';
+import { Text, Button, Card, Image } from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
@@ -16,6 +16,11 @@ import {Context as AskContext} from '../context/AskContext';
 const IntroScreen = ({ navigation }) => {
   SplashScreen.hide();
   console.log('IntroScreen');
+  // screen height
+  let screenHeight = 300;
+  if (Dimensions.get('window').height < 600 ) {
+    screenHeight = 200;
+  }
   // setup language
   const { t } = useTranslation();
   // state
@@ -23,6 +28,9 @@ const IntroScreen = ({ navigation }) => {
 
   // use effect
   useEffect(() => {
+//    console.log('screen width', Dimensions.get('window').width);
+//    console.log('screen height', Dimensions.get('window').height);
+
     // get app stat
     getAppStat();
   }, []);
@@ -43,20 +51,18 @@ const IntroScreen = ({ navigation }) => {
     }); 
   };
 
-  const introImage = () => {
+  const IntroImage = () => {
     return (
-    <FastImage
-      source={{
-        uri: 'https://facebook.github.io/react/img/logo_og.png',
-        priority: FastImage.priority.normal
-      }}
-    />
+      <FastImage
+        style={{ width: '100%', height: screenHeight }}
+        source={require('../../../assets/intro.png')}  
+        resizeMode={FastImage.resizeMode.contain}
+      />
     );
   };
 
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <ScrollView>
       <Card
         containerStyle={{ backgroundColor: '#259b9a' }}
         wrapperStyle={styles.statusContainer}>
@@ -77,14 +83,12 @@ const IntroScreen = ({ navigation }) => {
           <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{stat.cases}</Text>
         </View>
       </Card>
-
       <Card
         containerStyle={styles.container}
         title='helpus'
         titleStyle={{ fontSize: 50 }}
-        image={require('../../../assets/intro.png')}
-        imageStyle={{ height: '60%' }}
       >
+        <IntroImage />
         <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>
           {t('subtitle')}
         </Text>
@@ -102,8 +106,8 @@ const IntroScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('Signin')}
         />
       </Card>
-      </ScrollView>
-    </SafeAreaView>
+  </ScrollView>
+
   );
 };
 

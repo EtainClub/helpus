@@ -117,6 +117,7 @@ const SigninScreen = ({ navigation }) => {
           />
           <Input
             containerStyle={{ width: 130 }}
+            disabled
             leftIcon={
               <CountryPicker
                 countryCode={countryCode}
