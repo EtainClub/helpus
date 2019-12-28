@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, FlatList, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import { Button, Text, Card, Divider, Overlay, Badge } from 'react-native-elements';
+import { Button, Text, Card, Divider, Overlay, Badge, Icon } from 'react-native-elements';
 import { SafeAreaView, NavigationEvents } from 'react-navigation';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -197,7 +196,12 @@ const ProfileScreen = ({ navigation }) => {
                   <Text style={styles.itemText}>{ item.display }</Text>
                   <Badge value={item.votes} badgeStyle={{ height: 20 }}/>
                 </View>
-                <Icon name='trash-o' size={20} onPress={() => onDeleteLocation(index)} />
+                <Icon 
+                  type='font-awesome' 
+                  name='trash-o' 
+                  size={20} 
+                  onPress={() => onDeleteLocation(index)} 
+                />
               </View>
             );
           }}
@@ -262,6 +266,7 @@ const ProfileScreen = ({ navigation }) => {
         onPress={onSkillAddPress}
       >  
       <Icon
+        type='font-awesome' 
         name='pencil'
         size={30}
         color={'#353535'}
@@ -283,6 +288,7 @@ const ProfileScreen = ({ navigation }) => {
         onPress={onLocationAddPress}
       >
       <Icon
+        type='font-awesome' 
         name='pencil'
         size={30}
         color={'#353535'}
@@ -310,6 +316,7 @@ const ProfileScreen = ({ navigation }) => {
         <Card>
           <View style={styles.skillContainer}>
               <Icon
+               type='font-awesome' 
                 name='handshake-o'
                 size={40}
                 color={'#353535'}
@@ -327,6 +334,7 @@ const ProfileScreen = ({ navigation }) => {
         <Card>
           <View style={styles.skillContainer}>
               <Icon
+                type='font-awesome' 
                 name='map-marker'
                 size={40}
                 color={'#353535'}

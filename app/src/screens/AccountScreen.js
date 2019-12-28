@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, StyleSheet, PermissionsAndroid, Alert, TouchableOpacity } from 'react-native';
-import { Button, Text, Card, Avatar, Divider } from 'react-native-elements';
+import { Button, Text, Card, Avatar, Icon } from 'react-native-elements';
 import { SafeAreaView, NavigationEvents } from 'react-navigation';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import firebase from 'react-native-firebase'; 
@@ -171,6 +170,7 @@ const AccountScreen = ({ navigation }) => {
             <Spacer>
               <View style={{ flexDirection: "row" }}>
               <Icon
+                type='font-awesome'
                 name='map-marker'
                 size={20}
               />
@@ -195,6 +195,7 @@ const AccountScreen = ({ navigation }) => {
           <Spacer>
           <View style={styles.accountContainer}>
             <Icon
+              type='font-awesome'
               name='hand-o-left'
               size={40}
               color={'#353535'}
@@ -208,6 +209,7 @@ const AccountScreen = ({ navigation }) => {
           <Spacer>
           <View style={styles.accountContainer}>
             <Icon
+              type='font-awesome'
               name='hand-o-right'
               size={40}
               color={'#353535'}
@@ -221,6 +223,7 @@ const AccountScreen = ({ navigation }) => {
           <Spacer>
           <View style={styles.accountContainer}>
             <Icon
+              type='font-awesome'
               name='thumbs-o-up'
               size={40}
               color={'#353535'}

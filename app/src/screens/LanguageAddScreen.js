@@ -1,14 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { View, StyleSheet, Linking, Alert, Share, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Text, SearchBar, ListItem, Divider } from 'react-native-elements';
-import DraggableFlatList from 'react-native-draggable-flatlist'
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import MapView from 'react-native-maps';
+import { Text, ListItem } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-community/async-storage';
 // custom libraries
 import Spacer from '../components/Spacer';
 import { Context as AuthContext } from '../context/AuthContext';

@@ -1,10 +1,9 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {View, StyleSheet, Alert} from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import { Button, Card, Avatar, Input, Divider, Overlay, Badge } from 'react-native-elements';
+import { Button, Avatar, Input, Icon } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-picker';
 import uuid from 'uuid/v4'; // Import UUID to generate UUID
 import firebase from 'react-native-firebase'; 
@@ -165,6 +164,7 @@ const AccountEditScreen = ({ navigation }) => {
             onPress={onUpdatePress}
             leftIcon={
               <Icon
+                type='font-awesome'
                 name='check-circle-o'
                 size={24}
                 color='white'

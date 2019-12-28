@@ -1,17 +1,22 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Platform, PermissionsAndroid, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, Platform, PermissionsAndroid, Alert, Dimensions } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Text, Button, Input, Card } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Text, Button, Input, Card, Icon } from 'react-native-elements';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import SplashScreen from 'react-native-splash-screen';
 import Geolocation from 'react-native-geolocation-service';
-
+import { ScrollView } from 'react-native-gesture-handler';
 // custom libraries
 import {Context as AskContext} from '../context/AskContext';
 import Spacer from '../components/Spacer';
+
+// text size
+let textSize = 24;
+if (Dimensions.get('window').height < 600 ) {
+  textSize = 18;
+}
 
 const AskScreen = ({navigation}) => {
   SplashScreen.hide();
@@ -74,10 +79,9 @@ const AskScreen = ({navigation}) => {
 //    if (message !== '') {
       return (
         <Icon
-          style={{ left: 30, top: 5 }} 
           reverse
           name='close'
-          size={20}
+          size={16}
           color={'#353535'}
           onPress={() => {setMessage('')}}
         />
@@ -87,20 +91,22 @@ const AskScreen = ({navigation}) => {
 
   return (
     <SafeAreaView>
+      <ScrollView>
       <Card
         containerStyle={{backgroundColor: '#259b9a'}}
         wrapperStyle={styles.statusContainer}>
         <View style={{flexDirection: 'row'}}>
           <Icon
-            style={styles.androidHeight}
+            containerStyle={{ paddingTop: Platform.OS === 'android' ? 8 : 3 }}
+            type='font-awesome'
             name='user'
-            size={30}
+            size={32}
           />
           <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{state.totalUsers}</Text>
         </View>
         <View style={{flexDirection: 'row'}}>
           <Icon2
-            style={styles.androidHeight}
+            style={{ paddingTop: Platform.OS === 'android' ? 8 : 3 }}
             name='hands-helping'
             size={30}
           />
@@ -110,8 +116,8 @@ const AskScreen = ({navigation}) => {
       <Card>
         <Spacer>
           <View style={styles.guide}>
-          <Text style={styles.guideText}>{t('AskScreen.guideText')}</Text> 
-          {showRemoveIcon()}
+            <Text style={styles.guideText}>{t('AskScreen.guideText')}</Text> 
+            {showRemoveIcon()}
           </View>
         </Spacer>
         <TextInput
@@ -139,6 +145,7 @@ const AskScreen = ({navigation}) => {
           }}
         />
       </Spacer>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -174,12 +181,9 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
   guideText: {
-    fontSize: 24,
+    fontSize: textSize,
     fontWeight: 'bold',
     alignSelf: 'center'
-  },
-  androidHeight: {
-    paddingTop: Platform.OS === 'android' ? 6 : 3 
   },
   returnKey: Platform.OS === 'android' ? false : true
 });

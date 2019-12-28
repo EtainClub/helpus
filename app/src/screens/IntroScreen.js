@@ -1,9 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, StyleSheet, Platform, Dimensions } from 'react-native';
 import { NavigationEvents, SafeAreaView} from 'react-navigation';
-import { Text, Button, Card, Image } from 'react-native-elements';
+import { Text, Button, Card, Icon } from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -64,7 +63,8 @@ const IntroScreen = ({ navigation }) => {
         wrapperStyle={styles.statusContainer}>
         <View style={{ flexDirection: 'row' }}>
           <Icon
-            style={styles.androidHeight}
+            containerStyle={{ paddingTop: Platform.OS === 'android' ? 8 : 3 }}
+            type='font-awesome'
             name='user'
             size={30}
           />

@@ -1,8 +1,7 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, Linking, Alert, Share, Platform } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Text, SearchBar, ListItem, Divider } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Text, ListItem, Divider } from 'react-native-elements';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import i18next from 'i18next';

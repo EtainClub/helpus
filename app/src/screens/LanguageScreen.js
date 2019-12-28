@@ -1,17 +1,14 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { View, StyleSheet, Linking, Alert, Share, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Text, Button, CheckBox, SearchBar, ListItem, Divider } from 'react-native-elements';
+import { Text, Button, CheckBox, Icon } from 'react-native-elements';
 import DraggableFlatList from 'react-native-draggable-flatlist'
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import Icon2 from 'react-native-vector-icons/FontAwesome';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
 import firebase from 'react-native-firebase'; 
 // custom libraries
-import Spacer from '../components/Spacer';
 
 const LanguageScreen = ({ navigation }) => {
   // setup language
@@ -303,7 +300,8 @@ const LanguageScreen = ({ navigation }) => {
         onPress={() => navigation.navigate('LanguageAdd', { codeData })}
         icon={
           <Icon
-            style={{ marginHorizontal: 5 }}
+            containerStyle={{ marginHorizontal: 5 }}
+            type='material'
             name="add"
             size={30}
             color='white'

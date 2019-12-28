@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Text, Button, Input, Card, Overlay } from 'react-native-elements';
+import { Text, Button, Card, Overlay } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';

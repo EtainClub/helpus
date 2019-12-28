@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, StyleSheet, Platform, FlatList, Alert } from 'react-native';
+import { View, StyleSheet, Platform, FlatList } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import firebase from 'react-native-firebase'; 
-import { Button, Text, Card, ListItem, Avatar, CheckBox } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Text, Card, ListItem, Avatar, CheckBox, Icon } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -290,7 +289,12 @@ const UsersScreen = ({ navigation }) => {
       title={
         <View>
           <View style={{ flexDirection: 'row' }}>
-            <Icon name='gift' size={20} color={'#353535'}/>
+            <Icon 
+              type='font-awesome' 
+              name='gift' 
+              size={20} 
+              color={'#353535'}
+            />
             <View>
               {
                 item.skills.map((skill, id) => {
@@ -305,22 +309,22 @@ const UsersScreen = ({ navigation }) => {
           </View>
 
           <View style={{ flexDirection: 'row' }}>
-            <Icon name='hand-o-left' size={20} color={'#353535'}/>
+            <Icon type='font-awesome' name='hand-o-left' size={20} color={'#353535'}/>
             <Text style={{ marginLeft: 6 }}>{item.got}</Text>
           </View>
 
           <View style={{ flexDirection: 'row' }}>
-            <Icon name='hand-o-right' size={20} color={'#353535'}/>
+            <Icon type='font-awesome' name='hand-o-right' size={20} color={'#353535'}/>
             <Text style={{ marginLeft: 6 }}>{item.helped}</Text>
           </View>
 
           <View style={{ flexDirection: 'row' }}>
-            <Icon name='thumbs-o-up' size={20} color={'#353535'}/>
+            <Icon type='font-awesome' name='thumbs-o-up' size={20} color={'#353535'}/>
             <Text style={{ marginLeft: 8 }}>{item.votes}</Text>
           </View>
 
           <View style={{ flexDirection: 'row' }}>
-            <Icon name='map-marker' size={20} color={'#353535'}/>
+            <Icon type='font-awesome' name='map-marker' size={20} color={'#353535'}/>
             <View>
               {
                 item.locations.map((location, id) => {

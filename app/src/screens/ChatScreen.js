@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform} from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Text, Button, Input, Card, Overlay } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Button, Icon } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { GiftedChat } from 'react-native-gifted-chat';
@@ -230,7 +229,11 @@ const ChatScreen = ({ navigation }) => {
         <View style={styles.customActionsContainer}>
           <TouchableOpacity onPress={onFilePickerPress}>
             <View style={styles.buttonContainer}>
-              <Icon name="paperclip" size={23} color={icon_color} />
+              <Icon 
+                type='font-awesome' 
+                name="paperclip" 
+                size={23} 
+                color={icon_color} />
             </View>
           </TouchableOpacity>
         </View>

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { ListItem, Divider, Text } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { ListItem, Divider, Text, Icon } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import firebase from 'react-native-firebase';
@@ -92,7 +91,10 @@ const ChatListScreen = ({navigation}) => {
     <ListItem
       title={item.message}
       subtitle={item.createdAt}
-      leftIcon={ item.voted ? { name: 'thumb-up' } : {} } 
+      leftIcon={ 
+        type='font-awesome', 
+        item.voted ? { name: 'thumb-up' } : {}
+      } 
       bottomDivider
       chevron
       onPress={() => onItemPress({caseId: item.docId, helperId: item.helperId})}
@@ -156,7 +158,8 @@ ChatListScreen.navigationOptions = ({ navigation }) => {
         onPress={navigation.getParam('updateChatList')}
       >
       <Icon
-        style={{marginRight: 25}}
+        containerStyle={{marginRight: 25}}
+        type='font-awesome' 
         name="refresh"
         size={30}
         color={'#353535'}

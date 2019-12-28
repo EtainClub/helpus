@@ -1,11 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View, Linking, Platform } from 'react-native'; 
+import { StyleSheet, TouchableOpacity, View, Linking, Platform, Dimensions } from 'react-native'; 
 import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Text, Input, Card, Button } from 'react-native-elements';
+import { Text, Input, Card, Button, Icon } from 'react-native-elements';
 import SplashScreen from 'react-native-splash-screen';
 import CountryPicker from 'react-native-country-picker-modal';
 import firebase from 'react-native-firebase'; 
@@ -15,8 +14,15 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Context as AuthContext } from '../context/AuthContext';
 import Spacer from '../components/Spacer';
 
+// text size
+let textSize = 20;
+if (Dimensions.get('window').height < 600 ) {
+  textSize = 14;
+}
+
 const SigninScreen = ({ navigation }) => {
   SplashScreen.hide();
+
   // setup language
   const { t } = useTranslation();
   // urls
@@ -107,16 +113,21 @@ const SigninScreen = ({ navigation }) => {
           {t('SigninScreen.guideMsgSample')}
         </Text>
       </Card>
+      <Card
+        containerStyle={{ marginHorizontal: 0, paddingHorizontal: 0 }}
+      >
       <Spacer>
         <View style={{ flexDirection: 'row' }}>
           <Icon
-            style={{ paddingTop: 20, paddingLeft: 10 }}
+            containerStyle={{ paddingTop: 20, paddingLeft: 10 }}
+            type='font-awesome'
             name='phone'
             size={25}
             color='black'
           />
           <Input
-            containerStyle={{ width: 130 }}
+            containerStyle={{ flex: 3 }}
+            inputStyle={{ marginHorizontal: 0, paddingHorizontal: 0 }}
             disabled
             leftIcon={
               <CountryPicker
@@ -131,8 +142,7 @@ const SigninScreen = ({ navigation }) => {
             } 
           />
           <Input
-            containerStyle={{ width: '55%' }}
-            inputStyle={{ paddingLeft: 10 }} 
+            containerStyle={{ flex: 5 }}
             placeholder={t('SigninScreen.phone')}
             value={phoneNumber}
             onChangeText={setPhoneNumber}
@@ -149,7 +159,7 @@ const SigninScreen = ({ navigation }) => {
           <TouchableOpacity onPress={() => Linking.openURL(termsUrl)}>
             <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
           </TouchableOpacity>
-          <Text style={{ fontSize: 20 }}>{t('and')}</Text>
+          <Text style={{ fontSize: textSize }}>{t('and')}</Text>
           <TouchableOpacity onPress={() => Linking.openURL(privacyUrl)}>
             <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
           </TouchableOpacity>
@@ -206,7 +216,7 @@ const SigninScreen = ({ navigation }) => {
             <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
               <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
             </TouchableOpacity>
-            <Text style={{ fontSize: 20 }}>{t('and')}</Text>
+            <Text style={{ fontSize: textSize }}>{t('and')}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
               <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
             </TouchableOpacity>
@@ -229,6 +239,7 @@ const SigninScreen = ({ navigation }) => {
         :
         <View></View>
       }
+      </Card>
       </ScrollView>
     </SafeAreaView>
   );  
@@ -254,7 +265,7 @@ const styles = StyleSheet.create({
   },
   textLink: {
     color: 'blue',
-    fontSize: 20
+    fontSize: textSize
   }
 });
 

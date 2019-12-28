@@ -3,8 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Text, Button, Card, Overlay } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Text, Button, Card, Overlay, Icon } from 'react-native-elements';
 import firebase from 'react-native-firebase'; 
 
 // custom libraries
@@ -120,6 +119,7 @@ const HelpScreen = ({ navigation }) => {
           <Spacer>
           <View style={styles.itemContainer}>
             <Icon
+              type='font-awesome' 
               name='map-marker'
               size={20}
               color={'#353535'}
@@ -133,6 +133,7 @@ const HelpScreen = ({ navigation }) => {
           <Spacer>
           <View style={styles.itemContainer}>
             <Icon
+              type='font-awesome' 
               name='hand-o-left'
               size={20}
               color={'#353535'}
@@ -146,6 +147,7 @@ const HelpScreen = ({ navigation }) => {
           <Spacer>
           <View style={styles.itemContainer}>
             <Icon
+              type='font-awesome'
               name='hand-o-right'
               size={20}
               color={'#353535'}
@@ -159,6 +161,7 @@ const HelpScreen = ({ navigation }) => {
           <Spacer>
           <View style={styles.itemContainer}>
             <Icon
+              type='font-awesome'
               name='thumbs-o-up'
               size={20}
               color={'#353535'}
