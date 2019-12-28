@@ -10,6 +10,7 @@ import SplashScreen from 'react-native-splash-screen';
 import CountryPicker from 'react-native-country-picker-modal';
 import firebase from 'react-native-firebase'; 
 import * as RNLocalize from 'react-native-localize';
+import { ScrollView } from 'react-native-gesture-handler';
 // custom libraries
 import { Context as AuthContext } from '../context/AuthContext';
 import Spacer from '../components/Spacer';
@@ -89,6 +90,7 @@ const SigninScreen = ({ navigation }) => {
       <NavigationEvents
         onWillBlur={ clearError }
       />
+      <ScrollView>
       <Spacer>
         <Text h3>{t('SigninScreen.header')}</Text>
       </Spacer>
@@ -226,6 +228,7 @@ const SigninScreen = ({ navigation }) => {
         :
         <View></View>
       }
+      </ScrollView>
     </SafeAreaView>
   );  
 };

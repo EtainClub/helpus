@@ -9,6 +9,7 @@ import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import SplashScreen from 'react-native-splash-screen';
 import firebase from 'react-native-firebase'; 
+import { ScrollView } from 'react-native-gesture-handler';
 // custom libraries
 import {Context as AskContext} from '../context/AskContext';
 
@@ -55,6 +56,7 @@ const IntroScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView>
+      <ScrollView>
       <Card
         containerStyle={{ backgroundColor: '#259b9a' }}
         wrapperStyle={styles.statusContainer}>
@@ -100,6 +102,7 @@ const IntroScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('Signin')}
         />
       </Card>
+      </ScrollView>
     </SafeAreaView>
   );
 };
