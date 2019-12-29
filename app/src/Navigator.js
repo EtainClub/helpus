@@ -23,6 +23,7 @@ import ChatScreen from './screens/ChatScreen';
 import ChatListScreen from './screens/ChatListScreen';
 import SettingScreen from './screens/SettingScreen';
 import UsersScreen from './screens/UsersScreen';
+import LeadersScreen from './screens/LeadersScreen';
 import LanguageScreen from './screens/LanguageScreen';
 import LanguageAddScreen from './screens/LanguageAddScreen';
 
@@ -69,6 +70,7 @@ const profileFlow = createStackNavigator(
     ProfileContract: ProfileScreen,
     LocationVerify: LocationScreen,
     Users: UsersScreen,
+    Leaders: LeadersScreen,
   },
   {headerLayoutPreset: 'center'},
 );

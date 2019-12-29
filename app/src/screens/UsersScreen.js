@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, StyleSheet, Platform, FlatList } from 'react-native';
+import { View, StyleSheet, Platform, FlatList, TouchableOpacity } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import firebase from 'react-native-firebase'; 
 import { Text, Card, ListItem, Avatar, CheckBox, Icon } from 'react-native-elements';
@@ -37,9 +37,11 @@ const UsersScreen = ({ navigation }) => {
   const [address, setAddress] = useState('');
   const [multiLang, setMultiLang] = useState(null);
 
-  // use effect
+  // componentDidMount
   useEffect(() => {
     console.log('UserScreen');
+    // set navigation params
+    navigation.setParams({ showLeaderboard });
     // get current location
     const watchId = Geolocation.watchPosition(
       pos => {
@@ -60,12 +62,17 @@ const UsersScreen = ({ navigation }) => {
     return () => Geolocation.clearWatch(watchId);
   }, []);
 
+  // handler for multiLang change
   useEffect(() => {
     console.log('[useEffect] multi Language?', multiLang);
     if (multiLang !== null) {
       onRegionChangeComplete();
     }
   }, [multiLang]);
+
+  const showLeaderboard = () => {
+    console.log('[getLeaderboard]');
+  };
 
   const initGeocoding = () => {
     Geocoder.init(GEOCODING_API_KEY, { language }); 
@@ -383,6 +390,19 @@ UsersScreen.navigationOptions = ({ navigation }) => {
     headerTitleStyle: {
       fontWeight: 'bold',
     },
+    headerRight: (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Leaders')}
+      >
+      <Icon
+        containerStyle={{marginRight: 25}}
+        type='font-awesome' 
+        name="trophy"
+        size={30}
+        color={'#353535'}
+      />
+      </TouchableOpacity>
+    ),
   }
 };
 

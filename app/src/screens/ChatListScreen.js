@@ -8,7 +8,7 @@ import firebase from 'react-native-firebase';
 import moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const ChatListScreen = ({navigation}) => {
+const ChatListScreen = ({ navigation }) => {
   console.log('chatlist screen');
   // setup language
   const { t } = useTranslation();

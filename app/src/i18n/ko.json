@@ -146,6 +146,10 @@
       "noresult": "검색 결과 없음",
       "multiLang": "다른 언어 포함",
     },
+    "LeadersScreen": {
+      "header": "랭킹",
+      "searchPlaceholder": "사용자이름 검색",
+    },
     "ChatScreen": {
       "header": "채팅",
       "pickerTitle": "보낼 사진을 선택하세요",

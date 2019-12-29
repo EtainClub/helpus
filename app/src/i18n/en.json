@@ -145,6 +145,10 @@
       "noresult": "No Results",
       "multiLang": "other languages",
     },
+    "LeadersScreen": {
+      "header": "Leaderboard",
+      "searchPlaceholder": "Search username",
+    },
     "ChatScreen": {
       "header": "Chat",
       "pickerTitle": "Choose a photo to send",
