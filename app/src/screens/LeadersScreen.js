@@ -23,6 +23,9 @@ const LeadersScreen = ({ navigation }) => {
   // use state
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState(0);
+  const [rank, setRank] = useState(0);
+  const [indicator, setIndicator] = useState(0);
+  const [boardData, setBoardData] = useState([]);
 
   const globalData = [
     { name: 'We Tu Lo', score: null, iconUrl: 'https://st2.depositphotos.com/1006318/5909/v/950/depositphotos_59094043-stock-illustration-profile-icon-male-avatar.jpg' },
@@ -49,6 +52,8 @@ const LeadersScreen = ({ navigation }) => {
   // componentDidMount
   useEffect(() => {
     console.log('LeadersScreen');
+    // fetch initial board data
+    fetchData(tab);
   }, []);
 
 
@@ -67,26 +72,65 @@ const LeadersScreen = ({ navigation }) => {
     return i + "th";
   }
 
+  const updateBoard = (select) => {
+    // set a tab
+    setTab(select);
+    // fetch new data
+    fetchData(select);
+  };
+
+  const fetchData = async (select) => {
+    // users on firestore
+    const usersRef = firebase.firestore().collection('users');
+
+    //// get data
+    // field
+    let field = '';
+    switch (select) {
+      case 0: field = "helpCount"; break;
+      case 1: field = "askCount"; break;
+      case 2: field = "votes"; break;
+      default: field = "helpCount"; break;
+    }
+    // ordering
+    const maxElem = 10;
+    usersRef.orderBy(field, "desc").limit(maxElem)
+    .onSnapshot(snapshot => {
+      let data = [];
+      // build data array
+      snapshot.docs.forEach(doc => {
+        data = [...data, ({
+          name: doc.data().name,
+          iconUrl: doc.data().avatarUrl,
+          score: doc.data()[field]
+        })];
+      });
+      console.log('[LeadersScreen|fetchData] data', data);
+      // set data
+      setBoardData(data);
+    });
+  };
+
   const renderHeader = () => {
     return (
       <View colors={[, '#1da2c6', '#1695b7']}
         style={{ backgroundColor: '#119abf', padding: 15, paddingTop: 35, alignItems: 'center' }}>
-        <Text style={{ fontSize: 25, color: 'white', }}>Leaderboard</Text>
+        <Text style={{ fontSize: 25, color: 'white', }}>{state.userInfo.name}</Text>
         <View style={{
           flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
           marginBottom: 15, marginTop: 20
         }}>
           <Text style={{ color: 'white', fontSize: 25, flex: 1, textAlign: 'right', marginRight: 40 }}>
-              {ordinal_suffix_of(0)}
+            {ordinal_suffix_of(rank)}
           </Text>
           <FastImage style={{ flex: .66, height: 60, width: 60, borderRadius: 60 / 2 }}
-              source={{ uri: 'http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-braindead-zombie.png' }} />
+            source={{ uri: state.userInfo.avatarUrl }} />
           <Text style={{ color: 'white', fontSize: 25, flex: 1, marginLeft: 40 }}>
-              pts
+            {indicator}  
           </Text>
         </View>
         <ButtonGroup
-            onPress={setTab}
+            onPress={(select) => updateBoard(select)}
             selectedIndex={tab}
             buttons={['Helped', 'Got Helped', 'Voted']}
             containerStyle={{ height: 30 }} />
@@ -104,7 +148,7 @@ const LeadersScreen = ({ navigation }) => {
           value={search}
         />
         <Leaderboard 
-          data={globalData} 
+          data={boardData} 
           sortBy='score' 
           labelBy='name'
           icon="iconUrl"
