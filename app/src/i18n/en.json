@@ -69,9 +69,10 @@
       "profileTitle": "Profile",
       "askCases": "Requested Cases",
       "helpCases": "Helped Cases",
-      "locationPlaceholder": "Update location",      
+      "usernamePlaceholder": "Unknown Username",
+      "locationPlaceholder": "Unknown Location",      
       "votes": "Votes",
-      "usersButton": "Look around helpus"
+      "usersButton": "Neighbor helpus"
     },
     "AskScreen": {
       "header": "helpus",

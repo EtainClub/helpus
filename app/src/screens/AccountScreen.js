@@ -165,7 +165,8 @@ const AccountScreen = ({ navigation }) => {
           />
           <View style={styles.nickContainer}>
             <View style={{ flexDirection: 'row' }}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{state.userInfo.name}</Text>
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{state.userInfo.name ? 
+                state.userInfo.name : t('AccountScreen.usernamePlaceholder')}</Text>
             </View>
             <Spacer>
               <View style={{ flexDirection: "row" }}>
@@ -174,7 +175,7 @@ const AccountScreen = ({ navigation }) => {
                 name='map-marker'
                 size={20}
               />
-              <Text style={{ fontSize: 16, marginLeft: 7 }}>{ state.locations[0].name ? 
+              <Text style={{ fontSize: 14, marginLeft: 7 }}>{ state.locations[0].name ? 
                 state.locations[0].name.substring(0,20)
                 : t('AccountScreen.locationPlaceholder')}</Text>
               </View>

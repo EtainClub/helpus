@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     paddingRight: 5
   },
   textContainer: {
-    marginLeft: 5
+    marginLeft: 30
   },
   inputContainer: {
     flexDirection: "row",

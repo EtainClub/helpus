@@ -70,9 +70,10 @@
       "profileTitle": "프로필",
       "askCases": "도움 요청 내역",
       "helpCases": "도움 내역",
-      "locationPlaceholder": "지역을 업데이트하세요",
+      "usernamePlaceholder": "사용자이름 미설정",
+      "locationPlaceholder": "위치 미설정",
       "votes": "추천수",
-      "usersButton": "우리 동네 헬퍼스 둘러보기"
+      "usersButton": "우리 동네 헬퍼스"
     },
     "AskScreen": {
       "header": "helpus",
