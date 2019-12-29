@@ -18,42 +18,24 @@ const LeadersScreen = ({ navigation }) => {
   // setup language
   const { t } = useTranslation();
   const language = i18next.language;
+  // get reference to the current user
+  const { currentUser } = firebase.auth();
+  const userId = currentUser.uid;
   // use context
   const { state, findUsers, getLeaderboard } = useContext(ProfileContext);
   // use state
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState(0);
+  const [field, setField] = useState('');
   const [rank, setRank] = useState(0);
   const [indicator, setIndicator] = useState(0);
   const [boardData, setBoardData] = useState([]);
-
-  const globalData = [
-    { name: 'We Tu Lo', score: null, iconUrl: 'https://st2.depositphotos.com/1006318/5909/v/950/depositphotos_59094043-stock-illustration-profile-icon-male-avatar.jpg' },
-    { name: 'Adam Savage', score: 12, iconUrl: 'https://www.shareicon.net/data/128x128/2016/09/15/829473_man_512x512.png' },
-    { name: 'Derek Black', score: 244, iconUrl: 'http://ttsbilisim.com/wp-content/uploads/2014/09/20120807.png' },
-    { name: 'Erika White', score: 0, iconUrl: 'http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-eskimo-girl.png' },
-    { name: 'Jimmy John', score: 20, iconUrl: 'https://static.witei.com/static/img/profile_pics/avatar4.png' },
-    { name: 'Joe Roddy', score: 69, iconUrl: 'http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-braindead-zombie.png' },
-    { name: 'Ericka Johannesburg', score: 101, iconUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShPis8NLdplTV1AJx40z-KS8zdgaSPaCfNINLtQ-ENdPvrtMWz' },
-    { name: 'Tim Thomas', score: 41, iconUrl: 'http://conserveindia.org/wp-content/uploads/2017/07/teamMember4.png' },
-    { name: 'John Davis', score: 80, iconUrl: 'http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-afro-guy.png' },
-    { name: 'Tina Turner', score: 22, iconUrl: 'https://cdn.dribbble.com/users/223408/screenshots/2134810/me-dribbble-size-001-001_1x.png' },
-    { name: 'Harry Reynolds', score: null, iconUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsSlzi6GEickw2Ft62IdJTfXWsDFrOIbwXhzddXXt4FvsbNGhp' },
-    { name: 'Betty Davis', score: 25, iconUrl: 'https://landofblogging.files.wordpress.com/2014/01/bitstripavatarprofilepic.jpeg?w=300&h=300' },
-    { name: 'Lauren Leonard', score: 30, iconUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr27ZFBaclzKcxg2FgJh6xi3Z5-9vP_U1DPcB149bYXxlPKqv-' },
-  ];
-
-  const friendData = [
-    { name: 'Joe Roddy', score: 69, iconUrl: 'http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-braindead-zombie.png' },
-    { name: 'Ericka Johannesburg', score: 101, iconUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShPis8NLdplTV1AJx40z-KS8zdgaSPaCfNINLtQ-ENdPvrtMWz' },
-    { name: 'Tim Thomas', score: 41, iconUrl: 'http://conserveindia.org/wp-content/uploads/2017/07/teamMember4.png' },
-  ];
 
   // componentDidMount
   useEffect(() => {
     console.log('LeadersScreen');
     // fetch initial board data
-    fetchData(tab);
+    updateBoard(tab);
   }, []);
 
 
@@ -72,29 +54,33 @@ const LeadersScreen = ({ navigation }) => {
     return i + "th";
   }
 
+  // update leaderboard
   const updateBoard = (select) => {
     // set a tab
     setTab(select);
+    // set field
+    let property = '';
+    switch (select) {
+      case 0: property = "helpCount"; break;
+      case 1: property = "askCount"; break;
+      case 2: property = "votes"; break;
+      default: property = "helpCount"; break;
+    }
+    setField(property);
     // fetch new data
-    fetchData(select);
+    fetchData(property);
+    // update user rank
+    updatUserRank(property);
   };
 
-  const fetchData = async (select) => {
+  // fetch data and build board data
+  const fetchData = async (property) => {
     // users on firestore
     const usersRef = firebase.firestore().collection('users');
-
     //// get data
-    // field
-    let field = '';
-    switch (select) {
-      case 0: field = "helpCount"; break;
-      case 1: field = "askCount"; break;
-      case 2: field = "votes"; break;
-      default: field = "helpCount"; break;
-    }
-    // ordering
+    // ordering and showing only top users
     const maxElem = 10;
-    usersRef.orderBy(field, "desc").limit(maxElem)
+    usersRef.orderBy(property, "desc").limit(maxElem)
     .onSnapshot(snapshot => {
       let data = [];
       // build data array
@@ -102,12 +88,33 @@ const LeadersScreen = ({ navigation }) => {
         data = [...data, ({
           name: doc.data().name,
           iconUrl: doc.data().avatarUrl,
-          score: doc.data()[field]
+          score: doc.data()[property]
         })];
       });
       console.log('[LeadersScreen|fetchData] data', data);
       // set data
       setBoardData(data);
+    });
+  };
+
+  // update user's rank
+  const updatUserRank = async (property) => {
+    // users on firestore
+    const usersRef = firebase.firestore().collection('users');
+    usersRef.orderBy(property, "desc")
+    .onSnapshot(snapshot => {
+      let order = 1;
+      snapshot.docs.forEach(doc => {
+        // match with the user id
+        if (userId === doc.id) {
+          // set user data
+          setRank(order);
+          // set indicator
+          setIndicator(doc.data()[property]);
+          return;
+        }
+        order++;
+      });
     });
   };
 
@@ -126,7 +133,7 @@ const LeadersScreen = ({ navigation }) => {
           <FastImage style={{ flex: .66, height: 60, width: 60, borderRadius: 60 / 2 }}
             source={{ uri: state.userInfo.avatarUrl }} />
           <Text style={{ color: 'white', fontSize: 25, flex: 1, marginLeft: 40 }}>
-            {indicator}  
+            {indicator} {t('cases')}  
           </Text>
         </View>
         <ButtonGroup

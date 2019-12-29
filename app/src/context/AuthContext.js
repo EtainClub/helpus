@@ -132,6 +132,7 @@ const signin = dispatch => {
 
 // process signin
 const processSignin = ({ dispatch, user, navigation }) => {
+  const avatarUrl = "https://firebasestorage.googleapis.com/v0/b/helpus-206eb.appspot.com/o/avatar%2F661220f6-2742-47f7-96df-c037c532ded5.jpg?alt=media&token=156d2af8-4433-4335-a32d-edf788196f74";
   user.getIdToken(/* forceRefresh */ true)
   .then(async idToken => {
     // save the phone number in storage
@@ -163,8 +164,8 @@ const processSignin = ({ dispatch, user, navigation }) => {
           // create a user info
           userRef.set({ 
             pushToken,
-            name: '',
-            avatarUrl: '',
+            name: 'unknown',
+            avatarUrl,
             askCount: 0,
             helpCount: 0,
             votes: 0,
