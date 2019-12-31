@@ -5,6 +5,7 @@ import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Text, Button, Card, Overlay, Icon } from 'react-native-elements';
 import firebase from 'react-native-firebase'; 
+import { ScrollView } from 'react-native-gesture-handler';
 
 // custom libraries
 import { Context as HelpContext } from '../context/HelpContext';
@@ -109,6 +110,7 @@ const HelpScreen = ({ navigation }) => {
         onWillBlur={payload => handleGoBack(payload)}
         onWillFocus={payload => handleFocus(payload)}
       />
+      <ScrollView>
       <View style={styles.rowContainer}>
         <Card 
           containerStyle={styles.senderCard}
@@ -231,6 +233,7 @@ const HelpScreen = ({ navigation }) => {
             </View>
           </View>
         </Overlay>
+      </ScrollView>
     </SafeAreaView>
   );
 };

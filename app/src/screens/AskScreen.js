@@ -93,7 +93,7 @@ const AskScreen = ({navigation}) => {
     <SafeAreaView>
       <ScrollView>
       <Card
-        containerStyle={{backgroundColor: '#259b9a'}}
+        containerStyle={{backgroundColor: '#119abf'}}
         wrapperStyle={styles.statusContainer}>
         <View style={{flexDirection: 'row'}}>
           <Icon
