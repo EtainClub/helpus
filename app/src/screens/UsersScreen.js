@@ -40,8 +40,6 @@ const UsersScreen = ({ navigation }) => {
   // componentDidMount
   useEffect(() => {
     console.log('UserScreen');
-    // set navigation params
-    navigation.setParams({ showLeaderboard });
     // get current location
     const watchId = Geolocation.watchPosition(
       pos => {
@@ -69,10 +67,6 @@ const UsersScreen = ({ navigation }) => {
       onRegionChangeComplete();
     }
   }, [multiLang]);
-
-  const showLeaderboard = () => {
-    console.log('[getLeaderboard]');
-  };
 
   const initGeocoding = () => {
     Geocoder.init(GEOCODING_API_KEY, { language }); 

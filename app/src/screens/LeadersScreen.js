@@ -2,14 +2,10 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, Platform, FlatList, TouchableOpacity } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import firebase from 'react-native-firebase'; 
-import { SearchBar, Text, ButtonGroup, Card, ListItem, Avatar, CheckBox, Icon } from 'react-native-elements';
+import { Text, ButtonGroup } from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
-import Geocoder from 'react-native-geocoding';
-import { GEOCODING_API_KEY } from 'react-native-dotenv';
 import { ScrollView } from 'react-native-gesture-handler';
 import Leaderboard from 'react-native-leaderboard';
 import { Context as ProfileContext } from '../context/ProfileContext';
@@ -17,12 +13,11 @@ import { Context as ProfileContext } from '../context/ProfileContext';
 const LeadersScreen = ({ navigation }) => {
   // setup language
   const { t } = useTranslation();
-  const language = i18next.language;
   // get reference to the current user
   const { currentUser } = firebase.auth();
   const userId = currentUser.uid;
   // use context
-  const { state, findUsers, getLeaderboard } = useContext(ProfileContext);
+  const { state } = useContext(ProfileContext);
   // use state
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState(0);
@@ -86,7 +81,7 @@ const LeadersScreen = ({ navigation }) => {
       // build data array
       snapshot.docs.forEach(doc => {
         data = [...data, ({
-          name: doc.data().name,
+          name: `${doc.data().name} (${doc.data().regions[0]})`,
           iconUrl: doc.data().avatarUrl,
           score: doc.data()[property]
         })];
@@ -139,7 +134,7 @@ const LeadersScreen = ({ navigation }) => {
         <ButtonGroup
             onPress={(select) => updateBoard(select)}
             selectedIndex={tab}
-            buttons={['Helped', 'Got Helped', 'Voted']}
+            buttons={[t('LeadersScreen.helped'), t('LeadersScreen.gotHelped'), t('LeadersScreen.voted')]}
             containerStyle={{ height: 30 }} />
       </View>
     );
@@ -149,11 +144,6 @@ const LeadersScreen = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
         {renderHeader()}
-        <SearchBar
-          placeholder={t('LeadersScreen.searchPlaceholder')}
-          onChangeText={setSearch}
-          value={search}
-        />
         <Leaderboard 
           data={boardData} 
           sortBy='score' 

@@ -147,7 +147,9 @@
     },
     "LeadersScreen": {
       "header": "Leaderboard",
-      "searchPlaceholder": "Search username",
+      "helped": "Helped",
+      "gotHelped": "Got Helped",
+      "voted": "Voted"
     },
     "ChatScreen": {
       "header": "Chat",

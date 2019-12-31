@@ -147,8 +147,10 @@
       "multiLang": "다른 언어 포함",
     },
     "LeadersScreen": {
-      "header": "랭킹",
-      "searchPlaceholder": "사용자이름 검색",
+      "header": "도움순위",
+      "helped": "도움",
+      "gotHelped": "도움 요청",
+      "voted": "추천"
     },
     "ChatScreen": {
       "header": "채팅",

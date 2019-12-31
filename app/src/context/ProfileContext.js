@@ -452,13 +452,6 @@ const updateLocations = dispatch => {
   }
 }
 
-// get leaderboard
-const getLeaderboard = dispatch => {
-  return () => {
-    console.log('[getLeaderboard]]');
-  };
-};
-
 /*
 // create initial profile and upload on firebase
 const createInitialProfile = dispatch => {
@@ -557,8 +550,7 @@ export const { Provider, Context } = createDataContext(
     updateUserInfoState, updateAccount, updateAvatarState,
     updateSkill, verifyLocation, updateProfileInfo,
     updateSkills, updateSkillsDB, updateLocations, deleteLocation,
-    findUsers,
-    getLeaderboard
+    findUsers
   },
   { 
     userInfo: {}, 
