@@ -1,6 +1,6 @@
 {
   "name": "helpus",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -47,6 +47,7 @@
     "@bam.tech/react-native-make": "1.0.3",
     "@react-native-community/eslint-config": "0.0.5",
     "babel-jest": "24.9.0",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "6.4.0",
     "jest": "24.9.0",
     "metro-react-native-babel-preset": "0.57.0",
