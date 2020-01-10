@@ -80,6 +80,8 @@
       "button": "도움 요청하기",
       "guideText": "요청 메시지를 입력하세요",
       "placeholder": "도움 요청 예: 컴퓨터 전원 버튼을 눌러도 켜지지 않습니다. 도와주세요.",
+      "locationGuide": "활동지역 설정 필요",
+      "locationGuideText": "도움을 요청하려면 사용자탭에서 활동지역을 인증해야 합니다."
     },
     "AskWaitScreen": {
       "header": "도움 요청 중입니다",

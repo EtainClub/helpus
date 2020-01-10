@@ -15,6 +15,12 @@ const askReducer = (state, action) => {
         totalUsers: action.payload.totalUsers, 
         totalCases: action.payload.totalCases
       };
+    case 'set_region':
+      console.log('[set_region]', action.payload);
+      return {
+        ...state,
+        region: action.payload
+      }
     case 'set_loading':
       return {...state, loading: true};
     case 'request_help':
@@ -87,6 +93,31 @@ const getAppStatus = dispatch => {
   };
 };
 
+// check if a user sets a region
+const checkRegion = dispatch => {
+  return async () => {
+    //// do not request if the use's regions are empty
+    // get current user
+    const { currentUser } = firebase.auth();
+    const userId = currentUser.uid;
+    // get user info
+    let userRef = firebase.firestore().doc(`users/${userId}`);
+    let region = '';
+    // get region
+    await userRef
+    .get()
+    .then(doc => {
+      region = doc.data().regions[0];
+      console.log('[checkRegion] region', region);
+      dispatch({
+        type: 'set_region',
+        payload: region
+      });
+    })
+    .catch(error => console.log('error', error));
+  };
+}
+
 // ask help
 const requestHelp = dispatch => {
   console.log('[requestHelp]');
@@ -96,14 +127,12 @@ const requestHelp = dispatch => {
       console.log('[Ask] message is empty');
       return;
     }
-    // uppdate loading state
+    // update loading state
     dispatch({
       type: 'set_loading',
     });
-
-    console.log('[requestHelp] before sending message');
-
-    // initial request message becomes the first all the time
+    // send request message
+    console.log('[requestHelp] send message...');
     sendMessage({ dispatch, message, coordinate, navigation });
   };
 };
@@ -284,9 +313,9 @@ const monitorAcceptance = dispatch => {
 
 export const { Provider, Context } = createDataContext(
   askReducer,
-  { requestHelp, cancelRequest, monitorAcceptance, getAppStatus },
+  { requestHelp, cancelRequest, monitorAcceptance, getAppStatus, checkRegion },
   { 
-    message: '', errorMessage: '', loading: false,
+    message: '', errorMessage: '', loading: false, region: null,
     caseId: null, userId: null, senderId: null, requestAccepted:false,
     totalUsers: 0, totalCases: 0
   }

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Platform, PermissionsAndroid, Alert, Dimensions } from 'react-native';
+import { View, StyleSheet, TextInput, Platform, Alert, Dimensions } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import { Text, Button, Input, Card, Icon } from 'react-native-elements';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
@@ -18,77 +18,73 @@ if (Dimensions.get('window').height < 600 ) {
   textSize = 18;
 }
 
-const AskScreen = ({navigation}) => {
+const AskScreen = ({ navigation }) => {
   SplashScreen.hide();
   console.log('AskScreen');
   // setup language
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   // use auth context; state, action, default value
-  const {state, requestHelp, getAppStatus} = useContext(AskContext);
+  const { state, requestHelp, getAppStatus, checkRegion } = useContext(AskContext);
   // state
   const [message, setMessage] = useState('');
-  // coordinate
-  const [coordinate, setCoordinate] = useState(null);
 
   // use effect: componentDidMount
   useEffect(() => {
+    // get number of users and cases
     getAppStatus();
-    // get user's coordinate
-    getCoordinate();
   }, []);
 
-  const getCoordinate = async () => {
-    // get location permission for android device
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) { 
-          if (__DEV__) Alert.alert("Location Permission Granted.");
-          // get location
-          Geolocation.getCurrentPosition((position) => {
-            if (__DEV__) console.log('[AskScreen|getCoordinate] position', position);
-            // update the coordinate
-            setCoordinate(position.coords);
-          },
-          (error) => {
-            console.log(error.code, error.message);
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }); 
-        }
-        else {
-          Alert.alert(
-            t('LocationScreen.permissionFail'),
-            t('LocationScreen.permissionFailText'),
-            [
-              { text: t('confirm') }
-            ],
-            { cancelable: true },
-          );
-        }
-      } catch (err) {
-        console.warn(err);
-      }  
-    } else if (Platform.OS == 'ios') {
-      // @todo get permission for ios
+  // show icon for removing message
+  const showRemoveIcon = () => {
+    return (
+      <Icon
+        reverse
+        name='close'
+        size={16}
+        color={'#353535'}
+        onPress={() => {setMessage('')}}
+      />
+    );
+  };
+
+  // handle requestion action
+  const handleRequest = async () => {
+    // check if the region is set. if so, request help
+    if (state.region) {
+      // prohibit the double requesting
+      if (!state.loading) {
+        // if the region is set, then we have the location permission
+        // get location
+        let coordinate = null;
+        Geolocation.getCurrentPosition((position) => {
+          if (__DEV__) console.log('[AskScreen|getCoordinate] position', position);
+          // set coordinate
+          coordinate = position.coords;
+          // request help
+          requestHelp({ message, coordinate, navigation });
+        },
+        (error) => {
+          console.log(error.code, error.message);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });         
+      }      
+    } else { // guide to set location
+      Alert.alert(
+        t('AskScreen.locationGuide'),
+        t('AskScreen.locationGuideText'),
+        [
+          { text: t('confirm') }
+        ],
+        { cancelable: true },
+      );
     }
   };
 
-  const showRemoveIcon = () => {
-//    if (message !== '') {
-      return (
-        <Icon
-          reverse
-          name='close'
-          size={16}
-          color={'#353535'}
-          onPress={() => {setMessage('')}}
-        />
-      );
-//    }
-  }
-
   return (
     <SafeAreaView>
+      <NavigationEvents
+        onWillFocus={checkRegion}
+      />
       <ScrollView>
       <Card
         containerStyle={{backgroundColor: '#119abf'}}
@@ -135,12 +131,7 @@ const AskScreen = ({navigation}) => {
           titleStyle={{ fontSize: 30, fontWeight: 'bold' }}
           title={t('AskScreen.button')}
           loading={state.loading}
-          onPress={() => {
-            // prohibit the double requesting
-            if (!state.loading) {
-              requestHelp({ message, coordinate, navigation });
-            }
-          }}
+          onPress={handleRequest}
         />
       </Spacer>
       </ScrollView>

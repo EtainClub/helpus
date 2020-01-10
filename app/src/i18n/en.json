@@ -79,6 +79,8 @@
       "button": "Help",
       "guideText": "Type what you need",
       "placeholder": "e.g. My computer does not boot up. Help!!!",
+      "locationGuide": "Need to set location",
+      "locationGuideText": "You need to verify your location in User tab."
     },
     "AskWaitScreen": {
       "header": "Requesting Help",

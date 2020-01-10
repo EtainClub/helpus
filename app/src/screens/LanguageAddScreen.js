@@ -9,7 +9,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Spacer from '../components/Spacer';
 import { Context as AuthContext } from '../context/AuthContext';
 
-
+// @todo guide to change primary language by drag and drop
 const LanguageAddScreen = ({ navigation }) => {
   // setup language
   const { t } = useTranslation();
