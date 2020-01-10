@@ -33,8 +33,6 @@ const AskScreen = ({navigation}) => {
   // use effect: componentDidMount
   useEffect(() => {
     getAppStatus();
-//    Geolocation.requestAuthorization();
-//    console.log('Geolocation service1', Geolocation.getCurrentPosition((position)=>{console.log(position)}));
     // get user's coordinate
     getCoordinate();
   }, []);

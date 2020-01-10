@@ -70,16 +70,30 @@ const LeadersScreen = ({ navigation }) => {
 
   // fetch data and build board data
   const fetchData = async (property) => {
+    const testAccounts = ['E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
+                          'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
+                          'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
+                          'YceGXcoVfPNbLWpCrXVOOoYpJh02' 
+    ];
+
     // users on firestore
     const usersRef = firebase.firestore().collection('users');
     //// get data
     // ordering and showing only top users
     const maxElem = 10;
-    usersRef.orderBy(property, "desc").limit(maxElem)
+    usersRef.orderBy(property, "desc").limit(maxElem+testAccounts.length)
     .onSnapshot(snapshot => {
       let data = [];
       // build data array
       snapshot.docs.forEach(doc => {
+        // do not include test accounts
+        if (testAccounts.includes(doc.id)) {
+          return;
+        }
+        // check if the data exceeds the max 
+        if (data.length >= maxElem) {
+          return;
+        }        
         data = [...data, ({
           name: `${doc.data().name} (${doc.data().regions[0]})`,
           iconUrl: doc.data().avatarUrl,
