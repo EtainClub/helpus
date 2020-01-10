@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Text, Button, Card, Overlay, Icon } from 'react-native-elements';
+import { Text, Button, Card, Overlay, Icon, Badge } from 'react-native-elements';
 import firebase from 'react-native-firebase'; 
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -21,6 +21,7 @@ const HelpScreen = ({ navigation }) => {
   // use state
   const [senderInfo, setSenderInfo] = useState({});
   const [senderLocation, setSenderLocation] = useState('');
+  const [senderLocationVotes, setSenderLocationVotes] = useState(null);
 
   // use effect
   useEffect(() => {
@@ -74,6 +75,7 @@ const HelpScreen = ({ navigation }) => {
           console.log('location', locations);
           // put only the first location
           setSenderLocation(locations[0].name);
+          senderLocationVotes(locations[0].votes);
         }
       })
       .catch(error => {
@@ -129,6 +131,7 @@ const HelpScreen = ({ navigation }) => {
             <View style={{paddingLeft: 12}}>
               <Text style={{fontSize: 20, fontWeight: 'bold'}}>{t('location')}:</Text> 
               <Text style={{fontSize: 20, fontWeight: 'bold'}}>{senderLocation ? senderLocation : t('unknownLocation')}</Text>
+              <Badge value={item.votes} badgeStyle={{ height: 20 }}/>
             </View>
           </View>
           </Spacer>

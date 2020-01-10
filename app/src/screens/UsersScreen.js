@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, Platform, FlatList, TouchableOpacity } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import firebase from 'react-native-firebase'; 
-import { Text, Card, ListItem, Avatar, CheckBox, Icon } from 'react-native-elements';
+import { Text, Card, ListItem, Avatar, CheckBox, Icon, Badge } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -331,7 +331,10 @@ const UsersScreen = ({ navigation }) => {
                 item.locations.map((location, id) => {
                   if (location.name !== '') {
                     return (
-                      <Text key={id} style={{ marginLeft: 10 }}>{location.name}</Text>
+                      <View style={{ flexDirection: 'row' }}>
+                        <Text key={id} style={{ marginLeft: 10 }}>{location.name}</Text>
+                        <Badge value={location.votes} badgeStyle={{ height: 20 }}/>
+                      </View>
                     );
                   }
                 }) 

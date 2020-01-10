@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, PermissionsAndroid, Alert, TouchableOpacity } from 'react-native';
-import { Button, Text, Card, Avatar, Icon } from 'react-native-elements';
+import { View, StyleSheet, PermissionsAndroid, Alert } from 'react-native';
+import { Button, Text, Card, Avatar, Icon, Badge } from 'react-native-elements';
 import { SafeAreaView, NavigationEvents } from 'react-navigation';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -168,18 +168,18 @@ const AccountScreen = ({ navigation }) => {
               <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{state.userInfo.name ? 
                 state.userInfo.name : t('AccountScreen.usernamePlaceholder')}</Text>
             </View>
-            <Spacer>
-              <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row", marginVertical: 7 }}>
               <Icon
+                containerStyle={{ marginLeft: 0 }}
                 type='font-awesome'
                 name='map-marker'
                 size={20}
               />
-              <Text style={{ fontSize: 14, marginLeft: 7 }}>{ state.locations[0].name ? 
+              <Text style={{ fontSize: 14, marginLeft: 7, paddingRight: 2 }}>{ state.locations[0].name ? 
                 state.locations[0].name.substring(0,20)
                 : t('AccountScreen.locationPlaceholder')}</Text>
-              </View>
-            </Spacer>
+              <Badge value={state.locations[0].votes} badgeStyle={{ height: 20 }}/>
+            </View>
             <Button
               type="outline"
               buttonStyle={{ height: 20 }}
