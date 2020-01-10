@@ -133,12 +133,22 @@ const findUsers = dispatch => {
       });
     }
     
+    // test accounts
+    const testAccounts = ['E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
+    'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
+    'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
+    'YceGXcoVfPNbLWpCrXVOOoYpJh02' 
+    ];
     const usersRef = firebase.firestore().collection('users');
     // consider the multi languages. need to find both en and ko regions
     // react-native-firebase v5 does not support array-contains-any
     await usersRef.where('regions', 'array-contains', district).get()
     .then(async snapshot => {
-      snapshot.forEach(async doc => {             
+      snapshot.forEach(async doc => {
+        // exclude test users
+        if (testAccounts.includes(doc.id)) {
+          return;
+        }             
         // exclude the self when searching
         if (doc.id !== userId) {
           //// get data from subcollection
