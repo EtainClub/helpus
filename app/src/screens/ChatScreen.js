@@ -73,7 +73,6 @@ const ChatScreen = ({ navigation }) => {
     .doc(`${caseId}`)
     .collection('chats')
     .orderBy('createdAt', 'desc')
-    .limit(20)
     .onSnapshot(snapshot => {
       let messages = [];
       snapshot.docs.forEach(doc => {
