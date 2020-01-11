@@ -139,8 +139,8 @@ android {
         applicationId "club.etain.helpus"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "1.1.0"
+        versionCode 7
+        versionName "1.2.0"
         multiDexEnabled true
         resConfigs "ko", "en"
         manifestPlaceholders = [googleMapApiKey:googleMapApiKey]
