@@ -105,6 +105,12 @@ const profileReducer = (state, action) => {
       return { ...state, userList: [] }
     case 'update_user_list': 
       console.log('[update_user_list] payload', action.payload);
+      // check if the user is in the list (multi-language user)
+      for (let i=0; i<state.userList.length; i++) {
+        if (state.userList[i].userId == action.payload.userId) {
+          return state;
+        }
+      }
       return { ...state, 
         userList: [...state.userList, action.payload ] 
       };

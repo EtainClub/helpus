@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Platform, Alert, Dimensions } from 'react-native';
+import { View, StyleSheet, TextInput, Platform, Alert, Dimensions, PermissionsAndroid } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import { Text, Button, Input, Card, Icon } from 'react-native-elements';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
@@ -49,24 +49,48 @@ const AskScreen = ({ navigation }) => {
 
   // handle requestion action
   const handleRequest = async () => {
+    // prohibit the double requesting
+    if (state.loading) {
+      console.log('[handleRequest] aldreay requested.');
+      return;
+    }
+
     // check if the region is set. if so, request help
     if (state.region) {
-      // prohibit the double requesting
-      if (!state.loading) {
-        // if the region is set, then we have the location permission
-        // get location
-        let coordinate = null;
-        Geolocation.getCurrentPosition((position) => {
-          if (__DEV__) console.log('[AskScreen|getCoordinate] position', position);
-          // set coordinate
-          coordinate = position.coords;
-          // request help
-          requestHelp({ message, coordinate, navigation });
-        },
-        (error) => {
-          console.log(error.code, error.message);
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });         
+      // handle android 
+      if (Platform.OS === 'android') {
+        try {
+          // get location permission if it is not granted, 
+          const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) { 
+            // get location
+            let coordinate = null;
+            Geolocation.getCurrentPosition((position) => {
+              if (__DEV__) console.log('[AskScreen|getCoordinate] position', position);
+              // set coordinate
+              coordinate = position.coords;
+              // request help
+              requestHelp({ message, coordinate, navigation });
+            },
+            (error) => {
+              console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });        
+          } else {
+            Alert.alert(
+              t('LocationScreen.permissionFail'),
+              t('LocationScreen.permissionFailText'),
+              [
+                { text: t('confirm') }
+              ],
+              { cancelable: true },
+            );
+          }
+        } catch (err) {
+          console.warn(err);
+        } 
+      } else if (Platform.OS =='ios') {
+        // @todo get permission for ios and request help
       }      
     } else { // guide to set location
       Alert.alert(

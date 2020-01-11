@@ -128,10 +128,12 @@ const HelpScreen = ({ navigation }) => {
               size={20}
               color={'#353535'}
             />
-            <View style={{paddingLeft: 12}}>
+            <View style={{ paddingLeft: 12 }}>
               <Text style={{fontSize: 20, fontWeight: 'bold'}}>{t('location')}:</Text> 
-              <Text style={{fontSize: 20, fontWeight: 'bold'}}>{senderLocation ? senderLocation : t('unknownLocation')}</Text>
-              <Badge value={senderLocationVotes} badgeStyle={{ height: 20 }}/>
+              <View style={styles.itemContainer}>
+                <Text style={{fontSize: 20, fontWeight: 'bold'}}>{senderLocation ? senderLocation : t('unknownLocation')}</Text>
+                <Badge value={senderLocationVotes} badgeStyle={{ height: 20 }}/>
+              </View>
             </View>
           </View>
           </Spacer>

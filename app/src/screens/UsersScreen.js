@@ -331,8 +331,8 @@ const UsersScreen = ({ navigation }) => {
                 item.locations.map((location, id) => {
                   if (location.name !== '') {
                     return (
-                      <View style={{ flexDirection: 'row' }}>
-                        <Text key={id} style={{ marginLeft: 10 }}>{location.name}</Text>
+                      <View key={id} style={{ flexDirection: 'row' }}>
+                        <Text style={{ marginLeft: 10 }}>{location.name}</Text>
                         <Badge value={location.votes} badgeStyle={{ height: 20 }}/>
                       </View>
                     );

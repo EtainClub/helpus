@@ -20,8 +20,8 @@ const AccountEditScreen = ({ navigation }) => {
   const { state, updateAvatarState, updateAccount } = useContext( ProfileContext );
   // use state
   const [name, setName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [imgUri, setImgUri] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [imgUri, setImgUri] = useState(null);
 
   // get navigation param
   const userId = navigation.getParam('userId');

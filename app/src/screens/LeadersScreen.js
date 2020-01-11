@@ -15,6 +15,12 @@ const LeadersScreen = ({ navigation }) => {
   const { t } = useTranslation();
   // get reference to the current user
   const { currentUser } = firebase.auth();
+  // test accounts
+  const testAccounts = ['E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
+  'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
+  'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
+  'YceGXcoVfPNbLWpCrXVOOoYpJh02' 
+  ];
   const userId = currentUser.uid;
   // use context
   const { state } = useContext(ProfileContext);
@@ -70,12 +76,6 @@ const LeadersScreen = ({ navigation }) => {
 
   // fetch data and build board data
   const fetchData = async (property) => {
-    const testAccounts = ['E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
-                          'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
-                          'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
-                          'YceGXcoVfPNbLWpCrXVOOoYpJh02' 
-    ];
-
     // users on firestore
     const usersRef = firebase.firestore().collection('users');
     //// get data
@@ -114,15 +114,18 @@ const LeadersScreen = ({ navigation }) => {
     .onSnapshot(snapshot => {
       let order = 1;
       snapshot.docs.forEach(doc => {
-        // match with the user id
-        if (userId === doc.id) {
-          // set user data
-          setRank(order);
-          // set indicator
-          setIndicator(doc.data()[property]);
-          return;
+        // do not include test accounts
+        if (!testAccounts.includes(doc.id)) {
+          // match with the user id
+          if (userId === doc.id) {
+            // set user data
+            setRank(order);
+            // set indicator
+            setIndicator(doc.data()[property]);
+            return;
+          }
+          order++;
         }
-        order++;
       });
     });
   };
