@@ -75,7 +75,7 @@ const HelpScreen = ({ navigation }) => {
           console.log('location', locations);
           // put only the first location
           setSenderLocation(locations[0].name);
-          senderLocationVotes(locations[0].votes);
+          setSenderLocationVotes(locations[0].votes);
         }
       })
       .catch(error => {
@@ -131,7 +131,7 @@ const HelpScreen = ({ navigation }) => {
             <View style={{paddingLeft: 12}}>
               <Text style={{fontSize: 20, fontWeight: 'bold'}}>{t('location')}:</Text> 
               <Text style={{fontSize: 20, fontWeight: 'bold'}}>{senderLocation ? senderLocation : t('unknownLocation')}</Text>
-              <Badge value={item.votes} badgeStyle={{ height: 20 }}/>
+              <Badge value={senderLocationVotes} badgeStyle={{ height: 20 }}/>
             </View>
           </View>
           </Spacer>
