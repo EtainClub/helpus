@@ -182,7 +182,7 @@ const SigninScreen = ({ navigation }) => {
       </Spacer>
       
       {
-        __DEV__ ? 
+        __DEV__ && Platform.OS == 'android' ? 
           <Spacer>
             <Button
                 buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}

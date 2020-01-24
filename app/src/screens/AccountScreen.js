@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, PermissionsAndroid, Alert } from 'react-native';
+import { View, StyleSheet, PermissionsAndroid, Alert, Platform } from 'react-native';
 import { Button, Text, Card, Avatar, Icon, Badge } from 'react-native-elements';
 import { SafeAreaView, NavigationEvents } from 'react-navigation';
 import i18next from 'i18next';
@@ -185,7 +185,7 @@ const AccountScreen = ({ navigation }) => {
             </View>
             <Button
               type="outline"
-              buttonStyle={{ height: 20 }}
+              buttonStyle={Platform.OS == 'android' ? { height: 30 } : { margin: 0, padding: 0, height: 30 }}
               titleStyle={{ fontSize: 16, fontWeight: 'bold' }}     
               title={t('AccountScreen.usersButton')}
               onPress={onUsersPress}
