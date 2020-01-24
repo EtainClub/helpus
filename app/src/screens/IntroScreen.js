@@ -57,52 +57,54 @@ const IntroScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView>
-      <Card
-        containerStyle={{ backgroundColor: '#119abf' }}
-        wrapperStyle={styles.statusContainer}>
-        <View style={{ flexDirection: 'row' }}>
-          <Icon
-            containerStyle={{ paddingTop: Platform.OS === 'android' ? 8 : 3 }}
-            type='font-awesome'
-            name='user'
-            size={30}
-          />
-          <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{stat.users}</Text>
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <Icon2
-            style={styles.androidHeight}
-            name='hands-helping'
-            size={30}
-          />
-          <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{stat.cases}</Text>
-        </View>
-      </Card>
-      <Card
-        containerStyle={styles.container}
-        title='helpus'
-        titleStyle={{ fontSize: 50 }}
-      >
-        <IntroImage />
-        <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>
-          {t('subtitle')}
-        </Text>
-        <Button
-          icon={
-            <Icon2
-              name='hands-helping'
-              size={25}
-              color='white'
+    <SafeAreaView>
+      <ScrollView>
+        <Card
+          containerStyle={{ backgroundColor: '#119abf' }}
+          wrapperStyle={styles.statusContainer}>
+          <View style={{ flexDirection: 'row' }}>
+            <Icon
+              containerStyle={{ paddingTop: Platform.OS === 'android' ? 8 : 3 }}
+              type='font-awesome'
+              name='user'
+              size={30}
             />
-          }
-          buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-          titleStyle={{fontSize: 25, fontWeight: 'bold', paddingLeft: 7 }}
-          title={t('startApp')}
-          onPress={() => navigation.navigate('Signin')}
-        />
-      </Card>
-  </ScrollView>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{stat.users}</Text>
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Icon2
+              style={styles.androidHeight}
+              name='hands-helping'
+              size={30}
+            />
+            <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 10 }}>{stat.cases}</Text>
+          </View>
+        </Card>
+        <Card
+          containerStyle={styles.container}
+          title='helpus'
+          titleStyle={{ fontSize: 50 }}
+        >
+          <IntroImage />
+          <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>
+            {t('subtitle')}
+          </Text>
+          <Button
+            icon={
+              <Icon2
+                name='hands-helping'
+                size={25}
+                color='white'
+              />
+            }
+            buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+            titleStyle={{fontSize: 25, fontWeight: 'bold', paddingLeft: 7 }}
+            title={t('startApp')}
+            onPress={() => navigation.navigate('Signin')}
+          />
+        </Card>
+    </ScrollView>
+  </SafeAreaView>
 
   );
 };
