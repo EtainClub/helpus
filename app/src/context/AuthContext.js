@@ -12,6 +12,9 @@ const authReducer = (state, action) => {
     case 'start_auth':
       console.log('start_auth reducer');
       return { ...state, loading: true, errorMessage: '', confirmResult: action.payload };
+    case 'start_confirm':
+      console.log('start_confirm reducer');
+      return { ...state, loading: false, confirmLoading: true, errorMessage: '' };  
     case 'add_error':
       return { ...state, errorMessage: action.payload, loading: false };
     case 'signup':
@@ -22,7 +25,7 @@ const authReducer = (state, action) => {
       return { 
         errorMessage: '', 
         idToken: action.payload.idToken, pushToken: action.payload.pushToken, 
-        loading: false 
+        loading: false, confirmLoading: false 
       };
     case 'clear_error':
       return { ...state, errorMessage: '', loading: false };
@@ -105,6 +108,11 @@ const confirmVerificationCode = dispatch => {
   return async ({ phoneNumber, code, confirmResult, navigation }) => {
     console.log('[confirmVerificationCode] code', code);
     console.log('[confirmVerificationCode] confirmResult', confirmResult);
+
+    // start confirm action
+    dispatch({
+      type: 'start_confirm'
+    });
 
     // verify the confirm result and code that your input exists
     if (confirmResult && code.length) {
@@ -303,7 +311,7 @@ const signout = dispatch => {
 export const { Provider, Context } = createDataContext(
   authReducer,
   { signinPhoneNumber, signin, confirmVerificationCode, signout, clearError, trySigninWithToken },
-  { token: null, pushToken: null, errorMessage: '', loading: false, confirmResult: null }
+  { token: null, pushToken: null, errorMessage: '', loading: false, confirmLoading: false, confirmResult: null }
 );
 
 /*

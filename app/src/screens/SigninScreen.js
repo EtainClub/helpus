@@ -26,8 +26,8 @@ const SigninScreen = ({ navigation }) => {
   // setup language
   const { t } = useTranslation();
   // urls
-  let termsUrl = "https://etain.club/terms";
-  let privacyUrl = "https://etain.club/privacy";
+  let termsUrl = "https://etain.club/terms-ko";
+  let privacyUrl = "https://etain.club/privacy-ko";
   if (i18next.language == 'en') {
     termsUrl = "https://etain.club/terms-en";
     privacyUrl = "https://etain.club/privacy-en";  
@@ -154,17 +154,22 @@ const SigninScreen = ({ navigation }) => {
       </Spacer>
       {state.errorMessage ? <Text style={styles.errorMessage}>{state.errorMessage}</Text> : null}
       
-      <Spacer>
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => Linking.openURL(termsUrl)}>
-            <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
-          </TouchableOpacity>
-          <Text style={{ fontSize: textSize }}>{t('and')}</Text>
-          <TouchableOpacity onPress={() => Linking.openURL(privacyUrl)}>
-            <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
-          </TouchableOpacity>
-        </View>
-      </Spacer>
+      {
+        Platform.OS == 'android' ?
+        <Spacer>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <TouchableOpacity onPress={() => Linking.openURL(termsUrl)}>
+              <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
+            </TouchableOpacity>
+            <Text style={{ fontSize: textSize }}>{t('and')}</Text>
+            <TouchableOpacity onPress={() => Linking.openURL(privacyUrl)}>
+              <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
+            </TouchableOpacity>
+          </View>
+        </Spacer>
+        :
+        <View></View>
+      }
 
       <Spacer>
         <Button
@@ -175,12 +180,10 @@ const SigninScreen = ({ navigation }) => {
             onPress={() => signinPhoneNumber({ phoneNumber: '+' + country.callingCode[0]+phoneNumber })}
           />
       </Spacer>
-
-      <Spacer></Spacer>
       
       {
         __DEV__ ? 
-      <Spacer>
+          <Spacer>
             <Button
                 buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
                 titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
@@ -195,8 +198,6 @@ const SigninScreen = ({ navigation }) => {
           : 
           null
       }
-
-      <Spacer></Spacer>
 
       {
         Platform.OS === 'ios' ?
@@ -213,11 +214,11 @@ const SigninScreen = ({ navigation }) => {
           </Spacer>
             
           <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <TouchableOpacity onPress={() => Linking.openURL(termsUrl)}>
               <Text style={styles.textLink}>{t('SigninScreen.terms')}</Text>
             </TouchableOpacity>
             <Text style={{ fontSize: textSize }}>{t('and')}</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <TouchableOpacity onPress={() => Linking.openURL(privacyUrl)}>
               <Text style={styles.textLink}>{t('SigninScreen.privacyPolicy')}</Text>
             </TouchableOpacity>
           </View>
@@ -227,7 +228,7 @@ const SigninScreen = ({ navigation }) => {
                 buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
                 titleStyle={{ fontSize: 25, fontWeight: 'bold' }}
                 title={t('SigninScreen.start')}
-                loading={state.loading}
+                loading={state.confirmLoading}
                 onPress={() => confirmVerificationCode({ 
                   phoneNumber, 
                   code, 
@@ -237,7 +238,7 @@ const SigninScreen = ({ navigation }) => {
           </Spacer>
         </View>
         :
-        <View></View>
+        null
       }
       </Card>
       </ScrollView>
