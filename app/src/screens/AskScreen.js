@@ -28,11 +28,17 @@ const AskScreen = ({ navigation }) => {
   // state
   const [message, setMessage] = useState('');
 
-  // use effect: componentDidMount
+  // componentDidMount
   useEffect(() => {
+  }, []);
+
+  // called before the screen is focused
+  const onWillFocus = () => {
     // get number of users and cases
     getAppStatus();
-  }, []);
+    // check if a user sets a region
+    checkRegion();
+  };
 
   // show icon for removing message
   const showRemoveIcon = () => {
@@ -107,7 +113,7 @@ const AskScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <NavigationEvents
-        onWillFocus={checkRegion}
+        onWillFocus={onWillFocus}
       />
       <ScrollView>
       <Card

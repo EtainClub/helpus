@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#import "RNSplashScreen.h"
 #import "AppDelegate.h"
 
 #import <React/RCTBridge.h>
@@ -38,6 +39,7 @@
   [FIRApp configure];
   [RNFirebaseNotifications configure];
 
+  [RNSplashScreen show];
   return YES;
 }
 

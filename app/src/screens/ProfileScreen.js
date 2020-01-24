@@ -29,12 +29,17 @@ const ProfileScreen = ({ navigation }) => {
   const [editLocation, setEditLocation] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // use effect
+  // componentWillMount
   useEffect(() => {
-    getUserProfile();
-    console.log('state skills', state.skills);
-    console.log('state locations', state.locations);
   }, []);
+
+  // called before screen is focused
+  const onWillFocus = ()=> {
+    // get user profile from db
+    getUserProfile();
+    // 
+    setEditLocation(false);
+  }
 
   // get user profile info from db
   getUserProfile = async () => {
@@ -78,7 +83,6 @@ const ProfileScreen = ({ navigation }) => {
       console.log('cannot get location data', error);
     });
   }
-
 
   onSkillAddPress = () => {
     setEditSkill(true);
@@ -302,11 +306,6 @@ const ProfileScreen = ({ navigation }) => {
     console.log('locations', state.locations);
   }
 
-  // navigation event
-  const onWillFocus = ()=> {
-    setEditLocation(false);
-  }
-
   return (
     <SafeAreaView>
       <NavigationEvents
@@ -348,8 +347,6 @@ const ProfileScreen = ({ navigation }) => {
           {showLocationEdit()}
           {showLocationList()}
         </Card>
-
-        
 
         <Overlay
           overlayStyle={styles.modal}

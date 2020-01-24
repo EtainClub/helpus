@@ -4,6 +4,15 @@ const i18next = require('i18next');
 const moment = require('moment');
 
 
+// test accounts
+const testAccounts = [
+'E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
+'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
+'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
+'YceGXcoVfPNbLWpCrXVOOoYpJh02',
+'ofyzoEhGbyROabS6BV3xOylgA1t2' 
+];
+
 // initialize app
 //admin.initializeApp();
 
@@ -97,14 +106,53 @@ exports.sendMessage = functions.firestore
       console.log('Encountered error on listening to accepted field change', error);
     });
 
-    // send message to users who prefer the language of the message
+    //// send test message only to test accounts
+    let testMessage = false;
+    const testMsgPrefix = '[test]';
+    let testCount = 0;
+    if (docData.message.includes(testMsgPrefix)) {
+      console.log('[test] this is a test message!');
+      // send message to test accounts
+      await users.get()
+      .then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          console.log('testCount', testCount++);
+          // skip the sender  
+          if (doc.id == sender) {
+            console.log('[test] sender is the same');
+            return;
+          }
+          // skip users not belonging to test accounts
+          if (!testAccounts.includes(doc.id)) {
+            console.log('uid is not in test accounts', doc.id);
+            return;
+          }
+          // get the push token of a user
+          pushToken = doc.data().pushToken;
+          console.log('token, sending message', pushToken, payload);
+          // send if push token exists
+          if (pushToken) {
+            // send notification trhough firebase cloud messaging (fcm)
+            admin.messaging().sendToDevice(pushToken, payload);
+          }          
+        });
+        testMessage = true; 
+      })
+      .catch(error => console.log(error));
+    }
+
+    //// send message to users who prefer the language of the message
     // users.where('languages', 'array-contains', language).get()
     await users.get()
     .then(snapshot => {
+      if (testMessage) {
+        console.log('[test] this is a test message!');
+        return;
+      }
       // check if the request has been accepted
       if (accepted) {
         console.log('the request has been accpted. so no more sending message', accepted);
-        return 'the request has been accpted. so no more sending message';
+        return 'the request has been accepted. so no more sending message';
       }
 
       snapshot.forEach(doc => {
@@ -112,7 +160,7 @@ exports.sendMessage = functions.firestore
         console.log('doc languages', doc.data().languages);
         // do not send if the user does not prefer the language
         if (!doc.data().languages.includes(language)) {
-          console.log('user does not incude the language', doc.data().languages);
+          console.log('user does not include the language', doc.data().languages);
           return;
         }
         // do not send notification to the sender
@@ -140,7 +188,7 @@ exports.sendMessage = functions.firestore
             console.log('token, sending message', pushToken, payload);
             // send if push token exists
             if (pushToken) {
-              // send notification trhough firebase cloud messaging (fcm)
+              // send notification through firebase cloud messaging (fcm)
               admin.messaging().sendToDevice(pushToken, payload);
             }
           } else {

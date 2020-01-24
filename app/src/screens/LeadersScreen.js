@@ -16,10 +16,12 @@ const LeadersScreen = ({ navigation }) => {
   // get reference to the current user
   const { currentUser } = firebase.auth();
   // test accounts
-  const testAccounts = ['E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
-  'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
-  'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
-  'YceGXcoVfPNbLWpCrXVOOoYpJh02' 
+  const testAccounts = [
+    'E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
+    'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
+    'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
+    'YceGXcoVfPNbLWpCrXVOOoYpJh02',
+    'ofyzoEhGbyROabS6BV3xOylgA1t2' 
   ];
   const userId = currentUser.uid;
   // use context

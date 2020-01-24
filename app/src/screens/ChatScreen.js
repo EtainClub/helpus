@@ -36,11 +36,8 @@ const ChatScreen = ({ navigation }) => {
 
   let unsubscribe = null;
 
-  // use effect
+  // componentWillMount
   useEffect(() => {
-//    console.log('[chatScreen] caseId', caseId);
-//    getUserInfo();
-//    listenToChat();
     return () => {
       console.log('unsubscribe message listener');
       unsubscribe();

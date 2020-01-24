@@ -140,10 +140,12 @@ const findUsers = dispatch => {
     }
     
     // test accounts
-    const testAccounts = ['E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
-    'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
-    'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
-    'YceGXcoVfPNbLWpCrXVOOoYpJh02' 
+    const testAccounts = [
+      'E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
+      'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
+      'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
+      'YceGXcoVfPNbLWpCrXVOOoYpJh02',
+      'ofyzoEhGbyROabS6BV3xOylgA1t2' 
     ];
     const usersRef = firebase.firestore().collection('users');
     // consider the multi languages. need to find both en and ko regions

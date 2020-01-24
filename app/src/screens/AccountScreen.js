@@ -21,11 +21,14 @@ const AccountScreen = ({ navigation }) => {
   const { currentUser } = firebase.auth();
   const userId = currentUser.uid;
 
-  // use effect
+  // componentDidMount
   useEffect(() => {
-    getUserInfo();
   }, []);
 
+  // called before the screen is focused
+  const onWillFocus = () => {
+    getUserInfo();
+  };
   
   getUserInfo = async () => {
     // reference to user info
@@ -150,7 +153,7 @@ const AccountScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <NavigationEvents
-        onWillFocus={getUserInfo}
+        onWillFocus={onWillFocus}
       />
       <ScrollView>
         <Card wrapperStyle={styles.accountContainer}>

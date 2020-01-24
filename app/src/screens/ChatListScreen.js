@@ -20,8 +20,6 @@ const ChatListScreen = ({ navigation }) => {
   useEffect(() => {
     // set navigation params
     navigation.setParams({ updateChatList });
-    //
-//    updateChatList();
   }, []);
 
   // initialize the component -> componentDidMount
