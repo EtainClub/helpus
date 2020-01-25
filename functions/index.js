@@ -109,14 +109,12 @@ exports.sendMessage = functions.firestore
     //// send test message only to test accounts
     let testMessage = false;
     const testMsgPrefix = '[test]';
-    let testCount = 0;
     if (docData.message.includes(testMsgPrefix)) {
       console.log('[test] this is a test message!');
       // send message to test accounts
       await users.get()
       .then(snapshot => {
         snapshot.docs.forEach(doc => {
-          console.log('testCount', testCount++);
           // skip the sender  
           if (doc.id == sender) {
             console.log('[test] sender is the same');

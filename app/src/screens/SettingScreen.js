@@ -4,6 +4,7 @@ import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import { Text, ListItem, Divider } from 'react-native-elements';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -113,7 +114,7 @@ const SettingScreen = ({ navigation }) => {
   const [startDNDTime, setStartDNDTime] = useState({ show: false, time: START_TIME });
   const [endDNDTime,   setEndDNDTime] = useState({ show: false, time: END_TIME });
   
-  // use effect
+  // componentDidMount
   useEffect(() => {
     // initialize settings
     initSettings();
@@ -175,14 +176,15 @@ const SettingScreen = ({ navigation }) => {
       case 1:
           navigation.navigate('Language');
         break;
-      // share 
+      // share
+      // @todo update app store link after registration 
       case 2:
         await Share.share({
           title: t('SettingScreen.shareTitle'),
           message: Platform.OS === 'android' ? 
             'https://play.google.com/store/apps/details?id=club.etain.helpus' 
             : 
-            null
+            'https://testflight.apple.com/join/3JdIg0MP'
         });
         break;
       // app version
@@ -259,13 +261,11 @@ const SettingScreen = ({ navigation }) => {
   };
 
   // when a user clicks ok or cancel button on clock
-  const onStartClockChange = async (event, date) => {
-    // when a user cancels
-    if (event.type === 'dismissed') {
-      return;
-    }
-//    const time = convertTime(event.nativeEvent.timestamp);
-    const timestamp = event.nativeEvent.timestamp;
+  const onStartClockConfirm = async date => {
+    console.log('[onStartClockChange] date', date);
+    // convert the date to timestamp
+    const timestamp = date.getTime();
+    // hide the clock
     setStartDNDTime({ show: false, time: timestamp });
     // save the time in storage
     await AsyncStorage.setItem('startDNDTime', JSON.stringify(timestamp));
@@ -281,14 +281,18 @@ const SettingScreen = ({ navigation }) => {
     });
   };
 
+  const onStartClockCancle = () => {
+    setStartDNDTime(prevState => {
+      const newStart = { show: false, time: prevState.time }
+      return  newStart;
+    });
+  };
+
   // when a user clicks ok or cancel button on clock
-  const onEndClockChange = async (event, date) => {
-    // when a user cancels
-    if (event.type === 'dismissed') {
-      return;
-    }
-//    const time = convertTime(event.nativeEvent.timestamp);
-    const timestamp = event.nativeEvent.timestamp;
+  const onEndClockConfirm = async date => {
+    // convert the date to timestamp
+    const timestamp = date.getTime();
+    // hide the clock
     setEndDNDTime({ show: false, time: timestamp });
     // save the time in storage
     await AsyncStorage.setItem('endDNDTime', JSON.stringify(timestamp));
@@ -304,34 +308,36 @@ const SettingScreen = ({ navigation }) => {
     });
   };
   
+  const onEndClockCancle = () => {
+    setEndDNDTime(prevState => {
+      const newStart = { show: false, time: prevState.time }
+      return  newStart;
+    });
+  };
+  
   // show clock
   const renderStartClock = () => {
-    console.log('[renderStartClock]');
-    const show = startDNDTime.show;
     return (
-      show &&
-      <DateTimePicker 
-        display="spinner"
-        value={ new Date() }
-        mode={'time'}
-        is24Hour={false}
-        display="default"
-        onChange={onStartClockChange} />
+      <DateTimePickerModal
+        headerTextIOS={t('SettingScreen.startTimeHeader')}
+        isVisible={startDNDTime.show}
+        mode="time"
+        onConfirm={onStartClockConfirm}
+        onCancel={onStartClockCancle}
+      />
     );
   }
 
   // show clock
   const renderEndClock = () => {
-    const show = endDNDTime.show;
     return (
-      show &&
-      <DateTimePicker 
-        display="spinner"
-        value={ new Date() }
-        mode={'time'}
-        is24Hour={false}
-        display="default"
-        onChange={onEndClockChange} />
+      <DateTimePickerModal
+        headerTextIOS={t('SettingScreen.endTimeHeader')}
+        isVisible={endDNDTime.show}
+        mode="time"
+        onConfirm={onEndClockConfirm}
+        onCancel={onEndClockCancle}
+      />
     );
   }
 
@@ -358,6 +364,8 @@ const SettingScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <ScrollView>
+      {renderStartClock()}
+      {renderEndClock()}
       <Spacer>
         <Text style={styles.listHeaderText}>{t('SettingScreen.setting')}</Text>
         {
@@ -418,8 +426,6 @@ const SettingScreen = ({ navigation }) => {
           ))
         }
       </Spacer>
-      {renderStartClock()}
-      {renderEndClock()}
       </ScrollView>
     </SafeAreaView>
   );

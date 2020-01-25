@@ -239,8 +239,8 @@ const UsersScreen = ({ navigation }) => {
       return (
         <View>
           <MapView
-            style={{ height: 280, marginBottom: mapMargin }}
-            showsMyLocationButton
+            style={{ height: 280, paddingBottom: mapMargin }}
+            showsMyLocationButton={true}
             mapType="standard"
             loadingEnabled
             showsUserLocation

@@ -31,6 +31,7 @@
     "react-native-leaderboard": "^1.0.6",
     "react-native-localize": "1.2.1",
     "react-native-maps": "0.26.1",
+    "react-native-modal-datetime-picker": "8.1.1",
     "react-native-reanimated": "1.2.0",
     "react-native-screens": "1.0.0-alpha.23",
     "react-native-splash-screen": "3.2.0",
