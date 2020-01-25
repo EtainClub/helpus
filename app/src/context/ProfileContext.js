@@ -66,7 +66,7 @@ const profileReducer = (state, action) => {
             country: action.payload.address.country,
             display: action.payload.address.display,
             coordinate: action.payload.address.coordinate,
-            votes: location.votes + 1            
+            votes: action.payload.newVerify ? 1 : location.votes + 1            
           } 
           : location
         ),
@@ -283,18 +283,21 @@ const updateLocation = dispatch => {
 
 // verify location with id and update on DB
 const verifyLocation = dispatch => {
-  return ({ id, address, userId, verify }) => {
-    console.log('dispatch update location', id, address, userId);
+  return ({ id, address, userId, newVerify }) => {
+    console.log('dispatch verify location', id, Object.entries(address).length, userId);
     // sanity check
     if (!userId) return;
     if (typeof id === 'undefined') return; 
-    
+    if (Object.entries(address).length === 0) return;
+    console.log('[verifyLocation] address length', Object.entries(address).length);
+
     dispatch({
       type: 'verify_location',
-      payload: { id, address }
+      payload: { id, address, newVerify }
     });
 
     // update location on db with increment of verification
+    // if the location is different from the verified one, reset the verification count
     // @todo for location, use number of verification instead of votes.
     const userRef = firebase.firestore().doc(`users/${userId}`);
     userRef.collection('locations').doc(`${id}`).update({
@@ -305,7 +308,7 @@ const verifyLocation = dispatch => {
       country: address.country,
       display: address.display, 
       coordinate: address.coordinate,
-      votes: firebase.firestore.FieldValue.increment(1)
+      votes: newVerify ? 1 : firebase.firestore.FieldValue.increment(1)
     });
     
     //// update the region and its coordinate

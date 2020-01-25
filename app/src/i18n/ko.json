@@ -11,6 +11,7 @@
     "case": "건",
     "cases": "건",
     "location": "지역",
+    "cancel": "취소",
     "confirm": "확인",
     "save": "저장",
     "close": "닫기",
@@ -139,6 +140,8 @@
       "verify": "인증하기",
       "permissionFail": "허가 획득 실패",
       "permissionFailText": "동네 인증을 하려면 위치 허가가 필요합니다.",
+      "verifyTitle": "새로운 동네 인증",
+      "verifyText": "기존 인증한 동네와 다릅니다. 새로 인증하면 인증 횟수가 초기화 됩니다. 새로 인증하시겠습니까?"
     },
     "UsersScreen": {
       "header": "우리 동네 헬퍼스",

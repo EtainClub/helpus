@@ -27,7 +27,7 @@ const LocationForm = (props) => {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) { 
           if (__DEV__) Alert.alert("Location Permission Granted.");
           // navigate to the location screen
-          props.navigation.navigate('LocationVerify', { id: props.id })
+          props.navigation.navigate('LocationVerify', { id: props.id, location: props.item })
         }
         else {
           Alert.alert(
@@ -44,7 +44,7 @@ const LocationForm = (props) => {
       }  
     } else if (Platform.OS === 'ios') {
       // navigate to the location screen
-      props.navigation.navigate('LocationVerify', { id: props.id });
+      props.navigation.navigate('LocationVerify', { id: props.id, location: props.item });
     }
   };
 

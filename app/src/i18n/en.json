@@ -11,6 +11,7 @@
     "case": "Case",
     "cases": "Cases",
     "location": "Location",
+    "cancel": "Cancel",
     "confirm": "Confirm",
     "save": "Save",
     "close": "Close",
@@ -138,6 +139,8 @@
       "verify": "Verify",
       "permissionFail": "Permission denied",
       "permissionFailText": "Location permission is needed to verify the location",
+      "verifyTitle": "New Location Verification",
+      "verifyText": "The location is different from the verified one. Would you verify the new location?"
     },
     "UsersScreen": {
       "header": "Neighbor Helpus",

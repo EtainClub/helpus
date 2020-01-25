@@ -13,7 +13,9 @@ import { Context as ProfileContext } from '../context/ProfileContext';
 const LocationScreen = ({ navigation }) => {
   // get navigation params
   const locationId = navigation.getParam('id');
-  console.log('locationId', locationId);
+  const currentLocation = navigation.getParam('location');
+  console.log('[LocationScreen] locationId', locationId);
+  console.log('[LocationScreen] currentLocation', currentLocation);
 
   // setup language
   const { t } = useTranslation();
@@ -159,10 +161,28 @@ const LocationScreen = ({ navigation }) => {
     // get reference to the current user
     const { currentUser } = firebase.auth();
     const userId = currentUser.uid;
-    // update location
-    verifyLocation({ id: locationId, address: address, userId });
-    // set params
-    navigation.navigate('ProfileContract');
+    // check if the location is the same as the current location
+    if (address.display == currentLocation || currentLocation == '') {
+      // update location
+      verifyLocation({ id: locationId, address: address, userId, newVerify: false });
+      // navigate to profile screen
+      navigation.navigate('ProfileContract');
+    } else {
+      // show modal to confirm
+      Alert.alert(
+        t('LocationScreen.verifyTitle'),
+        t('LocationScreen.verifyText'),
+        [
+          { text: t('no'), style: 'cancel' },
+          { text: t('yes'), onPress: () => { 
+            verifyLocation({ id: locationId, address: address, userId, newVerify: true });
+            // navigate to profile screen
+            navigation.navigate('ProfileContract');
+          }}
+        ],
+        { cancelable: true },
+      );            
+    }
   };
 
   const showMap = () => {

@@ -324,6 +324,8 @@ const SettingScreen = ({ navigation }) => {
         mode="time"
         onConfirm={onStartClockConfirm}
         onCancel={onStartClockCancle}
+        cancelTextIOS={t('cancel')}
+        confirmTextIOS={t('confirm')}
       />
     );
   }
@@ -337,6 +339,8 @@ const SettingScreen = ({ navigation }) => {
         mode="time"
         onConfirm={onEndClockConfirm}
         onCancel={onEndClockCancle}
+        cancelTextIOS={t('cancel')}
+        confirmTextIOS={t('confirm')}
       />
     );
   }
