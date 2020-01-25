@@ -31,7 +31,7 @@ const UsersScreen = ({ navigation }) => {
     longitudeDelta: 0.01
   };
 
-  const [region, setRegion] = useState(INIT_REGION);
+  const [region, setRegion] = useState(null);
   const [mapMargin, setMapMargin] = useState(1);
   const [error, setError] = useState('');
   const [address, setAddress] = useState('');
@@ -50,11 +50,11 @@ const UsersScreen = ({ navigation }) => {
           longitudeDelta: INIT_REGION.longitudeDelta
         }
         setRegion(newRegion);
+        // init geocoding
+        initGeocoding(newRegion);
       },
       error => setError(error.message)
     );
-    // init geocoding
-    initGeocoding();
 
     // unsubscribe geolocation
     return () => Geolocation.clearWatch(watchId);
@@ -68,7 +68,7 @@ const UsersScreen = ({ navigation }) => {
     }
   }, [multiLang]);
 
-  const initGeocoding = () => {
+  const initGeocoding = (region) => {
     Geocoder.init(GEOCODING_API_KEY, { language }); 
     console.log('[initGeocoding] region', region);
     // get intial address
@@ -202,19 +202,21 @@ const UsersScreen = ({ navigation }) => {
     if (Platform.OS === 'android') {
       return (
         <View>
-          <MapView
-            style={{ height: 280, marginBottom: mapMargin }}
-            provider={PROVIDER_GOOGLE}
-            showsMyLocationButton
-            mapType="standard"
-            loadingEnabled
-            showsUserLocation
-            initialRegion={region}
-            onRegionChange={onRegionChange}
-            onRegionChangeComplete={onRegionChangeComplete}
-            onMapReady={() => setMapMargin(0)}
-          >
-          </MapView>
+          { region && 
+            <MapView
+              style={{ height: 280, marginBottom: mapMargin }}
+              provider={PROVIDER_GOOGLE}
+              showsMyLocationButton
+              mapType="standard"
+              loadingEnabled
+              showsUserLocation
+              initialRegion={region}
+              onRegionChange={onRegionChange}
+              onRegionChangeComplete={onRegionChangeComplete}
+              onMapReady={() => setMapMargin(0)}
+            >
+            </MapView>
+          }
           <View style={{ marginVertical: 10 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
@@ -238,19 +240,21 @@ const UsersScreen = ({ navigation }) => {
     } else if (Platform.OS === 'ios') {
       return (
         <View>
-          <MapView
-            style={{ height: 280, paddingBottom: mapMargin }}
-            showsMyLocationButton={true}
-            mapType="standard"
-            loadingEnabled
-            showsUserLocation
-            initialRegion={region}
-            onRegionChange={onRegionChange}
-            onRegionChangeComplete={onRegionChangeComplete}
-            onPress={e => onMapPress(e)}
-            onMapReady={() => setMapMargin(0)}
-          >
-          </MapView>
+          { region && 
+            <MapView
+              style={{ height: 280, paddingBottom: mapMargin }}
+              showsMyLocationButton={true}
+              mapType="standard"
+              loadingEnabled
+              showsUserLocation
+              initialRegion={region}
+              onRegionChange={onRegionChange}
+              onRegionChangeComplete={onRegionChangeComplete}
+              onPress={e => onMapPress(e)}
+              onMapReady={() => setMapMargin(0)}
+            >
+            </MapView>
+          }
           <View style={{ marginVertical: 10 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>

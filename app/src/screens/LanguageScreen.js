@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Alert, TouchableOpacity, Platform } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import { Text, Button, CheckBox, Icon } from 'react-native-elements';
 import DraggableFlatList from 'react-native-draggable-flatlist'
@@ -171,7 +171,9 @@ const LanguageScreen = ({ navigation }) => {
           removeFlag ? 
             <View style={{ flexDirection: 'row' }}>          
               <CheckBox
-                containerStyle={{ backgroundColor: 'white', borderWidth: 0 }}            
+                containerStyle={ Platform.OS == 'android' ? { backgroundColor: 'white', borderWidth: 0 }
+                  : { backgroundColor: 'white', borderWidth: 0, margin: 0, padding: 0 }
+                }            
                 title={t(item.code)}
                 textStyle={{ fontSize: 20, fontWeight: 'bold' }}
                 size={25}
