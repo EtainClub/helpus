@@ -154,7 +154,8 @@
       "header": "Leaderboard",
       "helped": "Helped",
       "gotHelped": "Got Helped",
-      "voted": "Voted"
+      "voted": "Voted",
+      "userInfo": "User Profile"
     },
     "ChatScreen": {
       "header": "Chat",

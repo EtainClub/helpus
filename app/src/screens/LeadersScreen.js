@@ -2,7 +2,8 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, Platform, FlatList, TouchableOpacity } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import firebase from 'react-native-firebase'; 
-import { Text, ButtonGroup } from 'react-native-elements';
+import { Text, ButtonGroup, Card, Overlay, ListItem, Avatar, Icon } from 'react-native-elements';
+import Flag from 'react-native-flags';
 import FastImage from 'react-native-fast-image';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +34,9 @@ const LeadersScreen = ({ navigation }) => {
   const [rank, setRank] = useState(0);
   const [indicator, setIndicator] = useState(0);
   const [boardData, setBoardData] = useState([]);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [userIndex, setUserIndex] = useState(null);
+  const [userItem, setUserItem] = useState(null);
 
   // componentDidMount
   useEffect(() => {
@@ -95,11 +99,35 @@ const LeadersScreen = ({ navigation }) => {
         // check if the data exceeds the max 
         if (data.length >= maxElem) {
           return;
-        }        
+        } 
+        // get skills
+        const userRef = firebase.firestore().doc(`users/${doc.id}`);
+        let skills = [];
+        userRef.collection('skills').get()
+        .then(snapshot2 => {
+          if (snapshot2.empty) {
+            console.log('No matching docs');
+            return;
+          }
+          console.log('[LeadersScreen|fetchData] got skills', snapshot2);  
+          snapshot2.forEach(doc => {
+            skills.push(doc.data());
+          });
+        })
+        .catch(error => {
+          console.log('cannot get skill data', error);
+        });  
+
         data = [...data, ({
           name: `${doc.data().name} (${doc.data().regions[0]})`,
           iconUrl: doc.data().avatarUrl,
-          score: doc.data()[property]
+          score: doc.data()[property],
+          username: doc.data().name,
+          helpCount: doc.data().helpCount,
+          askCount: doc.data().askCount,
+          votes: doc.data().votes,
+          skills: skills,
+          languages: doc.data().languages
         })];
       });
       console.log('[LeadersScreen|fetchData] data', data);
@@ -159,15 +187,121 @@ const LeadersScreen = ({ navigation }) => {
     );
   };
 
+  const renderUserInfo = async (item, index) => {
+    console.log('[LeadersScreen] show user info', item, index);
+    // set user index and item to show
+    setUserIndex(index);
+    setUserItem(item);
+    // set show modal flag
+    setShowUserModal(true);
+  };
+
+  const renderUserCard = () => {
+    return (
+      <Card
+        containerStyle={{ margin: 0, padding: 0 }}
+        title={t('LeadersScreen.userInfo')}
+      >
+        <ListItem
+          leftAvatar={
+            <View>
+              <Avatar size="large" rounded
+                source={{
+                  uri: userItem.iconUrl,
+                }} 
+              />
+              <Text style={{ textAlign: 'center' }}>{userItem.username}</Text>
+            </View>
+          }
+          title={
+            <View>
+              <View style={{ flexDirection: 'row' }}>
+                <Icon 
+                  type='font-awesome' 
+                  name='gift' 
+                  size={20} 
+                  color={'#353535'}
+                />
+                <View>
+                  {
+                    userItem.skills.map((skill, id) => {
+                      if (skill.name !== '') {
+                        return (
+                          <Text key={id} style={{ marginLeft: 6 }}>{skill.name}</Text>
+                        );
+                      }
+                    }) 
+                  }
+                </View>
+              </View>
+    
+              <View style={{ flexDirection: 'row' }}>
+                <Icon type='font-awesome' name='hand-o-left' size={20} color={'#353535'}/>
+                <Text style={{ marginLeft: 6 }}>{userItem.askCount}</Text>
+              </View>
+    
+              <View style={{ flexDirection: 'row' }}>
+                <Icon type='font-awesome' name='hand-o-right' size={20} color={'#353535'}/>
+                <Text style={{ marginLeft: 6 }}>{userItem.helpCount}</Text>
+              </View>
+    
+              <View style={{ flexDirection: 'row' }}>
+                <Icon type='font-awesome' name='thumbs-o-up' size={20} color={'#353535'}/>
+                <Text style={{ marginLeft: 8 }}>{userItem.votes}</Text>
+              </View>
+
+              <View style={{ flexDirection: 'row' }}>
+                <Icon type='font-awesome' name='language' size={20} color={'#353535'}/>
+                {
+                  userItem.languages[0] == 'ko' ? 
+                  <Flag
+                    style={ Platform.OS == 'ios' ? { marginLeft: 8, marginTop: 0, paddingTop: 0 } 
+                      : { marginLeft: 8 }
+                    } 
+                    code="KR" size={24}
+                  />
+                   : 
+                  <Flag
+                    style={ Platform.OS == 'ios' ? { marginLeft: 8, marginTop: 0, paddingTop: 0 } 
+                      : { marginLeft: 8 } 
+                    }
+                    code="GB" size={24}
+                  />
+                }
+                {
+                  typeof userItem.languages[1] == 'undefined' ? null :
+                  userItem.languages[1] == 'ko' ? <Flag code="KR" size={24}/>
+                   : <Flag code="GB" size={24}/>
+                }
+              </View>
+
+            </View>
+          }      
+        />
+      </Card>
+    );
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
         {renderHeader()}
+        <Overlay
+          isVisible={showUserModal}
+          height={300}
+          width='90%'
+          overlayBackgroundColor="lightgrey"
+          windowBackgroundColor="rgba(255, 255, 255, .5)"
+          onBackdropPress={() => setShowUserModal(false)}
+        >
+          {userItem && renderUserCard()}
+        </Overlay>
         <Leaderboard 
           data={boardData} 
           sortBy='score' 
           labelBy='name'
           icon="iconUrl"
+          onRowPress={renderUserInfo}
         />
       </ScrollView>
     </SafeAreaView>
