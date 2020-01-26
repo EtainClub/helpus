@@ -34,9 +34,9 @@ const LocationForm = (props) => {
             t('LocationScreen.permissionFail'),
             t('LocationScreen.permissionFailText'),
             [
-              {text: t('confirm')}
+              { text: t('confirm') }
             ],
-            {cancelable: true},
+            { cancelable: true },
           );
         }
       } catch (err) {

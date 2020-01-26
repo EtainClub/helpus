@@ -61,9 +61,9 @@ const AccountEditScreen = ({ navigation }) => {
           t('AccountEditScreen.cancelPickerTitle'),
           t('AccountEditScreen.cancelPicker'),
           [
-            {text: t('confirm')}
+            { text: t('confirm') }
           ],
-          {cancelable: true},
+          { cancelable: true },
         );
       } else if (response.error) {
         console.log('AccountEditScreen.pickerError', response.error);
@@ -72,9 +72,9 @@ const AccountEditScreen = ({ navigation }) => {
           t('AccountEditScreen.pickerErrorTitle'),
           t('AccountEditScreen.pickerError'),
           [
-            {text: t('confirm')}
+            { text: t('confirm') }
           ],
-          {cancelable: true},
+          { cancelable: true },
         );
       } else {
         const source = {uri: response.uri};
@@ -129,9 +129,9 @@ const AccountEditScreen = ({ navigation }) => {
             t('AccountEditScreen.updateErrorTitle'),
             t('AccountEditScreen.updateError'),
             [
-              {text: t('confirm')}
+              { text: t('confirm') }
             ],
-            {cancelable: true},
+            { cancelable: true },
           );
         }
       );

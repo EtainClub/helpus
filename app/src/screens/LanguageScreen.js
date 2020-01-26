@@ -236,6 +236,7 @@ const LanguageScreen = ({ navigation }) => {
         t('LanguageScreen.languageTitle'),
         t('LanguageScreen.languageText'),
         [
+          { text: t('no'), style: 'cancel' },
           { text: t('yes'), onPress: () => onLangRemove(checks) },
         ],
         { cancelable: true },

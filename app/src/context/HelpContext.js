@@ -83,9 +83,9 @@ const acceptRequest = dispatch => {
             t('HelpScreen.canceledTitle'),
             t('HelpScreen.canceledByClient'),
             [
-              {text: t('confirm')}
+              { text: t('confirm') }
             ],
-            {cancelable: true},
+            { cancelable: true },
           );
           // use accepted flag to return without further action
           accepted = true;
@@ -100,9 +100,9 @@ const acceptRequest = dispatch => {
           t('HelpScreen.acceptedTitle'),
           t('HelpScreen.alreadyAccepted'),
           [
-            {text: t('confirm')}
+            { text: t('confirm') }
           ],
-          {cancelable: true},
+          { cancelable: true },
         );
         }
       })
@@ -113,9 +113,9 @@ const acceptRequest = dispatch => {
           t('HelpScreen.canceledTitle'),
           t('HelpScreen.canceledByClient'),
           [
-            {text: t('confirm')}
+            { text: t('confirm') }
           ],
-          {cancelable: true},
+          { cancelable: true },
         );
       });
     if (accepted) {

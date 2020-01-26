@@ -55,9 +55,10 @@ export default () => {
           t('AppScreen.title'),
           t('AppScreen.message'),
           [
-            {text: t('yes'), onPress: () => NavigationService.navigate('Help', {notificationBody: notification})},
+            { text: t('no'), style: 'cancel' },
+            { text: t('yes'), onPress: () => NavigationService.navigate('Help', {notificationBody: notification}) },
           ],
-          {cancelable: true},
+          { cancelable: true },
         );
       }
     });
@@ -169,7 +170,7 @@ export default () => {
         t('App.permissionErrorTitle'),
         t('App.permissionErrorText'),
         [
-          {text: t('confirm')}
+          { text: t('confirm') }
         ],
         {cancelable: true},
       );

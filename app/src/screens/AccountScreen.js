@@ -136,7 +136,7 @@ const AccountScreen = ({ navigation }) => {
             t('LocationScreen.permissionFail'),
             t('LocationScreen.permissionFailText'),
             [
-              {text: t('confirm')}
+              { text: t('confirm') }
             ],
             {cancelable: true},
           );

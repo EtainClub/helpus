@@ -163,9 +163,9 @@ const ChatScreen = ({ navigation }) => {
             t('ChatScreen.updateErrorTitle'),
             t('ChatScreen.updateError'),
             [
-              {text: t('confirm')}
+              { text: t('confirm') }
             ],
-            {cancelable: true},
+            { cancelable: true },
           );
         }
       );
@@ -192,9 +192,9 @@ const ChatScreen = ({ navigation }) => {
           t('ChatScreen.cancelPickerTitle'),
           t('ChatScreen.cancelPicker'),
           [
-            {text: t('confirm')}
+            { text: t('confirm') }
           ],
-          {cancelable: true},
+          { cancelable: true },
         );        
       } else if (response.error) {
         console.log('ChatScreen pickerError', response.error);
@@ -203,9 +203,9 @@ const ChatScreen = ({ navigation }) => {
           t('ChatScreen.pickerErrorTitle'),
           t('ChatScreen.pickerError'),
           [
-            {text: t('confirm')}
+            { text: t('confirm') }
           ],
-          {cancelable: true},
+          { cancelable: true },
         );
       } else {
         const source = {uri: response.uri};
@@ -279,7 +279,7 @@ onVotePress = async ({ caseId, helperId }) => {
       i18next.t('ChatScreen.cannotVoteTitle'),
       i18next.t('ChatScreen.cannotVote'),
       [
-        {text: i18next.t('confirm')}
+        { text: i18next.t('confirm') }
       ],
       {cancelable: true},
     );
@@ -308,9 +308,9 @@ onVotePress = async ({ caseId, helperId }) => {
           i18next.t('ChatScreen.votedTitle'),
           i18next.t('ChatScreen.voted'),
           [
-            {text: i18next.t('confirm')}
+            { text: i18next.t('confirm') }
           ],
-          {cancelable: true},
+          { cancelable: true },
         );
       } else {
         // message box
@@ -320,9 +320,9 @@ onVotePress = async ({ caseId, helperId }) => {
           i18next.t('ChatScreen.votedAlreadyTitle'),
           i18next.t('ChatScreen.votedAlready'),
           [
-            {text: i18next.t('confirm')}
+            { text: i18next.t('confirm') }
           ],
-          {cancelable: true},
+          { cancelable: true },
         );
       }
     }

@@ -155,6 +155,7 @@ const ProfileScreen = ({ navigation }) => {
       t('ProfileScreen.deleteLocation'),
       t('ProfileScreen.deleteLocationText'),
       [
+        { text: t('no'), style: 'cancel' },
         { text: t('yes'), onPress: () => deleteLocation({ userId: state.userInfo.userId, id }) }
       ],
       { cancelable: true },
