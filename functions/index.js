@@ -10,7 +10,8 @@ const testAccounts = [
 'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
 'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
 'YceGXcoVfPNbLWpCrXVOOoYpJh02',
-'ofyzoEhGbyROabS6BV3xOylgA1t2' 
+'ofyzoEhGbyROabS6BV3xOylgA1t2',
+'Qfvz7uW5MsVw7k9pTHD550npVAT2' 
 ];
 
 // initialize app
@@ -122,12 +123,12 @@ exports.sendMessage = functions.firestore
           }
           // skip users not belonging to test accounts
           if (!testAccounts.includes(doc.id)) {
-            console.log('uid is not in test accounts', doc.id);
+//            console.log('uid is not in test accounts', doc.id);
             return;
           }
           // get the push token of a user
           pushToken = doc.data().pushToken;
-          console.log('token, sending message', pushToken, payload);
+//          console.log('token, sending message', pushToken, payload);
           // send if push token exists
           if (pushToken) {
             // send notification trhough firebase cloud messaging (fcm)
@@ -154,11 +155,11 @@ exports.sendMessage = functions.firestore
       }
 
       snapshot.forEach(doc => {
-        console.log('doc id', doc.id);
-        console.log('doc languages', doc.data().languages);
+//        console.log('doc id', doc.id);
+//        console.log('doc languages', doc.data().languages);
         // do not send if the user does not prefer the language
         if (!doc.data().languages.includes(language)) {
-          console.log('user does not include the language', doc.data().languages);
+//          console.log('user does not include the language', doc.data().languages);
           return;
         }
         // do not send notification to the sender
@@ -177,20 +178,20 @@ exports.sendMessage = functions.firestore
               dndTime2 = doc.data().dndTimes[2];
             }
           }
-          console.log('dndTime1', dndTime1);
-          console.log('dndTime2', dndTime2);
+//          console.log('dndTime1', dndTime1);
+//          console.log('dndTime2', dndTime2);
           // send message if dnd is not set or the messaging time is outside dnd time zone
           if (!dndTime1 || messagingTime < dndTime1 || messagingTime > dndTime2) {
             // get the push token of a user
             pushToken = doc.data().pushToken;
-            console.log('token, sending message', pushToken, payload);
+//            console.log('token, sending message', pushToken, payload);
             // send if push token exists
             if (pushToken) {
               // send notification through firebase cloud messaging (fcm)
               admin.messaging().sendToDevice(pushToken, payload);
             }
           } else {
-            console.log( 'time is in user dnd times', doc.id, messagingTime, dndTime1, dndTime2);
+//            console.log( 'time is in user dnd times', doc.id, messagingTime, dndTime1, dndTime2);
           }
         } else {
           console.log( 'the sender is the same', doc.id, sender);

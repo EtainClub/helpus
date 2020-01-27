@@ -55,6 +55,9 @@ const AskScreen = ({ navigation }) => {
 
   // handle requestion action
   const handleRequest = async () => {
+
+    console.log('[AskScreen] handleRequest');
+
     // prohibit the double requesting
     if (state.loading) {
       console.log('[handleRequest] aldreay requested.');
@@ -97,6 +100,19 @@ const AskScreen = ({ navigation }) => {
         } 
       } else if (Platform.OS =='ios') {
         // @todo get permission for ios and request help
+        // get location
+        let coordinate = null;
+        Geolocation.getCurrentPosition((position) => {
+          if (__DEV__) console.log('[AskScreen|getCoordinate] position', position);
+          // set coordinate
+          coordinate = position.coords;
+          // request help
+          requestHelp({ message, coordinate, navigation });
+        },
+        (error) => {
+          console.log(error.code, error.message);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });  
       }      
     } else { // guide to set location
       Alert.alert(
