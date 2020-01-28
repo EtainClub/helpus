@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>388248876836-vcoo03v0r8oml1a1s8batp6klihdtmas.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.388248876836-vcoo03v0r8oml1a1s8batp6klihdtmas</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>388248876836-4mv0jd7krmreu6tg8v8pp9ngt5klbl4e.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDuabU_EdZPiTXbJRuMmk5amJpslfLbILo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>388248876836</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>club.etain.helpus</string>
+	<key>PROJECT_ID</key>
+	<string>helpus-206eb</string>
+	<key>STORAGE_BUCKET</key>
+	<string>helpus-206eb.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:388248876836:ios:88d04af5303fdd7dd425b1</string>
+	<key>DATABASE_URL</key>
+	<string>https://helpus-206eb.firebaseio.com</string>
+</dict>
+</plist>
