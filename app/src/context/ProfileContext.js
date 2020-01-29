@@ -311,12 +311,13 @@ const verifyLocation = dispatch => {
       votes: newVerify ? 1 : firebase.firestore.FieldValue.increment(1)
     });
     
-    //// update the region and its coordinate
-    // convert the coordinate to a string
-    const coordinateStr = `${address.coordinate[0]},${address.coordinate[1]}`;
+    //// update the region
     userRef.update({
       regions: firebase.firestore.FieldValue.arrayUnion(address.district),
-      coordinates: firebase.firestore.FieldValue.arrayUnion(coordinateStr)
+    });
+    // update the location coordinate, geopoint
+    userRef.update({
+      coordinates: address.coordinate
     });    
   }
 };
@@ -366,13 +367,14 @@ const deleteLocation = dispatch => {
         votes: 0
       });
 
-      //// update the region and its coordinate too
-      // convert the coordinate to a string
-      const coordinateStr = `${coordinate[0]},${coordinate[1]}`;
+      // update the region
       userRef.update({
         regions: firebase.firestore.FieldValue.arrayRemove(district),
-        coordinates: firebase.firestore.FieldValue.arrayRemove(coordinateStr)
       });  
+      // update the location coordinate, geopoint
+      userRef.update({
+        coordinates: []
+      });   
     })
     .catch(error => {
       console.log(error);

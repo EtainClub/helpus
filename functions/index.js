@@ -9,9 +9,9 @@ const testAccounts = [
 'E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
 'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
 'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
-'YceGXcoVfPNbLWpCrXVOOoYpJh02',
-'ofyzoEhGbyROabS6BV3xOylgA1t2',
-'Qfvz7uW5MsVw7k9pTHD550npVAT2' 
+'Qfvz7uW5MsVw7k9pTHD550npVAT2',
+'eHtWShuvY2f65HzezsbufRt184M2',
+'MXWX9PZjdFdA3aFKNE1dn0aYnru2' 
 ];
 
 // initialize app
@@ -118,7 +118,7 @@ exports.sendMessage = functions.firestore
         snapshot.docs.forEach(doc => {
           // skip the sender  
           if (doc.id == sender) {
-            console.log('[test] sender is the same');
+            console.log('[test] sender is the same', sender);
             return;
           }
           // skip users not belonging to test accounts
@@ -131,6 +131,7 @@ exports.sendMessage = functions.firestore
 //          console.log('token, sending message', pushToken, payload);
           // send if push token exists
           if (pushToken) {
+//            console.log('sending message uid', doc.id);
             // send notification trhough firebase cloud messaging (fcm)
             admin.messaging().sendToDevice(pushToken, payload);
           }          

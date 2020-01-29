@@ -3,7 +3,11 @@ import { NavigationActions } from 'react-navigation';
 let _navigator;
 
 function setTopLevelNavigator(navigatorRef) {
-  _navigator = navigatorRef;
+  if (navigatorRef) {
+    _navigator = navigatorRef;
+  } else {
+    console.log('navigatorRef is null');
+  }
 }
 
 function navigate(routeName, params) {
