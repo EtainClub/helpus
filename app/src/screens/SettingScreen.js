@@ -71,7 +71,10 @@ const SettingScreen = ({ navigation }) => {
     },
     {
       title: t('SettingScreen.evaluate'),
-      url: 'https://play.google.com/store/apps/details?id=club.etain.helpus',
+      url: Platform.OS === 'ios' ? 
+          'https://apps.apple.com/us/app/helpus-instant-help-in-town/id1496615309?app=itunes&ign-mpt=uo%3D4' 
+          : 
+          'https://play.google.com/store/apps/details?id=club.etain.helpus',
       icon: 'star-o'
     },
     {
@@ -177,14 +180,13 @@ const SettingScreen = ({ navigation }) => {
           navigation.navigate('Language');
         break;
       // share
-      // @todo update app store link after registration 
       case 2:
         await Share.share({
           title: t('SettingScreen.shareTitle'),
           message: Platform.OS === 'android' ? 
             'https://play.google.com/store/apps/details?id=club.etain.helpus' 
             : 
-            'https://testflight.apple.com/join/3JdIg0MP'
+            'https://apps.apple.com/us/app/helpus-instant-help-in-town/id1496615309?app=itunes&ign-mpt=uo%3D4'
         });
         break;
       // app version

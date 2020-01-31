@@ -244,6 +244,7 @@ const UsersScreen = ({ navigation }) => {
             <MapView
               style={{ height: 280, marginBottom: mapMargin }}
               showsMyLocationButton
+              mapType="standard"
               loadingEnabled
               showsUserLocation
               initialRegion={region}

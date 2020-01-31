@@ -73,7 +73,9 @@
       "usernamePlaceholder": "Unknown Username",
       "locationPlaceholder": "Unknown Location",      
       "votes": "Votes",
-      "usersButton": "Neighbor helpus"
+      "usersButton": "Neighbor helpus",
+      "locationGuide": "Need to set location",
+      "locationGuideText": "You need to verify your location in the profile"
     },
     "AskScreen": {
       "header": "helpus",
@@ -205,6 +207,7 @@
       "languageTitle": "Languages",
       "languageText": "Select lanugage",
       "shareTitle": "Download helpus app",
+      "shareMessage": "helpus app download link",
       "app": "App Settings",
       "evaluate": "Evaluate App",
       "evaluationTitle": "App Evaluation",

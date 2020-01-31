@@ -74,7 +74,9 @@
       "usernamePlaceholder": "사용자이름 미설정",
       "locationPlaceholder": "위치 미설정",
       "votes": "추천수",
-      "usersButton": "우리 동네 헬퍼스"
+      "usersButton": "우리 동네 헬퍼스",
+      "locationGuide": "활동지역 설정 필요",
+      "locationGuideText": "동네 헬퍼스를 둘려면 프로필에서 활동지역을 인증해야 합니다."
     },
     "AskScreen": {
       "header": "helpus",
@@ -204,6 +206,7 @@
       "endTimeHeader": "종료 시간 설정",
       "language": "언어 설정",
       "shareTitle": "helpus앱 다운로드",
+      "shareMessage": "helpus앱 다운로드 링크",
       "app": "앱 설정",
       "evaluate": "앱 평가하기",
       "evaluationTitle": "앱 평가",

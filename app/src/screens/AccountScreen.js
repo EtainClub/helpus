@@ -122,6 +122,21 @@ const AccountScreen = ({ navigation }) => {
   }
 
   onUsersPress = async () => {
+    //
+    // check if the user sets the location
+    if (state.locations[0].name === '') {
+      // alert
+      Alert.alert(
+        t('AccountScreen.locationGuide'),
+        t('AccountScreen.locationGuideText'),
+        [
+          { text: t('confirm') }
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+
     // get location permission for android device
     if (Platform.OS === 'android') {
       try {
@@ -145,8 +160,21 @@ const AccountScreen = ({ navigation }) => {
         console.warn(err);
       }  
     } else if (Platform.OS === 'ios') {
-      // navigate to the location screen
-      navigation.navigate('Users', { id: currentUser.uid });
+      // check if the user sets the location
+      if (state.locations[0].name === '') {
+        // alert
+        Alert.alert(
+          t('AccountScreen.locationGuide'),
+          t('AccountScreen.locationGuideText'),
+          [
+            { text: t('confirm') }
+          ],
+          { cancelable: true },
+        );
+      } else {
+        // navigate to the location screen
+        navigation.navigate('Users', { id: currentUser.uid });
+      }
     }    
   }
 
