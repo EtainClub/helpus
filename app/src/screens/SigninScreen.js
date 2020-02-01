@@ -144,7 +144,7 @@ const SigninScreen = ({ navigation }) => {
           <Input
             containerStyle={{ flex: 5 }}
             placeholder={t('SigninScreen.phone')}
-            value={phoneNumber}
+            value={phoneNumber.replace(/\-/g, "")}
             onChangeText={setPhoneNumber}
             autoCapitalize="none"
             autoCorrect={false}
