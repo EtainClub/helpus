@@ -25,7 +25,12 @@ const SettingScreen = ({ navigation }) => {
   const forceUpdate = useCallback(() => updateState({}), []);
   */
 
+  const APPSTORE = 'https://apps.apple.com/us/app/helpus-instant-help-in-town/id1496615309?app=itunes&ign-mpt=uo%3D4';  
+  const GOOGLEPLAY = 'https://play.google.com/store/apps/details?id=club.etain.helpus';
+
   //// initial values
+  // app version
+  const appVersion = '1.5.2';
   // setting list
   const settingList = [
     {
@@ -41,6 +46,9 @@ const SettingScreen = ({ navigation }) => {
       title: t('SettingScreen.app'),
     },
     {
+      title: t('SettingScreen.version') + appVersion,
+    },
+    {
       title: t('SettingScreen.signout'),
     },
     {
@@ -53,6 +61,10 @@ const SettingScreen = ({ navigation }) => {
       title: t('SettingScreen.howto'),
       url: 'http://etain.club/howto',
       icon: 'question'
+    },
+    {
+      title: t('SettingScreen.notice'),
+      icon: 'bullhorn'
     },
     {
       title: t('SettingScreen.facebookGroup'),
@@ -71,10 +83,7 @@ const SettingScreen = ({ navigation }) => {
     },
     {
       title: t('SettingScreen.evaluate'),
-      url: Platform.OS === 'ios' ? 
-          'https://apps.apple.com/us/app/helpus-instant-help-in-town/id1496615309?app=itunes&ign-mpt=uo%3D4' 
-          : 
-          'https://play.google.com/store/apps/details?id=club.etain.helpus',
+      url: Platform.OS === 'ios' ? APPSTORE : GOOGLEPLAY,
       icon: 'star-o'
     },
     {
@@ -90,7 +99,7 @@ const SettingScreen = ({ navigation }) => {
       lang: i18next.language
     },
   ];
-  
+
   // get user doc
   const { currentUser } = firebase.auth();
   let userId = null;
@@ -116,12 +125,30 @@ const SettingScreen = ({ navigation }) => {
   const [showDND, setShowDND] = useState(false); 
   const [startDNDTime, setStartDNDTime] = useState({ show: false, time: START_TIME });
   const [endDNDTime,   setEndDNDTime] = useState({ show: false, time: END_TIME });
-  
+  const [latestAppVersion, setLatestAppVersion] = useState(null);
+
   // componentDidMount
   useEffect(() => {
+    // get latest app version from db
+    getLatestAppVersion();
     // initialize settings
     initSettings();
   }, []);
+
+  const getLatestAppVersion = () => {
+    // stat doc ref
+    const statRef = firebase.firestore().doc('stat/0');
+    console.log('[getLatestAppVersion] stat ref', statRef);
+    statRef.get()
+    .then(doc => {
+      console.log('[getLatestAppVersion] doc', doc);
+      const newVersion = doc.data().version;
+      setLatestAppVersion(newVersion);
+    })
+    .catch(error => {
+      console.log('Error getting the app stat', error);
+    }); 
+  };
 
   const initSettings = async () => {
 
@@ -183,17 +210,33 @@ const SettingScreen = ({ navigation }) => {
       case 2:
         await Share.share({
           title: t('SettingScreen.shareTitle'),
-          message: Platform.OS === 'android' ? 
-            'https://play.google.com/store/apps/details?id=club.etain.helpus' 
-            : 
-            'https://apps.apple.com/us/app/helpus-instant-help-in-town/id1496615309?app=itunes&ign-mpt=uo%3D4'
+          message: Platform.OS === 'android' ? GOOGLEPLAY : APPSTORE 
         });
         break;
-      // app version
+      // app settings
       case 3:
         Linking.openSettings();
         break;
+      // app version
       case 4:
+        // check if the app version is the lastest
+        if (appVersion === latestAppVersion) {
+          // alert
+          Alert.alert(
+            t('SettingScreen.versionTitle'),
+            t('SettingScreen.versionText'),
+            [
+              { text: t('confirm') }
+            ],
+            { cancelable: true },
+          );
+        } else {
+          // forward to app store of google play
+          const url = Platform.OS === 'ios' ? APPSTORE : GOOGLEPLAY;
+          onLinkPress(url, null, null);
+        }
+        break;
+      case 5:
         Alert.alert(
           t('SettingScreen.signoutTitle'),
           t('SettingScreen.signoutText'),
@@ -204,7 +247,7 @@ const SettingScreen = ({ navigation }) => {
           { cancelable: true },
         );
         break;  
-      case 5:
+      case 6:
           Alert.alert(
             t('SettingScreen.deleteTitle'),
             t('SettingScreen.deleteText'),
@@ -362,6 +405,8 @@ const SettingScreen = ({ navigation }) => {
         title: t('SettingScreen.feedbackTitle'),
         message: t('SettingScreen.feedbackMsg'),
       });
+    } else if (icon === 'bullhorn') {
+      // navigate to notice screen
     } else {
       Linking.openURL(newUrl);  
     }
