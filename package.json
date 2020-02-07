@@ -1,6 +1,6 @@
 {
   "name": "helpus",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "private": true,
   "scripts": {
     "start": "react-native start",

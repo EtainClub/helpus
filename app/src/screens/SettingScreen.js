@@ -407,6 +407,7 @@ const SettingScreen = ({ navigation }) => {
       });
     } else if (icon === 'bullhorn') {
       // navigate to notice screen
+      navigation.navigate('NoticeList');
     } else {
       Linking.openURL(newUrl);  
     }

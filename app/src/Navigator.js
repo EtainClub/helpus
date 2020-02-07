@@ -11,7 +11,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import ResolveAuthScreen from './screens/ResolveAuthScreen';
 import IntroScreen from './screens/IntroScreen';
 import SigninScreen from './screens/SigninScreen';
-import SignupScreen from './screens/SignupScreen';
 import AskScreen from './screens/AskScreen';
 import AskWaitScreen from './screens/AskWaitScreen';
 import HelpScreen from './screens/HelpScreen';
@@ -26,6 +25,8 @@ import UsersScreen from './screens/UsersScreen';
 import LeadersScreen from './screens/LeadersScreen';
 import LanguageScreen from './screens/LanguageScreen';
 import LanguageAddScreen from './screens/LanguageAddScreen';
+import NoticeListScreen from './screens/NoticeListScreen';
+import NoticeScreen from './screens/NoticeScreen';
 
 const askFlow = createStackNavigator(
   {
@@ -83,6 +84,8 @@ const settingFlow = createStackNavigator(
     Settings: SettingScreen,
     Language: LanguageScreen,
     LanguageAdd: LanguageAddScreen,
+    NoticeList: NoticeListScreen,
+    Notice: NoticeScreen,
   },
   {headerLayoutPreset: 'center'},
 );
