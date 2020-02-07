@@ -190,7 +190,7 @@ const SigninScreen = ({ navigation }) => {
                 title={t('confirm')}
                 onPress={() => confirmVerificationCode({ 
                   phoneNumber, 
-                  code: '123456', 
+                  code: '989898', 
                   confirmResult: state.confirmResult,
                   navigation })}
               />
