@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform} from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Button, Icon } from 'react-native-elements';
+import { Button, Icon, Rating } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { GiftedChat } from 'react-native-gifted-chat';
@@ -303,7 +303,8 @@ onVotePress = async ({ caseId, helperId }) => {
         helperRef.update({
           votes: increment
         });
-        // alert for cannot vote message
+        
+        // alert for vote message
         Alert.alert(
           i18next.t('ChatScreen.votedTitle'),
           i18next.t('ChatScreen.voted'),
@@ -312,9 +313,8 @@ onVotePress = async ({ caseId, helperId }) => {
           ],
           { cancelable: true },
         );
+        
       } else {
-        // message box
-        alert(i18next.t('ChatScreen.votedAlready'));
         // alert for cannot vote message
         Alert.alert(
           i18next.t('ChatScreen.votedAlreadyTitle'),
