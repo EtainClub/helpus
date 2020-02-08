@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
+import firebase from 'react-native-firebase';
 import { StyleSheet } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Text, ListItem } from 'react-native-elements';
+import { Text, Divider } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
 // custom libraries
 import Spacer from '../components/Spacer';
-import { Context as AuthContext } from '../context/AuthContext';
 
 // @todo guide to change primary language by drag and drop
 const NoticeScreen = ({ navigation }) => {
@@ -15,43 +15,34 @@ const NoticeScreen = ({ navigation }) => {
   const { t } = useTranslation();
 
   // get navigation params
-  const codeData = navigation.getParam('codeData');
-  // build language list to display
-  let allLanguages = [];
-  if (codeData) {
-    // english
-    if (!codeData.includes('en')) {
-      // append
-      allLanguages.push('en');
-    }
-    // korean
-    if (!codeData.includes('ko')) {
-      // append
-      allLanguages.push('ko');
-    }
-  }
-  
-  const onLanguagePress = async (langCode) => {
-    console.log('[onLanguagePress] allLang', allLanguages, langCode);
-    // return to langugae screen
-    navigation.navigate('Language', { selectedLang: langCode });
-  };
+  const docId = navigation.getParam('docId');
+  const language = navigation.getParam('language');
+  const subject = navigation.getParam('subject');
+  // get reference to the notice
+  const bodyRef = firebase.firestore().collection('notices').doc(`${docId}`).collection('body').doc(`${language}`);
 
+  // state
+  const [body, setBody] = useState('');
+  const [imgUrl, setImgUrl] = useState(null);
+  const [link, setLink] = useState(null);
+
+  // get body
+  bodyRef.get()
+  .then(doc => {
+    console.log('doc data', doc.data());
+    setBody(doc.data().body);
+    setImgUrl(doc.data().imgUrl);
+    setLink(doc.data().link);
+  })
+  .catch(error => console.log(error));
+
+  console.log('bodyRef', bodyRef);
   return (
     <SafeAreaView>
       <ScrollView>
-        <Spacer>
-          <Text style={styles.listHeaderText}>{t('LanguageAddScreen.all')}</Text>
-          {
-            allLanguages.map((item, i) => (
-              <ListItem
-                key={i}
-                title={t(item)}
-                onPress={() => onLanguagePress(item)} 
-              />
-            ))
-          }
-        </Spacer>  
+        <Text h4>{subject}</Text>
+        <Divider />
+        <Text>{body}</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -59,7 +50,7 @@ const NoticeScreen = ({ navigation }) => {
 
 NoticeScreen.navigationOptions = () => {
   return {
-    title: i18next.t('LanguageAddScreen.header'),
+    title: i18next.t('NoticeScreen.header'),
     headerStyle: {
       backgroundColor: '#07a5f3',
       alignText: 'center'

@@ -239,6 +239,12 @@
       "all": "모든 언어",
       "korean": "한글",
       "english": "English"
-    }
+    },
+    "NoticeListScreen": {
+      "header": "공지사항 목록",
+    },
+    "NoticeScreen": {
+      "header": "공지사항",
+    },
   }
 }

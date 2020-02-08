@@ -240,7 +240,13 @@
       "all": "All Languages",
       "korean": "Korean",
       "english": "English"
-    }
+    },
+    "NoticeListScreen": {
+      "header": "Notice List",
+    },    
+    "NoticeScreen": {
+      "header": "Notice",
+    },
   },
 }
 

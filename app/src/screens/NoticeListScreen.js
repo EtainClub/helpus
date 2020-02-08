@@ -42,6 +42,7 @@ const NoticeListScreen = ({ navigation }) => {
       // build data array
       snapshot.docs.forEach(doc => {
         data = [...data, ({
+          docId: doc.id,
           createdAt: moment(doc.data().createdAt.toDate()).format('ll'),
           subject: doc.data()[subject]
         })];
@@ -51,9 +52,9 @@ const NoticeListScreen = ({ navigation }) => {
     });
   };
 
-  const onItemPress = () => {
+  const onItemPress = ({ docId, subject }) => {
     // navigate to chatting with case id
-    navigation.navigate('Notice');
+    navigation.navigate('Notice', { docId, subject, language });
   };
 
   const renderItem = ({ item }) => (
@@ -62,7 +63,7 @@ const NoticeListScreen = ({ navigation }) => {
       subtitle={item.createdAt}
       bottomDivider
       chevron
-      onPress={() => onItemPress()}
+      onPress={() => onItemPress({ docId: item.docId, subject: item.subject })}
     />
   );
 
@@ -84,9 +85,6 @@ const NoticeListScreen = ({ navigation }) => {
       <NavigationEvents
         onWillFocus={payload => onWillFocus(payload)}
       />
-      <View style={{alignItems: 'center', backgroundColor: 'lightgrey'}}>
-        <Text style={{fontSize: 20, fontWeight: 'bold'}}>{i18next.t('ChatListScreen.askCases')}</Text>
-      </View>
       {renderNoticeList()}
     </SafeAreaView>
   );
@@ -94,7 +92,7 @@ const NoticeListScreen = ({ navigation }) => {
 
 NoticeListScreen.navigationOptions = ({ navigation }) => {
   return {
-    title: i18next.t('ChatListScreen.header'),
+    title: i18next.t('NoticeListScreen.header'),
     headerStyle: {
       backgroundColor: '#07a5f3',
     },
