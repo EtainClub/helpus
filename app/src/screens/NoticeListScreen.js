@@ -52,9 +52,9 @@ const NoticeListScreen = ({ navigation }) => {
     });
   };
 
-  const onItemPress = ({ docId, subject }) => {
+  const onItemPress = ({ docId, subject, date }) => {
     // navigate to chatting with case id
-    navigation.navigate('Notice', { docId, subject, language });
+    navigation.navigate('Notice', { docId, subject, language, date });
   };
 
   const renderItem = ({ item }) => (
@@ -63,7 +63,7 @@ const NoticeListScreen = ({ navigation }) => {
       subtitle={item.createdAt}
       bottomDivider
       chevron
-      onPress={() => onItemPress({ docId: item.docId, subject: item.subject })}
+      onPress={() => onItemPress({ docId: item.docId, subject: item.subject, date: item.createdAt })}
     />
   );
 

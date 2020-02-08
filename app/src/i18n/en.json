@@ -246,6 +246,7 @@
     },    
     "NoticeScreen": {
       "header": "Notice",
+      "button": "Go"
     },
   },
 }

@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
 import firebase from 'react-native-firebase';
-import { StyleSheet } from 'react-native';
+import { Linking, StyleSheet } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Text, Divider } from 'react-native-elements';
+import { Text, Divider, Button } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -18,6 +18,7 @@ const NoticeScreen = ({ navigation }) => {
   const docId = navigation.getParam('docId');
   const language = navigation.getParam('language');
   const subject = navigation.getParam('subject');
+  const date = navigation.getParam('date');
   // get reference to the notice
   const bodyRef = firebase.firestore().collection('notices').doc(`${docId}`).collection('body').doc(`${language}`);
 
@@ -31,8 +32,10 @@ const NoticeScreen = ({ navigation }) => {
   .then(doc => {
     console.log('doc data', doc.data());
     setBody(doc.data().body);
-    setImgUrl(doc.data().imgUrl);
-    setLink(doc.data().link);
+    if (doc.data().imgUrl !== '')
+      setImgUrl(doc.data().imgUrl);
+    if (doc.data().link !== '')
+      setLink(doc.data().link);
   })
   .catch(error => console.log(error));
 
@@ -40,9 +43,22 @@ const NoticeScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <ScrollView>
-        <Text h4>{subject}</Text>
+        <Spacer>
+          <Text>{date}</Text>
+          <Text h4>{subject}</Text>
+        </Spacer>
         <Divider />
-        <Text>{body}</Text>
+        <Spacer>
+          <Text>{body}</Text>
+          {
+            link &&
+            <Button
+              buttonStyle={{ margin: 20, justifyContent: 'center' }} 
+              title={t('NoticeScreen.button')} 
+              onPress={() => Linking.openURL(link)}
+            />
+          }
+        </Spacer>
       </ScrollView>
     </SafeAreaView>
   );

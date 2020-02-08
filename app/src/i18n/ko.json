@@ -245,6 +245,7 @@
     },
     "NoticeScreen": {
       "header": "공지사항",
+      "button": "바로가기"
     },
   }
 }
