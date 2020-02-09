@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform, SnapshotViewIOS} from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
 import { Button, Icon, AirbnbRating, Overlay } from 'react-native-elements';
 import i18next from 'i18next';
@@ -313,6 +313,22 @@ const ChatScreen = ({ navigation }) => {
     const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
     // set the vote flag
     caseRef.update({ voted: true });
+    
+    /*
+    //// @test update add new field to users
+    const usersRef = firebase.firestore().collection('users');
+    const initRatings = [0, 0, 0, 0, 0];
+    usersRef.get()
+    .then(snapshot => {
+      snapshot.forEach(async doc => {
+        const userRef = firebase.firestore().doc(`users/${doc.id}`);
+        userRef.update({
+          ratings: initRatings
+        });
+      });
+    });
+    */
+
     // get helper id
     const helperRef = firebase.firestore().doc(`users/${helperId}`);
     // update the number of votes of the helper
