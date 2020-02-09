@@ -177,6 +177,7 @@ const processSignin = ({ dispatch, user, navigation }) => {
             askCount: 0,
             helpCount: 0,
             votes: 0,
+            ratings: [0, 0, 0, 0, 0],
             regions: [],
             languages: [i18next.language],
             coordinates: [],

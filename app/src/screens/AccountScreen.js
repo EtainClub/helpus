@@ -49,6 +49,7 @@ const AccountScreen = ({ navigation }) => {
           name: doc.data().name || null,
           avatarUrl: doc.data().avatarUrl || null,
           votes: doc.data().votes || 0,
+          ratings: doc.data().ratings || [0, 0, 0, 0, 0],
           askCount: counts.askCount,
           helpCount: counts.helpCount
         });

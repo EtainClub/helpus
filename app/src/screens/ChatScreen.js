@@ -24,6 +24,7 @@ const ChatScreen = ({ navigation }) => {
   const [imgAttached, setImgAttached] = useState(false);
 //  const [unsubscribeChat, setUnsubscribeChat] = useState(null);
   const [showRating, setShowRating] = useState(false);
+  const [rating, setRating] = useState(0);
 
   // get navigation params
   const caseId = navigation.getParam('caseId');
@@ -280,17 +281,8 @@ const ChatScreen = ({ navigation }) => {
       console.log('[ChatScreen|onVotePress] doc', doc);
       if (typeof doc.data().voted != 'undefined') {
         if (!doc.data().voted) {
-          setShowRating(true);
-          // set the flag
-//          caseRef.update({ voted: true });
-          // set increment interval
-          const increment = firebase.firestore.FieldValue.increment(1);
-          // get helper id
-          const helperRef = firebase.firestore().doc(`users/${helperId}`);
-          // update the number of votes of the helper
-          helperRef.update({
-            votes: increment
-          });       
+          // show the rating modal
+          setShowRating(true);      
         } else {
           // alert for cannot vote message
           Alert.alert(
@@ -309,8 +301,39 @@ const ChatScreen = ({ navigation }) => {
     });
   }
   
+  // update the rating
   const onFinishRating = (value) => {
-    console.log('onFinishRating. rate: ', value);
+    setRating(value);
+  };
+
+  const onConfirmRating = async () => {
+    // dismiss the modal
+    setShowRating(false);
+    // case reference
+    const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
+    // set the vote flag
+    caseRef.update({ voted: true });
+    // get helper id
+    const helperRef = firebase.firestore().doc(`users/${helperId}`);
+    // update the number of votes of the helper
+    helperRef.update({
+      votes: firebase.firestore.FieldValue.increment(1)
+    });
+    //// update the rate array
+    // get current ratings
+    let ratings = [];
+    helperRef.get()
+    .then(doc => {
+      // get ratings
+      ratings = doc.data().ratings;
+      // increment
+      ratings[rating-1] += 1;
+      // update the db
+      helperRef.update({
+        ratings: ratings
+      });
+    })
+    .catch(error => console.log(error));
   };
 
   return (
@@ -330,24 +353,26 @@ const ChatScreen = ({ navigation }) => {
       />
       <Overlay
         isVisible={showRating}
-        height={100}
+        height={200}
         width='90%'
-        overlayBackgroundColor="lightgrey"
-        windowBackgroundColor="rgba(255, 255, 255, .5)"
         onBackdropPress={() => setShowRating(false)}
       >
-        <AirbnbRating
-          count={5}
-          reviews={[t('ChatScreen.ratingBad'), t('ChatScreen.ratingHm'), t('ChatScreen.ratingOk'), 
-                    t('ChatScreen.ratingGood'), t('ChatScreen.ratingEx')
-          ]}
-          defaultRating={5}
-          size={20}
-          onFinishRating={onFinishRating}
-        />
-        <Button
-          title={t('ChatScreen.ratingButton')} 
-        />
+        <View>
+          <AirbnbRating
+            count={5}
+            reviews={[t('ChatScreen.ratingBad'), t('ChatScreen.ratingHmm'), t('ChatScreen.ratingOk'), 
+                      t('ChatScreen.ratingGood'), t('ChatScreen.ratingEx')
+            ]}
+            defaultRating={0}
+            size={20}
+            onFinishRating={onFinishRating}
+          />
+          <Button
+            containerStyle={{ marginTop: 20 }}
+            title={t('ChatScreen.ratingButton')}
+            onPress={onConfirmRating} 
+          />
+        </View>
       </Overlay>
       </View>
   );
