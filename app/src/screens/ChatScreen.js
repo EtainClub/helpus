@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform} from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Button, Icon, Rating } from 'react-native-elements';
+import { Button, Icon, AirbnbRating, Overlay } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { GiftedChat } from 'react-native-gifted-chat';
@@ -23,9 +23,11 @@ const ChatScreen = ({ navigation }) => {
   const [imgLoading, setImgLoading] = useState(false);
   const [imgAttached, setImgAttached] = useState(false);
 //  const [unsubscribeChat, setUnsubscribeChat] = useState(null);
+  const [showRating, setShowRating] = useState(false);
 
-  // get params
+  // get navigation params
   const caseId = navigation.getParam('caseId');
+  const helperId = navigation.getParam('helperId');
 
   // get reference to the message list
   const chatsRef = firebase.firestore().collection('cases').doc(`${caseId}`).collection('chats');
@@ -38,6 +40,11 @@ const ChatScreen = ({ navigation }) => {
 
   // componentWillMount
   useEffect(() => {
+    // set navigation param for voting
+    navigation.setParams({ 
+      handleVoting: handleVoting
+    });
+
     return () => {
       console.log('unsubscribe message listener');
       unsubscribe();
@@ -241,7 +248,71 @@ const ChatScreen = ({ navigation }) => {
     );
   }
 
+  // increase the helper's vote
+  // @todo the user cannot vote more for this case
+  // creat a new field in the case, vote to set flag
+  handleVoting = async () => {
+    console.log('vote up pressed');
+    console.log('[ChatScreen|handleVoting] caseId, helperId', caseId, helperId);
+
+    //// self cannot vote
+    // get reference to the current user
+    const { currentUser } = firebase.auth();
+    const userId = currentUser.uid;  
+    // check the userId
+    if (userId === helperId) {
+      // alert for cannot vote message
+      Alert.alert(
+        i18next.t('ChatScreen.cannotVoteTitle'),
+        i18next.t('ChatScreen.cannotVote'),
+        [
+          { text: i18next.t('confirm') }
+        ],
+        {cancelable: true},
+      );
+      return;
+    }  
+    // case reference
+    const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
+    // get vote field
+    await caseRef.get()
+    .then(doc => {
+      console.log('[ChatScreen|onVotePress] doc', doc);
+      if (typeof doc.data().voted != 'undefined') {
+        if (!doc.data().voted) {
+          setShowRating(true);
+          // set the flag
+//          caseRef.update({ voted: true });
+          // set increment interval
+          const increment = firebase.firestore.FieldValue.increment(1);
+          // get helper id
+          const helperRef = firebase.firestore().doc(`users/${helperId}`);
+          // update the number of votes of the helper
+          helperRef.update({
+            votes: increment
+          });       
+        } else {
+          // alert for cannot vote message
+          Alert.alert(
+            i18next.t('ChatScreen.votedAlreadyTitle'),
+            i18next.t('ChatScreen.votedAlready'),
+            [
+              { text: i18next.t('confirm') }
+            ],
+            { cancelable: true },
+          );
+        }
+      }
+    })
+    .catch(error => {
+      console.log('cannot get voted flag', error);
+    });
+  }
   
+  const onFinishRating = (value) => {
+    console.log('onFinishRating. rate: ', value);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <NavigationEvents
@@ -257,88 +328,32 @@ const ChatScreen = ({ navigation }) => {
         }}
         renderActions={this.renderCustomActions}
       />
+      <Overlay
+        isVisible={showRating}
+        height={100}
+        width='90%'
+        overlayBackgroundColor="lightgrey"
+        windowBackgroundColor="rgba(255, 255, 255, .5)"
+        onBackdropPress={() => setShowRating(false)}
+      >
+        <AirbnbRating
+          count={5}
+          reviews={[t('ChatScreen.ratingBad'), t('ChatScreen.ratingHm'), t('ChatScreen.ratingOk'), 
+                    t('ChatScreen.ratingGood'), t('ChatScreen.ratingEx')
+          ]}
+          defaultRating={5}
+          size={20}
+          onFinishRating={onFinishRating}
+        />
+        <Button
+          title={t('ChatScreen.ratingButton')} 
+        />
+      </Overlay>
       </View>
   );
 }
 
-// increase the helper's vote
-// @todo the user cannot vote more for this case
-// creat a new field in the case, vote to set flag
-onVotePress = async ({ caseId, helperId }) => {
-  console.log('vote up pressed');
-  console.log('[ChatScreen|onVotePress] caseId, helperId', caseId, helperId);
-
-  //// self cannot vote
-  // get reference to the current user
-  const { currentUser } = firebase.auth();
-  const userId = currentUser.uid;  
-  // check the userId
-  if (userId === helperId) {
-    // alert for cannot vote message
-    Alert.alert(
-      i18next.t('ChatScreen.cannotVoteTitle'),
-      i18next.t('ChatScreen.cannotVote'),
-      [
-        { text: i18next.t('confirm') }
-      ],
-      {cancelable: true},
-    );
-    return;
-  }  
-  // case reference
-  const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
-  // get vote field
-  await caseRef.get()
-  .then(doc => {
-    console.log('[ChatScreen|onVotePress] doc', doc);
-    if (typeof doc.data().voted != 'undefined') {
-      if (!doc.data().voted) {
-        // set the flag
-        caseRef.update({ voted: true });
-        // set increment interval
-        const increment = firebase.firestore.FieldValue.increment(1);
-        // get helper id
-        const helperRef = firebase.firestore().doc(`users/${helperId}`);
-        // update the number of votes of the helper
-        helperRef.update({
-          votes: increment
-        });
-        
-        // alert for vote message
-        Alert.alert(
-          i18next.t('ChatScreen.votedTitle'),
-          i18next.t('ChatScreen.voted'),
-          [
-            { text: i18next.t('confirm') }
-          ],
-          { cancelable: true },
-        );
-        
-      } else {
-        // alert for cannot vote message
-        Alert.alert(
-          i18next.t('ChatScreen.votedAlreadyTitle'),
-          i18next.t('ChatScreen.votedAlready'),
-          [
-            { text: i18next.t('confirm') }
-          ],
-          { cancelable: true },
-        );
-      }
-    }
-  })
-  .catch(error => {
-    console.log('cannot get voted flag', error);
-  });
-}
-
-ChatScreen.navigationOptions = ({ navigation }) => {
-  const caseId = navigation.getParam('caseId');
-  const helperId = navigation.getParam('helperId');
-
-//  console.log('[ChatScreen] caseId, helperId', caseId, helperId);
-//  console.log('navigation', navigation);
-  
+ChatScreen.navigationOptions = ({ navigation }) => {  
   return {
     title: i18next.t('ChatScreen.header'),
     headerStyle: {
@@ -353,9 +368,7 @@ ChatScreen.navigationOptions = ({ navigation }) => {
         containerStyle={styles.voteButton}
         buttonStyle={{ marginRight: 5 }} 
         title={i18next.t('ChatScreen.voteButton')}
-        onPress={() => { 
-          onVotePress({ caseId, helperId });
-        }}
+        onPress={navigation.getParam('handleVoting')}
       />
     )
   };

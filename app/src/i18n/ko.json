@@ -176,6 +176,12 @@
       "votedAlready": "이미 추천하셨습니다",
       "updateErrorTitle": "업로드 오류",
       "updateError": "다시 시도해 주세요",
+      "ratingBad": "나쁨",
+      "ratingHm": "별로",
+      "ratingOk": "괜찮음",
+      "ratingGood": "좋음",
+      "ratingEx": "훌륭함",
+      "ratingButton": "평가하기"
     },
     "ChatListScreen": {
       "header": "채팅 리스트",

@@ -175,6 +175,12 @@
       "votedAlready": "Already voted",
       "updateErrorTitle": "Upload Error",
       "updateError": "Try again", 
+      "ratingBad": "Bad",
+      "ratingHm": "Hm",
+      "ratingOk": "OK",
+      "ratingGood": "Good",
+      "ratingEx": "Excellent",
+      "ratingButton": "Rate"
     },
     "ChatListScreen": {
       "header": "Chat List",
