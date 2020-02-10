@@ -173,8 +173,6 @@ const sendMessage = async ({ dispatch, message, coordinate, navigation }) => {
   const hour = date.getHours();
   const minutes = date.getMinutes();
   const messagingTime = hour*60 + minutes + timeOffset;
-  // position coordinate
-  const coordinateStr = `${coordinate.latitude},${coordinate.longitude}`;
   // add a new document with auto generated doc id
   await casesRef.add({
     senderId: userId,
@@ -184,7 +182,7 @@ const sendMessage = async ({ dispatch, message, coordinate, navigation }) => {
     language,
     createdAt: new Date(),
     messagingTime,
-    coordinate: [coordinateStr],
+    coordinate: [coordinate.latitude, coordinate.longitude],
     newChat: true
   })
   .then(async docRef => {
