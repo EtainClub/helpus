@@ -30,7 +30,7 @@ const SettingScreen = ({ navigation }) => {
 
   //// initial values
   // app version
-  const appVersion = '1.7.1';
+  const appVersion = '1.7.2';
   // setting list
   const settingList = [
     {

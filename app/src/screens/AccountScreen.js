@@ -263,7 +263,7 @@ const AccountScreen = ({ navigation }) => {
             />
             <View style={{ marginHorizontal: 25 }}>
               <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{t('AccountScreen.votes')}</Text>
-              <Text style={{ fontSize: 16 }}>{state.userInfo.votes? state.userInfo.votes : "0"} {t('cases')}</Text>
+              <Text style={{ fontSize: 16 }}>{state.userInfo.rating} ({state.userInfo.votes})</Text>
             </View>
           </View>
           </Spacer>

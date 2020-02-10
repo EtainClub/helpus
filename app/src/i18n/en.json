@@ -72,7 +72,7 @@
       "helpCases": "Helped Cases",
       "usernamePlaceholder": "Unknown Username",
       "locationPlaceholder": "Unknown Location",      
-      "votes": "Votes",
+      "votes": "Rating (# of Votes)",
       "usersButton": "Neighbor helpus",
       "locationGuide": "Need to set location",
       "locationGuideText": "You need to verify your location in the profile"
@@ -104,7 +104,7 @@
       "alreadyAccepted": "This has already been assigned",
       "canceledTitle": "Canceled Request",
       "canceledByClient": "The client canceled it",
-      "votes": "Votes",
+      "votes": "Rating",
       "updateFailureTitle": "Update Failure",
       "updateFailure": "failed during DB update",
     },

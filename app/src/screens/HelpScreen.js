@@ -22,6 +22,7 @@ const HelpScreen = ({ navigation }) => {
   const [senderInfo, setSenderInfo] = useState({});
   const [senderLocation, setSenderLocation] = useState('');
   const [senderLocationVotes, setSenderLocationVotes] = useState(null);
+  const [rating, setRating] = useState(0);
 
   // use effect
   useEffect(() => {
@@ -43,6 +44,23 @@ const HelpScreen = ({ navigation }) => {
     getSenderInfo(senderId);
   };
   
+  // calculate the average rating
+  const calucateAverageRating = (ratings) => {
+    let sumRatings = 0;
+    let ratingCount = 0;
+    for( let i=0; i<ratings.length; i++) {
+      sumRatings += (i+1)*ratings[i];
+      ratingCount += ratings[i];
+    }
+    // check sanity and compute average
+    let avgRating = 0;
+    if (ratingCount > 0) {
+      // average
+      avgRating = (sumRatings/ratingCount).toFixed(1);
+    } 
+    return avgRating;
+  }
+
   const getSenderInfo = async (senderId) => {
     // sender
     console.log('[HelpScreen] senderId', senderId);
@@ -55,6 +73,9 @@ const HelpScreen = ({ navigation }) => {
         console.log('[HelpScreen] sender doc', doc);
         // set sender info
         setSenderInfo(doc.data());
+        // calculate average rating
+        const avgRating = calucateAverageRating(doc.data().ratings);
+        setRating(avgRating);
       })
       .catch(error => {
         console.log('cannot get sender info', error);
@@ -175,7 +196,7 @@ const HelpScreen = ({ navigation }) => {
             />
             <View style={styles.columnContainer}>
               <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{t('HelpScreen.votes')}</Text>
-              <Text style={{ fontSize: 20 }}>{senderInfo.votes? senderInfo.votes : "0"} {t('cases')}</Text>
+              <Text style={{ fontSize: 20 }}>{rating} ({senderInfo.votes})</Text>
             </View>
           </View> 
           </Spacer>

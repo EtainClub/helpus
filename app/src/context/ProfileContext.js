@@ -145,7 +145,9 @@ const findUsers = dispatch => {
       'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
       'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
       'eHtWShuvY2f65HzezsbufRt184M2',
-      'MXWX9PZjdFdA3aFKNE1dn0aYnru2'
+      'MXWX9PZjdFdA3aFKNE1dn0aYnru2',
+      '0bmeKTsmlGeAOdOne2wQCwhLp7t1',
+      'PzuWvkV0sWhzrXRrEsYgwPBvSFI3' 
     ];
     const usersRef = firebase.firestore().collection('users');
     // consider the multi languages. need to find both en and ko regions
@@ -163,7 +165,9 @@ const findUsers = dispatch => {
           // get skill
           getSkillsLocations({ userId: doc.id })
           .then(userData => {
-            console.log('[findUsers] user data', userData);              
+            console.log('[findUsers] user data', userData);   
+            // calculate the average rating
+            const avgRating = calucateAverageRating(doc.data().ratings);           
             dispatch({
               type: 'update_user_list',
               payload: {
@@ -174,7 +178,8 @@ const findUsers = dispatch => {
                 locations: userData.locations,
                 got: doc.data().askCount,
                 helped: doc.data().helpCount,
-                votes: doc.data().votes  
+                votes: doc.data().votes,
+                rating: avgRating  
               }
             });
           })
@@ -421,16 +426,36 @@ const updateAccount = dispatch => {
   }
 };
 
+// calculate the average rating
+const calucateAverageRating = (ratings) => {
+  let sumRatings = 0;
+  let ratingCount = 0;
+  for( let i=0; i<ratings.length; i++) {
+    sumRatings += (i+1)*ratings[i];
+    ratingCount += ratings[i];
+  }
+  // check sanity and compute average
+  let avgRating = 0;
+  if (ratingCount > 0) {
+    // average
+    avgRating = (sumRatings/ratingCount).toFixed(1);
+  } 
+  return avgRating;
+}
+
 // update user info state
 const updateUserInfoState = dispatch => {
   return ( userInfo ) => {
     console.log('[updateUserInfoState]', userInfo);
+    // calculate average rating
+    const avgRating = calucateAverageRating(userInfo.ratings);
     // update state
     const userState = { 
       userId: userInfo.userId, 
       name: userInfo.name,
       avatarUrl: userInfo.avatarUrl,
       votes: userInfo.votes,
+      rating: avgRating,
       askCount: userInfo.askCount,
       helpCount: userInfo.helpCount 
     };

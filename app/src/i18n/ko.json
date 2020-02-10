@@ -73,7 +73,7 @@
       "helpCases": "도움 내역",
       "usernamePlaceholder": "사용자이름 미설정",
       "locationPlaceholder": "위치 미설정",
-      "votes": "추천수",
+      "votes": "평점(추천수)",
       "usersButton": "우리 동네 헬퍼스",
       "locationGuide": "활동지역 설정 필요",
       "locationGuideText": "동네 헬퍼스를 둘려면 프로필에서 활동지역을 인증해야 합니다."
@@ -105,7 +105,7 @@
       "alreadyAccepted": "이미 처리된 요청입니다.",
       "canceledTitle": "취소된 요청",
       "canceledByClient": "의뢰인이 요청을 취소했습니다.",
-      "votes": "추천수",
+      "votes": "평점",
       "updateFailureTitle": "업데이트 오류",
       "updateFailure": "DB 업데이트 중 오류가 발생했습니다",
     },

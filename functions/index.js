@@ -11,7 +11,9 @@ const testAccounts = [
 'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
 'Qfvz7uW5MsVw7k9pTHD550npVAT2',
 'eHtWShuvY2f65HzezsbufRt184M2',
-'MXWX9PZjdFdA3aFKNE1dn0aYnru2' 
+'MXWX9PZjdFdA3aFKNE1dn0aYnru2',
+'0bmeKTsmlGeAOdOne2wQCwhLp7t1',
+'PzuWvkV0sWhzrXRrEsYgwPBvSFI3' 
 ];
 
 // initialize app

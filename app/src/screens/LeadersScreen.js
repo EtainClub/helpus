@@ -22,7 +22,9 @@ const LeadersScreen = ({ navigation }) => {
     'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
     'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
     'eHtWShuvY2f65HzezsbufRt184M2',
-    'MXWX9PZjdFdA3aFKNE1dn0aYnru2'  
+    'MXWX9PZjdFdA3aFKNE1dn0aYnru2',
+    '0bmeKTsmlGeAOdOne2wQCwhLp7t1',
+    'PzuWvkV0sWhzrXRrEsYgwPBvSFI3' 
   ];
   const userId = currentUser.uid;
   // use context
@@ -80,6 +82,23 @@ const LeadersScreen = ({ navigation }) => {
     updatUserRank(property);
   };
 
+  // calculate the average rating
+  const calucateAverageRating = (ratings) => {
+    let sumRatings = 0;
+    let ratingCount = 0;
+    for( let i=0; i<ratings.length; i++) {
+      sumRatings += (i+1)*ratings[i];
+      ratingCount += ratings[i];
+    }
+    // check sanity and compute average
+    let avgRating = 0;
+    if (ratingCount > 0) {
+      // average
+      avgRating = (sumRatings/ratingCount).toFixed(1);
+    } 
+    return avgRating;
+  }
+
   // fetch data and build board data
   const fetchData = async (property) => {
     // users on firestore
@@ -118,6 +137,8 @@ const LeadersScreen = ({ navigation }) => {
           console.log('cannot get skill data', error);
         });  
 
+        // calculate average rating
+        const avgRating = calucateAverageRating(doc.data().ratings);
         data = [...data, ({
           name: `${doc.data().name} (${doc.data().regions[0]})`,
           iconUrl: doc.data().avatarUrl,
@@ -126,6 +147,7 @@ const LeadersScreen = ({ navigation }) => {
           helpCount: doc.data().helpCount,
           askCount: doc.data().askCount,
           votes: doc.data().votes,
+          rating: avgRating,
           skills: skills,
           languages: doc.data().languages
         })];
@@ -247,7 +269,7 @@ const LeadersScreen = ({ navigation }) => {
     
               <View style={{ flexDirection: 'row' }}>
                 <Icon type='font-awesome' name='thumbs-o-up' size={20} color={'#353535'}/>
-                <Text style={{ marginLeft: 8 }}>{userItem.votes}</Text>
+                <Text style={{ marginLeft: 8 }}>{userItem.rating} ({userItem.votes})</Text>
               </View>
 
               <View style={{ flexDirection: 'row' }}>

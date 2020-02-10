@@ -44,9 +44,9 @@ const UsersScreen = ({ navigation }) => {
     const watchId = Geolocation.watchPosition(
       pos => {
         const newRegion = {
-          latitude: pos.coords.latitude,
+          latitude: __DEV__ ? INIT_REGION.latitude : pos.coords.latitude,
           latitudeDelta: INIT_REGION.latitudeDelta,
-          longitude: pos.coords.longitude,
+          longitude: __DEV__ ? INIT_REGION.longitude : pos.coords.longitude,
           longitudeDelta: INIT_REGION.longitudeDelta
         }
         setRegion(newRegion);
@@ -325,7 +325,7 @@ const UsersScreen = ({ navigation }) => {
 
           <View style={{ flexDirection: 'row' }}>
             <Icon type='font-awesome' name='thumbs-o-up' size={20} color={'#353535'}/>
-            <Text style={{ marginLeft: 8 }}>{item.votes}</Text>
+            <Text style={{ marginLeft: 8 }}>{item.rating} ({item.votes})</Text>
           </View>
 
           <View style={{ flexDirection: 'row' }}>
