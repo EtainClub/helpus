@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { ListItem, Divider, Text, Icon } from 'react-native-elements';
+import { ListItem, Divider, Text, Icon, Badge } from 'react-native-elements';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import firebase from 'react-native-firebase';
@@ -80,9 +80,15 @@ const ChatListScreen = ({ navigation }) => {
       });
   };
 
-  const onItemPress = ({caseId, helperId}) => {
+  const onItemPress = ({ caseId, helperId }) => {
+    //// reset newchat field
+    // case reference
+    const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
+    // update the newChat field
+    caseRef.update({ newChat: false });
+    
     // navigate to chatting with case id
-    navigation.navigate('Chatting', {caseId, helperId});
+    navigation.navigate('Chatting', { caseId, helperId });
   };
 
   const renderItem = ({item}) => (
@@ -91,10 +97,13 @@ const ChatListScreen = ({ navigation }) => {
       subtitle={item.createdAt}
       leftIcon={ 
         type='font-awesome', 
-        item.voted ? { name: 'thumb-up' } : {}
+        item.voted ? { name: 'thumb-up', color: 'black' } : { name: 'thumb-up', color: 'lightgrey' }
       } 
       bottomDivider
-      chevron
+      rightIcon={
+        item.newChat &&
+        <Badge status="warning" />
+      }
       onPress={() => onItemPress({caseId: item.docId, helperId: item.helperId})}
     />
   );

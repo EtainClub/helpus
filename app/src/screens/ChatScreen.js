@@ -59,6 +59,15 @@ const ChatScreen = ({ navigation }) => {
     listenToChat();
   };
 
+  // process when a user is away from this screen
+  const onWillBlur = payload => {
+    //// set newChat field to false
+    // case ref
+    const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
+    // update newChat field
+    caseRef.update({ newChat: false });
+  }
+
   const getUserInfo = async () => {
     const userRef = firebase.firestore().doc(`users/${userId}`);
     await userRef.get()
@@ -104,7 +113,6 @@ const ChatScreen = ({ navigation }) => {
     const message = messages[0];
     console.log('onSend message', message);
 
-
     // add the message to firestore chats 
     await chatsRef.add({
       _id: message._id,
@@ -116,7 +124,13 @@ const ChatScreen = ({ navigation }) => {
         avatar: message.user.avatar
       },
       image: message.image
-    })
+    });
+
+    //// set newChat field to true
+    // case ref
+    const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
+    // update newChat field
+    caseRef.update({ newChat: true });
   }
 
   const uploadImage = async (source, imageUri) => {
@@ -312,7 +326,7 @@ const ChatScreen = ({ navigation }) => {
     // case reference
     const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
     // set the vote flag
-    caseRef.update({ voted: true });
+//    caseRef.update({ voted: true });
     
     /*
     //// @test update add new field to users
@@ -356,6 +370,7 @@ const ChatScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <NavigationEvents
         onWillFocus={payload => onWillFocus(payload)}
+        onWillBlur={payload => onWillBlur(payload)}
       />
       <GiftedChat
         messages={chats}
