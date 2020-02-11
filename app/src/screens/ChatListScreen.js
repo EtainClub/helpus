@@ -42,6 +42,20 @@ const ChatListScreen = ({ navigation }) => {
     // cases ref
     const casesRef = firebase.firestore().collection('cases');
     console.log('casesRef', casesRef);
+
+    /*
+    //// @test update add newChat field to all cases
+    casesRef.get()
+    .then(snapshot => {
+      snapshot.forEach(async doc => {
+        const caseRef = firebase.firestore().doc(`cases/${doc.id}`);
+        caseRef.update({
+          newChat: false
+        });
+      });
+    });
+    */
+   
     // query
     let matchedCases = [];
     // get chat list of sender

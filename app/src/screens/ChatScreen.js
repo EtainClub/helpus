@@ -326,7 +326,7 @@ const ChatScreen = ({ navigation }) => {
     // case reference
     const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
     // set the vote flag
-//    caseRef.update({ voted: true });
+    caseRef.update({ voted: true });
     
     /*
     //// @test update add new field to users
