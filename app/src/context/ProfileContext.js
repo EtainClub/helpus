@@ -138,19 +138,6 @@ const findUsers = dispatch => {
         type: 'delete_user_list',
       });
     }
-    
-    /*
-    // test accounts
-    const testAccounts = [
-      'E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
-      'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
-      'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
-      'eHtWShuvY2f65HzezsbufRt184M2',
-      'MXWX9PZjdFdA3aFKNE1dn0aYnru2',
-      '0bmeKTsmlGeAOdOne2wQCwhLp7t1',
-      'PzuWvkV0sWhzrXRrEsYgwPBvSFI3' 
-    ];
-    */
    
     const usersRef = firebase.firestore().collection('users');
     // consider the multi languages. need to find both en and ko regions
