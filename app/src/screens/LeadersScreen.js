@@ -106,13 +106,14 @@ const LeadersScreen = ({ navigation }) => {
     //// get data
     // ordering and showing only top users
     const maxElem = 10;
+    // @todo how to use db instead of static testAccounts?
     usersRef.orderBy(property, "desc").limit(maxElem+testAccounts.length)
     .onSnapshot(snapshot => {
       let data = [];
       // build data array
       snapshot.docs.forEach(doc => {
         // do not include test accounts
-        if (testAccounts.includes(doc.id)) {
+        if (doc.data().tester) {
           return;
         }
         // check if the data exceeds the max 
@@ -167,7 +168,7 @@ const LeadersScreen = ({ navigation }) => {
       let order = 1;
       snapshot.docs.forEach(doc => {
         // do not include test accounts
-        if (!testAccounts.includes(doc.id)) {
+        if (!doc.data().tester) {
           // match with the user id
           if (userId === doc.id) {
             // set user data

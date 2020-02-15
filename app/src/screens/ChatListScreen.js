@@ -33,6 +33,22 @@ const ChatListScreen = ({ navigation }) => {
     getCaseList('senderId');
     // get chat list of heper
     getCaseList('helperId');
+
+    ///////////////////////////////////////////
+    /*
+    //// @db update db new field to users
+    const usersRef = firebase.firestore().collection('users');
+    usersRef.get()
+    .then(snapshot => {
+      snapshot.forEach(async doc => {
+        const userRef = firebase.firestore().doc(`users/${doc.id}`);
+        userRef.update({
+          tester: false
+        });
+      });
+    });
+    */
+    /////////////////////////////////////////
   };
 
   const getCaseList = async userIdType => {

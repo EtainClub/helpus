@@ -4,6 +4,7 @@ const i18next = require('i18next');
 const moment = require('moment');
 
 
+/*
 // test accounts
 const testAccounts = [
 'E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
@@ -15,11 +16,7 @@ const testAccounts = [
 '0bmeKTsmlGeAOdOne2wQCwhLp7t1',
 'PzuWvkV0sWhzrXRrEsYgwPBvSFI3' 
 ];
-
-// abusing users
-const abusingAccounts = [
-'ExrI13vvTLaIqeuwoGyUlcs5bjr1'
-];
+*/
 
 // initialize app
 //admin.initializeApp();
@@ -64,16 +61,59 @@ exports.sendMessage = functions.firestore
           ko: {
             "translation": {
               "header": '[helpus] 도움 요청',
+              "abuseHeader": '[helpus] 사용 위반',
+              "abuseText": "앱 사용을 위반하여 도움 요청을 할 수 없습니다."
             },
           },
           en: {
             "translation": {
               "header": '[helpus] HELP WANTED',
+              "abuseHeader": '[helpus] Usage Violation',
+              "abuseText": "You cannot request help becaseu you violated the temr of use."
             },
           },
         },
     });
     
+    //// do not send if the sender belongs to abusing accounts. 
+    //// Instead send warning message to the sender
+    const senderRef = admin.firestore().collection('users').doc(`${sender}`);
+    // abuser flag
+    let abuser = false;
+    // get sender's doc
+    await senderRef.get()
+    .then(doc => {
+      // check if the sender is an abuser
+      abuser = doc.data().abuser;
+      if (abuser) {
+        console.log('sender is an abuser', sender);
+        // get the push token of a user
+        pushToken = doc.data().pushToken;
+        // send the warning message to the sender
+        if (pushToken) {
+          const payload = {
+            notification: {
+              title: i18next.t('abuseHeader'),
+              body: i18next.t('abuseText')
+            },
+            data:{
+              title: i18next.t('abuseHeader'),
+              body: i18next.t('abuseText'),
+              senderId: sender,
+              caseId: caseId,
+            },
+          };      
+          admin.messaging().sendToDevice(pushToken, payload);
+          console.log('sent warning to abuser', abuser);
+        }      
+      }
+    })
+    .catch(error => console.log(error));
+    // stop the process if the sender is abuser
+    if (abuser) return;
+
+    console.log('abuser handling finished, abuser', abuser);
+
     // get users collection
     const users = admin.firestore().collection('users');
     // build push notification
@@ -116,20 +156,20 @@ exports.sendMessage = functions.firestore
 
     //// send test message only to test accounts
     let testMessage = false;
-    const testMsgPrefix = '[Warning]';
+    const testMsgPrefix = '[test]';
     if (docData.message.includes(testMsgPrefix)) {
-      console.log('[Warning] this is a test/warning message!');
+      console.log('[test] this is a test message!');
       // send message to test accounts
       await users.get()
       .then(snapshot => {
         snapshot.docs.forEach(doc => {
           // skip the sender  
           if (doc.id == sender) {
-//            console.log('[Warning] sender is the same', sender);
+//            console.log('[test] sender is the same', sender);
             return;
           }
-          // skip users not belonging to test accounts or abusing accounts
-          if (!testAccounts.includes(doc.id) && !abusingAccounts.includes(doc.id)) {
+          // skip users not belonging to test accounts
+          if (!doc.data().tester) {
 //            console.log('uid is not in test accounts', doc.id);
             return;
           }
@@ -152,7 +192,7 @@ exports.sendMessage = functions.firestore
     // users.where('languages', 'array-contains', language).get()
     await users.get()
     .then(snapshot => {
-      if (testMessage) {
+      if (testMessage || abuser) {
         console.log('[test] this is a test message!');
         return;
       }

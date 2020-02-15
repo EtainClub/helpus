@@ -51,7 +51,9 @@ const AccountScreen = ({ navigation }) => {
           votes: doc.data().votes || 0,
           ratings: doc.data().ratings || [0, 0, 0, 0, 0],
           askCount: counts.askCount,
-          helpCount: counts.helpCount
+          helpCount: counts.helpCount,
+          abuser: doc.data().abuser,
+          tester: doc.data().tester,
         });
       });
     })

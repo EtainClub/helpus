@@ -139,6 +139,7 @@ const findUsers = dispatch => {
       });
     }
     
+    /*
     // test accounts
     const testAccounts = [
       'E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
@@ -149,6 +150,8 @@ const findUsers = dispatch => {
       '0bmeKTsmlGeAOdOne2wQCwhLp7t1',
       'PzuWvkV0sWhzrXRrEsYgwPBvSFI3' 
     ];
+    */
+   
     const usersRef = firebase.firestore().collection('users');
     // consider the multi languages. need to find both en and ko regions
     // react-native-firebase v5 does not support array-contains-any
@@ -156,7 +159,7 @@ const findUsers = dispatch => {
     .then(async snapshot => {
       snapshot.forEach(async doc => {
         // exclude test users
-        if (testAccounts.includes(doc.id)) {
+        if (doc.data().tester) {
           return;
         }             
         // exclude the self when searching
@@ -179,7 +182,8 @@ const findUsers = dispatch => {
                 got: doc.data().askCount,
                 helped: doc.data().helpCount,
                 votes: doc.data().votes,
-                rating: avgRating  
+                rating: avgRating,
+                abuser: doc.data().abuser  
               }
             });
           })
@@ -457,7 +461,8 @@ const updateUserInfoState = dispatch => {
       votes: userInfo.votes,
       rating: avgRating,
       askCount: userInfo.askCount,
-      helpCount: userInfo.helpCount 
+      helpCount: userInfo.helpCount,
+      abuser: userInfo.abuser 
     };
     dispatch({
       type: 'update_user_state',
