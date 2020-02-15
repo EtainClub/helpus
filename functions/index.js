@@ -16,6 +16,11 @@ const testAccounts = [
 'PzuWvkV0sWhzrXRrEsYgwPBvSFI3' 
 ];
 
+// abusing users
+const abusingAccounts = [
+'ExrI13vvTLaIqeuwoGyUlcs5bjr1'
+];
+
 // initialize app
 //admin.initializeApp();
 
@@ -111,20 +116,20 @@ exports.sendMessage = functions.firestore
 
     //// send test message only to test accounts
     let testMessage = false;
-    const testMsgPrefix = '[test]';
+    const testMsgPrefix = '[Warning]';
     if (docData.message.includes(testMsgPrefix)) {
-      console.log('[test] this is a test message!');
+      console.log('[Warning] this is a test/warning message!');
       // send message to test accounts
       await users.get()
       .then(snapshot => {
         snapshot.docs.forEach(doc => {
           // skip the sender  
           if (doc.id == sender) {
-            console.log('[test] sender is the same', sender);
+//            console.log('[Warning] sender is the same', sender);
             return;
           }
-          // skip users not belonging to test accounts
-          if (!testAccounts.includes(doc.id)) {
+          // skip users not belonging to test accounts or abusing accounts
+          if (!testAccounts.includes(doc.id) && !abusingAccounts.includes(doc.id)) {
 //            console.log('uid is not in test accounts', doc.id);
             return;
           }
