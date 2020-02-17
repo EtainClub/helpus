@@ -84,6 +84,9 @@ exports.sendMessage = functions.firestore
     await senderRef.get()
     .then(doc => {
       // check if the sender is an abuser
+      if (typeof doc.data().abuser == 'undefined' ) {
+        return;
+      }
       abuser = doc.data().abuser;
       if (abuser) {
         console.log('sender is an abuser', sender);
@@ -169,6 +172,9 @@ exports.sendMessage = functions.firestore
             return;
           }
           // skip users not belonging to test accounts
+          if (typeof doc.data().tester == 'undefined' ) {
+            return;
+          }
           if (!doc.data().tester) {
 //            console.log('uid is not in test accounts', doc.id);
             return;
@@ -187,6 +193,9 @@ exports.sendMessage = functions.firestore
       })
       .catch(error => console.log(error));
     }
+
+    // stop the process if the sender is abuser
+    if (testMessage) return;
 
     //// send message to users who prefer the language of the message
     // users.where('languages', 'array-contains', language).get()
