@@ -140,7 +140,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 11
-        versionName "1.8.2"
+        versionName "1.9.0"
         multiDexEnabled true
         resConfigs "ko", "en"
         manifestPlaceholders = [googleMapApiKey:googleMapApiKey]

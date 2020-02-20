@@ -41,8 +41,9 @@ const LocationScreen = ({ navigation }) => {
       pos => {
         setLatitude(pos.coords.latitude);
         setLongitude(pos.coords.longitude);
-        // @test
-        /*
+        // @test: set default location
+        if (0)
+        {
         const INIT_REGION = {
           latitude: 37.25949,
           latitudeDelta: 0.01,
@@ -53,7 +54,7 @@ const LocationScreen = ({ navigation }) => {
         setLongitude(INIT_REGION.longitude);
         console.log('latitude', latitude);
         console.log('longitude', longitude);
-        */
+        } // end of test
       },
       error => setError(error.message)
     );
@@ -69,12 +70,12 @@ const LocationScreen = ({ navigation }) => {
     Geocoder.init(GEOCODING_API_KEY, { language: language }); 
     // get intial address
     Geocoder.from(latitude, longitude)
-      .then(json => {
-        const addrComponent = json.results[0].address_components[1];
-        console.log('addr json', json);
-        console.log('addr', addrComponent);
-      })
-      .catch(error => console.warn(error));
+    .then(json => {
+      const addrComponent = json.results[0].address_components[1];
+      if (__DEV__) console.log('addr json', json);
+      if (__DEV__) console.log('addr', addrComponent);
+    })
+    .catch(error => console.warn(error));
   };
 
   // convert the location to address using geocoding
@@ -156,12 +157,28 @@ const LocationScreen = ({ navigation }) => {
     .catch(error => console.warn(error)); 
   }
   
-  const onVerify = () => {
-    console.log('verify button clicked');
+  const onVerify = async () => {
     // get reference to the current user
     const { currentUser } = firebase.auth();
     const userId = currentUser.uid;
+    
+    //// get current region
+    // user ref
+    const userRef = firebase.firestore().doc(`users/${userId}`);
+    // get region
+    let currentRegion = null;
+    await userRef.get()
+    .then(doc => {
+      currentRegion = doc.data().regions[locationId];
+    })
+    .catch(error => console.log(error));
+    console.log('current region', currentRegion);
+
+
     // check if the location is the same as the current location
+    if (currentLocation == '') {
+      updateRegionDB(null);
+    }
     if (address.display == currentLocation || currentLocation == '') {
       // update location
       verifyLocation({ id: locationId, address: address, userId, newVerify: false });
@@ -174,7 +191,10 @@ const LocationScreen = ({ navigation }) => {
         t('LocationScreen.verifyText'),
         [
           { text: t('no'), style: 'cancel' },
-          { text: t('yes'), onPress: () => { 
+          { text: t('yes'), onPress: () => {
+            // update region db
+            updateRegionDB(currentRegion);
+            // verify location 
             verifyLocation({ id: locationId, address: address, userId, newVerify: true });
             // navigate to profile screen
             navigation.navigate('ProfileContract');
@@ -182,6 +202,67 @@ const LocationScreen = ({ navigation }) => {
         ],
         { cancelable: true },
       );            
+    }
+  };
+
+  // update region DB
+  const updateRegionDB = async (currentRegion) => {
+    const queryParams = `latlng=${latitude},${longitude}&language='en'&key=${GEOCODING_API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?${queryParams}`;
+    let response, data;
+    try {
+      response = await fetch(url);
+      console.log('geocoding fetching response', response);
+    } catch(error) {
+      throw {
+        code: Geocoder.Errors.FETCHING,
+        message: "Error while fetching. Check your network",
+        origin: error
+      };
+    }
+    // parse data
+    try {
+      data = await response.json();
+      console.log('geocoding data', data);
+    } catch(error) {
+      throw {
+        code: Geocoder.Errors.PARSING,
+        message : "Error while parsing response's body into JSON. The response is in the error's 'origin' field. Try to parse it yourself.",
+        origin : response,
+      };
+    }
+    if (data.status === 'OK') {
+      console.log('english geocoding', data.results);
+      //// update db
+      // district
+      const district = data.results[0].address_components[2].short_name;
+      // get regions ref
+      const regionRef = firebase.firestore().collection('regions').doc(district);
+      regionRef.get()
+      .then(docSnapshot => {
+        console.log('[english region] doc snapshot', docSnapshot);
+        if (docSnapshot.exists) {
+          console.log('[english region] doc exist');
+          //// @todo decrease the previous region by 1
+          // get previous region
+          prevRegionRef = firebase.firestore().collection('regions').doc(currentRegion);
+          // decrease
+          prevRegionRef.update({
+            count: firebase.firestore.FieldValue.increment(-1)
+          });
+
+          // increase the count by 1
+          regionRef.update({
+            count: firebase.firestore.FieldValue.increment(1)
+          })
+        } else {
+          // create region
+          regionRef.set({
+            count: 1
+          });
+        }
+      })
+      .catch(error => console.log(error));
     }
   };
 
