@@ -157,7 +157,8 @@
       "helped": "Helped",
       "gotHelped": "Got Helped",
       "voted": "Voted",
-      "userInfo": "User Profile"
+      "userInfo": "User Profile",
+      "region": "Region",
     },
     "ChatScreen": {
       "header": "Chat",

@@ -65,7 +65,11 @@ const ChatScreen = ({ navigation }) => {
     // case ref
     const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
     // update newChat field
-    caseRef.update({ newChat: false });
+    if (userId === helperId) {
+      caseRef.update({ newChatHelper: false });
+    } else {
+      caseRef.update({ newChatSender: false });
+    }
   }
 
   const getUserInfo = async () => {
@@ -130,7 +134,11 @@ const ChatScreen = ({ navigation }) => {
     // case ref
     const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
     // update newChat field
-    caseRef.update({ newChat: true });
+    if (userId === helperId) {
+      caseRef.update({ newChatSender: true });
+    } else {
+      caseRef.update({ newChatHelper: true });
+    }
   }
 
   const uploadImage = async (source, imageUri) => {
@@ -271,9 +279,6 @@ const ChatScreen = ({ navigation }) => {
     console.log('[ChatScreen|handleVoting] caseId, helperId', caseId, helperId);
 
     //// self cannot vote
-    // get reference to the current user
-    const { currentUser } = firebase.auth();
-    const userId = currentUser.uid;  
     // check the userId
     if (userId === helperId) {
       // alert for cannot vote message

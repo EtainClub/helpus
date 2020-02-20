@@ -103,11 +103,22 @@ const LeadersScreen = ({ navigation }) => {
   const fetchData = async (property) => {
     // users on firestore
     const usersRef = firebase.firestore().collection('users');
+
+    // @todo how to use db instead of static testAccounts?: 
+    // count number of test accounts
+    let numTesters = 0;
+    await usersRef.where("tester", "==", true).get()
+    .then(snapshot => {
+      numTesters = snapshot.size;
+    })
+    .catch(error => console.log(error));
+    // @test
+    console.log('number of testers', numTesters);
+
     //// get data
-    // ordering and showing only top users
     const maxElem = 10;
-    // @todo how to use db instead of static testAccounts?
-    usersRef.orderBy(property, "desc").limit(maxElem+testAccounts.length)
+    // ordering and showing only top users
+    usersRef.orderBy(property, "desc").limit(maxElem+numTesters)
     .onSnapshot(snapshot => {
       let data = [];
       // build data array
@@ -204,7 +215,10 @@ const LeadersScreen = ({ navigation }) => {
         <ButtonGroup
             onPress={(select) => updateBoard(select)}
             selectedIndex={tab}
-            buttons={[t('LeadersScreen.helped'), t('LeadersScreen.gotHelped'), t('LeadersScreen.voted')]}
+            buttons={
+              [t('LeadersScreen.helped'), t('LeadersScreen.gotHelped'), 
+              t('LeadersScreen.voted'), t('LeadersScreen.region')]
+            }
             containerStyle={{ height: 30 }} />
       </View>
     );

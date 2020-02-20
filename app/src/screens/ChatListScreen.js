@@ -16,6 +16,11 @@ const ChatListScreen = ({ navigation }) => {
   const [search, setSearch] = useState('');
   const [askCases, setAskCases] = useState([]);
   const [helpCases, setHelpCases] = useState([]);
+
+  // get reference to the current user
+  const { currentUser } = firebase.auth();
+  const userId = currentUser.uid;
+  
   // componentDidMount
   useEffect(() => {
     // set navigation params
@@ -59,14 +64,19 @@ const ChatListScreen = ({ navigation }) => {
     const casesRef = firebase.firestore().collection('cases');
     console.log('casesRef', casesRef);
 
+
     /*
     //// @test update add newChat field to all cases
     casesRef.get()
     .then(snapshot => {
       snapshot.forEach(async doc => {
         const caseRef = firebase.firestore().doc(`cases/${doc.id}`);
+        // delete newChat field and add two new fields
         caseRef.update({
-          newChat: false
+          newChat: firebase.firestore.FieldValue.delete(),
+//          newChat: false,
+//          newChatHelper: false,
+//          newChatSender: false
         });
       });
     });
@@ -115,8 +125,11 @@ const ChatListScreen = ({ navigation }) => {
     // case reference
     const caseRef = firebase.firestore().collection('cases').doc(`${caseId}`);
     // update the newChat field
-    caseRef.update({ newChat: false });
-    
+    if (userId === helperId) {
+      caseRef.update({ newChatHelper: false });
+    } else {
+      caseRef.update({ newChatSender: false });
+    }
     // navigate to chatting with case id
     navigation.navigate('Chatting', { caseId, helperId });
   };
@@ -124,15 +137,17 @@ const ChatListScreen = ({ navigation }) => {
   const renderItem = ({item}) => (
     <ListItem
       title={item.message}
+      titleStyle={ userId === item.helperId ? item.newChatHelper && { color: 'blue' }
+                   : item.newChatSender && { color: 'blue' }
+      }
       subtitle={item.createdAt}
       leftIcon={ 
         type='font-awesome', 
         item.voted ? { name: 'thumb-up', color: 'black' } : { name: 'thumb-up', color: 'lightgrey' }
       } 
       bottomDivider
-      rightIcon={
-        item.newChat &&
-        <Badge status="warning" />
+      rightIcon={ userId === item.helperId ? item.newChatHelper && <Badge status="warning" />
+                  : item.newChatSender && <Badge status="warning" />
       }
       onPress={() => onItemPress({caseId: item.docId, helperId: item.helperId})}
     />

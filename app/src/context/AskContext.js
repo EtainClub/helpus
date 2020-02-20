@@ -183,7 +183,8 @@ const sendMessage = async ({ dispatch, message, coordinate, navigation }) => {
     createdAt: new Date(),
     messagingTime,
     coordinate: [coordinate.latitude, coordinate.longitude],
-    newChat: true
+    newChatSender: false,
+    newChatHelper: false,
   })
   .then(async docRef => {
     console.log('case generated with doc id: ', docRef.id);
