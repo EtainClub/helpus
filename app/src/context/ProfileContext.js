@@ -1,6 +1,8 @@
 import React from 'react';
 import { Alert } from 'react-native';
 import firebase from 'react-native-firebase'; 
+import Geocoder from 'react-native-geocoding';
+import { GEOCODING_API_KEY } from 'react-native-dotenv';
 // cumstom libraries
 import createDataContext from './createDataContext';
 
@@ -72,7 +74,10 @@ const profileReducer = (state, action) => {
         ),
         // set flag to need to update the db or contract
         needUpdateContract: true
-      };  
+      };
+    case 'update_region':
+      console.log('[update_region] payload', action.payload );
+      return { ...state, region: action.payload };  
     case 'update_location':
       return {
         ...state,
@@ -280,7 +285,7 @@ const updateLocation = dispatch => {
 // verify location with id and update on DB
 const verifyLocation = dispatch => {
   return ({ id, address, userId, newVerify }) => {
-    console.log('dispatch verify location', id, Object.entries(address).length, userId);
+    console.log('[dispatch verify location]', id, Object.entries(address).length, userId);
     // sanity check
     if (!userId) return;
     if (typeof id === 'undefined') return; 
@@ -308,12 +313,58 @@ const verifyLocation = dispatch => {
     });
     
     //// update the region
-    userRef.update({
-      regions: firebase.firestore.FieldValue.arrayUnion(address.district),
-      coordinates: address.coordinate
-    });
+    // get the region in english
+    console.log('before updateRegionState, lat, long', address.coordinate[0], address.coordinate[1]);
+    updateRegionState(dispatch, address.coordinate[0], address.coordinate[1], 'en')
+    .then(region => {
+      console.log('update region', region);
+      // update the db
+      userRef.update({
+        regions: firebase.firestore.FieldValue.arrayUnion(region),
+        coordinates: address.coordinate
+      });
+    })
+    .catch(error => console.log(error));
   }
 };
+
+const updateRegionState = async (dispatch, latitude, longitude, language) => {
+  console.log('[updateRegionState] lat, long', latitude, longitude, typeof latitude);
+  const queryParams = `latlng=${latitude},${longitude}&language=${language}&key=${GEOCODING_API_KEY}`;
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?${queryParams}`;
+  let response, data;
+  try {
+    response = await fetch(url);
+    console.log('geocoding fetching response', response);
+  } catch(error) {
+    throw {
+      code: Geocoder.Errors.FETCHING,
+      message: "Error while fetching. Check your network",
+      origin: error
+    };
+  }
+  // parse data
+  try {
+    data = await response.json();
+    console.log('geocoding data', data);
+  } catch(error) {
+    throw {
+      code: Geocoder.Errors.PARSING,
+      message : "Error while parsing response's body into JSON. The response is in the error's 'origin' field. Try to parse it yourself.",
+      origin : response,
+    };
+  }
+  if (data.status === 'OK') {
+    console.log('english geocoding', data.results);
+    // update region state
+    const region = data.results[0].address_components[2].short_name;
+    dispatch({
+      type: 'update_region',
+      payload: region
+    });
+    return region;
+  }
+}
 
 // delete location; just make it empty
 const deleteLocation = dispatch => {
@@ -593,7 +644,7 @@ export const { Provider, Context } = createDataContext(
     userInfo: {}, 
     skills: INIT_SKILLS, skill: '', locations: INIT_LOCATIONS, location: '', 
     userList: [],
-    needUpdateContract: false, loading: false 
+    needUpdateContract: false, loading: false, region: null, 
   }
 );
 

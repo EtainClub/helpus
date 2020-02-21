@@ -42,7 +42,7 @@ const LocationScreen = ({ navigation }) => {
         setLatitude(pos.coords.latitude);
         setLongitude(pos.coords.longitude);
         // @test: set default location
-        if (0)
+        if (1)
         {
         const INIT_REGION = {
           latitude: 37.25949,
@@ -177,9 +177,12 @@ const LocationScreen = ({ navigation }) => {
 
     // check if the location is the same as the current location
     if (currentLocation == '') {
-      updateRegionDB(null);
+//      updateRegionDB(null);
     }
     if (address.display == currentLocation || currentLocation == '') {
+      // first update english region state  in the context
+//      await updateRegionState({ latitude, longitude, language: 'en' });
+//      console.log('[onVerify] state region', state.region);
       // update location
       verifyLocation({ id: locationId, address: address, userId, newVerify: false });
       // navigate to profile screen
@@ -193,7 +196,7 @@ const LocationScreen = ({ navigation }) => {
           { text: t('no'), style: 'cancel' },
           { text: t('yes'), onPress: () => {
             // update region db
-            updateRegionDB(currentRegion);
+//            updateRegionDB(currentRegion);
             // verify location 
             verifyLocation({ id: locationId, address: address, userId, newVerify: true });
             // navigate to profile screen
@@ -205,6 +208,7 @@ const LocationScreen = ({ navigation }) => {
     }
   };
 
+  /*
   // update region DB
   const updateRegionDB = async (currentRegion) => {
     const queryParams = `latlng=${latitude},${longitude}&language='en'&key=${GEOCODING_API_KEY}`;
@@ -265,6 +269,7 @@ const LocationScreen = ({ navigation }) => {
       .catch(error => console.log(error));
     }
   };
+  */
 
   const showMap = () => {
     if (Platform.OS === 'android') {
