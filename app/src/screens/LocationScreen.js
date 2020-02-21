@@ -243,7 +243,7 @@ const LocationScreen = ({ navigation }) => {
         console.log('[english region] doc snapshot', docSnapshot);
         if (docSnapshot.exists) {
           console.log('[english region] doc exist');
-          //// @todo decrease the previous region by 1
+          //// decrease the previous region by 1
           // get previous region
           prevRegionRef = firebase.firestore().collection('regions').doc(currentRegion);
           // decrease

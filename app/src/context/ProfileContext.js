@@ -310,11 +310,8 @@ const verifyLocation = dispatch => {
     //// update the region
     userRef.update({
       regions: firebase.firestore.FieldValue.arrayUnion(address.district),
-    });
-    // update the location coordinate, geopoint
-    userRef.update({
       coordinates: address.coordinate
-    });    
+    });
   }
 };
 

@@ -151,8 +151,11 @@ const LeadersScreen = ({ navigation }) => {
 
         // calculate average rating
         const avgRating = calucateAverageRating(doc.data().ratings);
+        let nameAndRegion = doc.data().name;
+        if (typeof doc.data().regions[0] !== 'undefined')
+          nameAndRegion +=  ` (${doc.data().regions[0]})`;
         data = [...data, ({
-          name: `${doc.data().name} (${doc.data().regions[0]})`,
+          name: nameAndRegion,
           iconUrl: doc.data().avatarUrl,
           score: doc.data()[property],
           username: doc.data().name,
