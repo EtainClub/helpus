@@ -20,19 +20,18 @@ const LeadersScreen = ({ navigation }) => {
   // get reference to the current user
   const { currentUser } = firebase.auth();
   const userId = currentUser.uid;
-  const maxElem = 100;
+  const maxElem = 20;
   // use context
   const { state } = useContext(ProfileContext);
   // use state
-  const [search, setSearch] = useState('');
   const [tab, setTab] = useState(0);
-  const [field, setField] = useState('');
   const [rank, setRank] = useState(0);
   const [indicator, setIndicator] = useState(0);
   const [boardData, setBoardData] = useState([]);
   const [showUserModal, setShowUserModal] = useState(false);
   const [userIndex, setUserIndex] = useState(null);
   const [userItem, setUserItem] = useState(null);
+  const [userRegion, setUserRegion] = useState(null);
   const [showRegionRanking, setShowRegionRanking] = useState(false);
   const [regionBoardData, setRegionBoardData] = useState([]);
 
@@ -75,26 +74,26 @@ const LeadersScreen = ({ navigation }) => {
       case 2: 
         property = "votes"; 
         break;
+      case 3:
+        property = "count";
       default: 
         break;
     }
     // return if the region board is selected
     if (select === 3) {
       setShowRegionRanking(true);
-      // @todo fetch data
-      console.log('fetching region data');
+      // fetch data
       fetchRegionData();
-      // @todo update header for region
-//      fetchData('votes');
+      // update user rank
+      updateUserRegionRank(property);
       return;
     }
     // reset the region ranking board
     setShowRegionRanking(false);
-//    setField(property);
     // fetch new data
     fetchData(property);
     // update user rank
-    updatUserRank(property);
+    updateUserRank(property);
   };
 
   // calculate the average rating
@@ -128,11 +127,8 @@ const LeadersScreen = ({ navigation }) => {
       numTesters = snapshot.size;
     })
     .catch(error => console.log(error));
-    // @test
-    console.log('number of testers', numTesters);
 
     //// get data
-
     // ordering and showing only top users
     usersRef.orderBy(property, "desc").limit(maxElem+numTesters)
     .onSnapshot(snapshot => {
@@ -194,7 +190,7 @@ const LeadersScreen = ({ navigation }) => {
   };
 
   // update user's rank
-  const updatUserRank = async (property) => {
+  const updateUserRank = async (property) => {
     // users on firestore
     const usersRef = firebase.firestore().collection('users');
     usersRef.orderBy(property, "desc")
@@ -209,6 +205,9 @@ const LeadersScreen = ({ navigation }) => {
             setRank(order);
             // set indicator
             setIndicator(doc.data()[property]);
+            // set user region
+            console.log('update user rank, region', doc.data().regions[0]);
+            setUserRegion(doc.data().regions[0]);
             return;
           }
           order++;
@@ -222,7 +221,6 @@ const LeadersScreen = ({ navigation }) => {
     // get regions collection ref
     const regionsRef = firebase.firestore().collection('regions');
     // get ordered data
-    const maxElem = 100;
     regionsRef.orderBy('count', "desc").limit(maxElem)
     .onSnapshot(snapshot => {
       // region data
@@ -266,6 +264,31 @@ const LeadersScreen = ({ navigation }) => {
     });
   };
 
+  // update user's region rank
+  const updateUserRegionRank = async (property) => {
+    // regions on firestore
+    const regionsRef = firebase.firestore().collection('regions');
+    regionsRef.orderBy(property, "desc")
+    .onSnapshot(snapshot => {
+      let order = 1;
+      snapshot.docs.forEach(doc => {
+        // do not include test accounts
+        if (!doc.data().tester) {
+          // match with the user id
+          if (userRegion === doc.id) {
+            console.log('updateUserRegionRank match found');
+            // set user data
+            setRank(order);
+            // set indicator
+            setIndicator(doc.data()[property]);
+            return;
+          }
+          order++;
+        }
+      });
+    });
+  };
+
   const renderHeader = () => {
     return (
       <View colors={[, '#1da2c6', '#1695b7']}
@@ -284,6 +307,7 @@ const LeadersScreen = ({ navigation }) => {
             {indicator} {t('cases')}  
           </Text>
         </View>
+        <Text style={{ fontSize: 20, color: 'white' }}>{state.locations[0].district}</Text>
         <ButtonGroup
             onPress={(select) => updateBoard(select)}
             selectedIndex={tab}

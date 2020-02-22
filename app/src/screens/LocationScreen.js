@@ -42,7 +42,7 @@ const LocationScreen = ({ navigation }) => {
         setLatitude(pos.coords.latitude);
         setLongitude(pos.coords.longitude);
         // @test: set default location
-        if (0)
+        if (1)
         {
         const INIT_REGION = {
           latitude: 37.25949,
