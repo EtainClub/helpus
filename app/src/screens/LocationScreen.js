@@ -42,7 +42,7 @@ const LocationScreen = ({ navigation }) => {
         setLatitude(pos.coords.latitude);
         setLongitude(pos.coords.longitude);
         // @test: set default location
-        if (1)
+        if (0)
         {
         const INIT_REGION = {
           latitude: 37.25949,
@@ -165,26 +165,25 @@ const LocationScreen = ({ navigation }) => {
     //// get current region
     // user ref
     const userRef = firebase.firestore().doc(`users/${userId}`);
-    // get region
-    let currentRegion = null;
+    // get previous region
+    let prevRegion = null;
     await userRef.get()
     .then(doc => {
-      currentRegion = doc.data().regions[locationId];
+      prevRegion = doc.data().regions[locationId];
     })
     .catch(error => console.log(error));
-    console.log('current region', currentRegion);
+    console.log('previous region', prevRegion);
+    console.log('address district', address.district);
 
-
-    // check if the location is the same as the current location
+    // check if the location is a new location
     if (currentLocation == '') {
-//      updateRegionDB(null);
-    }
-    if (address.display == currentLocation || currentLocation == '') {
-      // first update english region state  in the context
-//      await updateRegionState({ latitude, longitude, language: 'en' });
-//      console.log('[onVerify] state region', state.region);
       // update location
-      verifyLocation({ id: locationId, address: address, userId, newVerify: false });
+      verifyLocation({ id: locationId, address: address, userId, newVerify: true, prevRegion });
+      // navigate to profile screen
+      navigation.navigate('ProfileContract');      
+    } else if (address.display === currentLocation) { // same as the previous location
+      // update location
+      verifyLocation({ id: locationId, address: address, userId, newVerify: false, prevRegion });
       // navigate to profile screen
       navigation.navigate('ProfileContract');
     } else {
@@ -195,10 +194,8 @@ const LocationScreen = ({ navigation }) => {
         [
           { text: t('no'), style: 'cancel' },
           { text: t('yes'), onPress: () => {
-            // update region db
-//            updateRegionDB(currentRegion);
             // verify location 
-            verifyLocation({ id: locationId, address: address, userId, newVerify: true });
+            verifyLocation({ id: locationId, address: address, userId, newVerify: true, prevRegion });
             // navigate to profile screen
             navigation.navigate('ProfileContract');
           }}

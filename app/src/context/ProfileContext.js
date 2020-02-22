@@ -247,45 +247,11 @@ const updateSkill = dispatch => {
   }
 };
 
-/*
-// update location with id
-const updateLocation = dispatch => {
-  return ({ id, address, userId }) => {
-    console.log('dispatch update location', id, address, userId);
-    // sanity check
-    if (!userId) return;
-    if (typeof id === 'undefined') return; 
-    
-    dispatch({
-      type: 'update_location',
-      payload: { id, address }
-    });
-
-    // update location on db
-    // @todo for location, use number of verification instead of votes.
-    const userRef = firebase.firestore().doc(`users/${userId}`);
-    userRef.collection('locations').doc(`${id}`).update({
-      name: address.name,
-      district: address.district,
-      city: address.city,
-      state: address.state,
-      country: address.country,
-      display: address.display,
-      coordinate: address.coordinate
-    });
-    // update the region and its coordinate
-    userRef.update({
-      regions: firebase.firestore.FieldValue.arrayUnion(address.district),
-      coordinates: firebase.firestore.FieldValue.arrayUnion(address.coordinate)
-    });
-  }
-};
-*/
-
 // verify location with id and update on DB
 const verifyLocation = dispatch => {
-  return ({ id, address, userId, newVerify }) => {
+  return ({ id, address, userId, newVerify, prevRegion }) => {
     console.log('[dispatch verify location]', id, Object.entries(address).length, userId);
+    console.log('[dispatch verify location] prevRegion', prevRegion);
     // sanity check
     if (!userId) return;
     if (typeof id === 'undefined') return; 
@@ -323,6 +289,37 @@ const verifyLocation = dispatch => {
         regions: firebase.firestore.FieldValue.arrayUnion(region),
         coordinates: address.coordinate
       });
+      
+      //// update the region count if it is new or the empty previously
+      if (newVerify) {
+        // get regions ref
+        const regionRef = firebase.firestore().collection('regions').doc(region);
+        regionRef.get()
+        .then(docSnapshot => {
+          console.log('[english region] doc snapshot', docSnapshot);
+          if (docSnapshot.exists) {
+            console.log('[english region] doc exist');
+            //// decrease the previous region by 1
+            // get previous region
+            prevRegionRef = firebase.firestore().collection('regions').doc(prevRegion);
+            // decrease
+            prevRegionRef.update({
+              count: firebase.firestore.FieldValue.increment(-1)
+            });
+
+            // increase the count by 1
+            regionRef.update({
+              count: firebase.firestore.FieldValue.increment(1)
+            })
+          } else {
+            // create region
+            regionRef.set({
+              count: 1
+            });
+          }
+        })
+        .catch(error => console.log(error));  
+      }
     })
     .catch(error => console.log(error));
   }
@@ -540,36 +537,6 @@ const updateLocations = dispatch => {
   }
 }
 
-/*
-// create initial profile and upload on firebase
-const createInitialProfile = dispatch => {
-  return async ({ userId }) => {
-    // get the firebase doc ref
-    const userRef = firebase.firestore().doc(`users/${userId}`);
-    console.log('[createInitialProfile] userRef', userRef );
-    // map over the skills and override the current skills
-    skills.map(async (skill, id) => {
-      console.log('[createInitialProfile] skill, id', skill.name, id);
-      // add new doc under the id
-      userRef.collection('skills').doc(`${id}`).set({
-        name: skill.name,
-        votes: skill.votes
-      });
-    });
-
-    // map over the locations and override current locations
-    locations.map(async (location, id) => {
-      console.log('[createInitialProfile] location, id', location.name, id);
-      // add new doc under the id
-      userRef.collection('locations').doc(`${id}`).set({
-        name: location.name,
-        votes: location.votes
-      });
-    });
-  };
-};
-*/
-
 // update db
 const updateSkillsDB = dispatch => {
   return async ({ userId, skills }) => {
@@ -648,6 +615,70 @@ export const { Provider, Context } = createDataContext(
   }
 );
 
+/*
+// update location with id
+const updateLocation = dispatch => {
+  return ({ id, address, userId }) => {
+    console.log('dispatch update location', id, address, userId);
+    // sanity check
+    if (!userId) return;
+    if (typeof id === 'undefined') return; 
+    
+    dispatch({
+      type: 'update_location',
+      payload: { id, address }
+    });
+
+    // update location on db
+    // @todo for location, use number of verification instead of votes.
+    const userRef = firebase.firestore().doc(`users/${userId}`);
+    userRef.collection('locations').doc(`${id}`).update({
+      name: address.name,
+      district: address.district,
+      city: address.city,
+      state: address.state,
+      country: address.country,
+      display: address.display,
+      coordinate: address.coordinate
+    });
+    // update the region and its coordinate
+    userRef.update({
+      regions: firebase.firestore.FieldValue.arrayUnion(address.district),
+      coordinates: firebase.firestore.FieldValue.arrayUnion(address.coordinate)
+    });
+  }
+};
+*/
+
+/*
+// create initial profile and upload on firebase
+const createInitialProfile = dispatch => {
+  return async ({ userId }) => {
+    // get the firebase doc ref
+    const userRef = firebase.firestore().doc(`users/${userId}`);
+    console.log('[createInitialProfile] userRef', userRef );
+    // map over the skills and override the current skills
+    skills.map(async (skill, id) => {
+      console.log('[createInitialProfile] skill, id', skill.name, id);
+      // add new doc under the id
+      userRef.collection('skills').doc(`${id}`).set({
+        name: skill.name,
+        votes: skill.votes
+      });
+    });
+
+    // map over the locations and override current locations
+    locations.map(async (location, id) => {
+      console.log('[createInitialProfile] location, id', location.name, id);
+      // add new doc under the id
+      userRef.collection('locations').doc(`${id}`).set({
+        name: location.name,
+        votes: location.votes
+      });
+    });
+  };
+};
+*/
     /*
     // first remove the current existing skill documents
     await userRef.collection('skills').get()
