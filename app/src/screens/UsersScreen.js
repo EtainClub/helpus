@@ -462,14 +462,12 @@ const initRegions = () => {
           // check undefined
           if (typeof coordinate === 'undefined')
             return;
-          //console.log('[userScreen|initRegions] coordinate', coordinate);
           
           const queryParams = `latlng=${coordinate[0]},${coordinate[1]}&language='en'&key=${GEOCODING_API_KEY}`;
           const url = `https://maps.googleapis.com/maps/api/geocode/json?${queryParams}`;
           let response, data;
           try {
             response = await fetch(url);
-//            console.log('geocoding fetching response', response);
           } catch(error) {
             throw {
               code: Geocoder.Errors.FETCHING,
@@ -480,7 +478,6 @@ const initRegions = () => {
           // parse data
           try {
             data = await response.json();
-//            console.log('geocoding data', data);
           } catch(error) {
             throw {
               code: Geocoder.Errors.PARSING,
@@ -491,6 +488,11 @@ const initRegions = () => {
           if (data.status === 'OK') {
             // update region state
             const district = data.results[0].address_components[2].short_name;
+            // update the new region field with english district
+            userRef.update({
+              regionsEN: firebase.firestore.FieldValue.arrayUnion(district)   
+            });
+
             console.log('english region', district);
             // get regions ref
             const regionRef = firebase.firestore().collection('regions').doc(district);

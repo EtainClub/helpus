@@ -42,7 +42,7 @@ const LocationScreen = ({ navigation }) => {
         setLatitude(pos.coords.latitude);
         setLongitude(pos.coords.longitude);
         // @test: set default location
-        if (1)
+        if (0)
         {
         const INIT_REGION = {
           latitude: 37.25949,
@@ -165,11 +165,14 @@ const LocationScreen = ({ navigation }) => {
     //// get current region
     // user ref
     const userRef = firebase.firestore().doc(`users/${userId}`);
-    // get previous region
+    // get previous region in english
     let prevRegion = null;
     await userRef.get()
     .then(doc => {
-      prevRegion = doc.data().regions[locationId];
+      const temp = doc.data().regionsEN[locationId];
+      if (typeof temp !== 'undefined') {
+        prevRegion = doc.data().regionsEN[locationId];
+      }
     })
     .catch(error => console.log(error));
 
@@ -177,12 +180,12 @@ const LocationScreen = ({ navigation }) => {
     // @note currentLocation is from navigation param, which is in local lanugage
     if (currentLocation == '') {
       // update location
-      verifyLocation({ id: locationId, address: address, userId, newVerify: true, prevRegion });
+      verifyLocation({ id: locationId, address: address, userId, newVerify: true, prevRegion, language });
       // navigate to profile screen
       navigation.navigate('ProfileContract');      
     } else if (address.display === currentLocation) { // same as the previous location
       // update location
-      verifyLocation({ id: locationId, address: address, userId, newVerify: false, prevRegion });
+      verifyLocation({ id: locationId, address: address, userId, newVerify: false, prevRegion, language });
       // navigate to profile screen
       navigation.navigate('ProfileContract');
     } else {
@@ -194,7 +197,7 @@ const LocationScreen = ({ navigation }) => {
           { text: t('no'), style: 'cancel' },
           { text: t('yes'), onPress: () => {
             // verify location 
-            verifyLocation({ id: locationId, address: address, userId, newVerify: true, prevRegion });
+            verifyLocation({ id: locationId, address: address, userId, newVerify: true, prevRegion, language });
             // navigate to profile screen
             navigation.navigate('ProfileContract');
           }}

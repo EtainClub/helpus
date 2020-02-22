@@ -17,6 +17,7 @@ import LocationForm from '../components/LocationForm';
 const ProfileScreen = ({ navigation }) => {
   // setup language
   const { t } = useTranslation();
+  const language = i18next.language;
   // use context
   const { 
     state, 
@@ -156,7 +157,7 @@ const ProfileScreen = ({ navigation }) => {
       t('ProfileScreen.deleteLocationText'),
       [
         { text: t('no'), style: 'cancel' },
-        { text: t('yes'), onPress: () => deleteLocation({ userId: state.userInfo.userId, id }) }
+        { text: t('yes'), onPress: () => deleteLocation({ userId: state.userInfo.userId, id, language }) }
       ],
       { cancelable: true },
     );

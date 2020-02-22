@@ -249,7 +249,7 @@ const updateSkill = dispatch => {
 
 // verify location with id and update on DB
 const verifyLocation = dispatch => {
-  return ({ id, address, userId, newVerify, prevRegion }) => {
+  return ({ id, address, userId, newVerify, prevRegion, language }) => {
     console.log('[dispatch verify location]', id, Object.entries(address).length, userId);
     console.log('[dispatch verify location] prevRegion', prevRegion);
     // sanity check
@@ -277,51 +277,64 @@ const verifyLocation = dispatch => {
       coordinate: address.coordinate,
       votes: newVerify ? 1 : firebase.firestore.FieldValue.increment(1)
     });
+    // update the regions in local language
+    userRef.update({
+      regions: firebase.firestore.FieldValue.arrayUnion(address.district),
+      coordinates: address.coordinate
+    });
     
-    //// update the region
-    // get the region in english
-    console.log('before updateRegionState, lat, long', address.coordinate[0], address.coordinate[1]);
-    updateRegionState(dispatch, address.coordinate[0], address.coordinate[1], 'en')
-    .then(region => {
-      console.log('update region', region);
-      // update the db
+    
+    //// update the regions in english
+    // if the local language is english, just copy the address.district
+    let region = address.district;
+    if (language === 'en') {
       userRef.update({
-        regions: firebase.firestore.FieldValue.arrayUnion(region),
-        coordinates: address.coordinate
+        regionsEN: firebase.firestore.FieldValue.arrayUnion(address.district),
       });
-      
-      //// update the region count if it is new or the empty previously
-      if (newVerify) {
-        // get regions ref
-        const regionRef = firebase.firestore().collection('regions').doc(region);
-        regionRef.get()
-        .then(docSnapshot => {
-          console.log('[english region] doc snapshot', docSnapshot);
-          if (docSnapshot.exists) {
-            console.log('[english region] doc exist');
-            //// decrease the previous region by 1
-            // get previous region
-            prevRegionRef = firebase.firestore().collection('regions').doc(prevRegion);
+    } else {
+      // get region in english
+      updateRegionState(dispatch, address.coordinate[0], address.coordinate[1], 'en')
+      .then(district => {
+        console.log('update region', district);
+        region = district;
+        // update the db
+        userRef.update({
+          regionsEN: firebase.firestore.FieldValue.arrayUnion(district),
+        });
+      })
+      .catch(error => console.log(error));
+    }
+
+    //// update the regions DB if the region is new or the empty previously
+    if (newVerify) {
+      // get regions ref
+      const regionRef = firebase.firestore().collection('regions').doc(region);
+      regionRef.get()
+      .then(docSnapshot => {
+        if (docSnapshot.exists) {
+          //// decrease the previous region by 1
+          // decrease previous region if it exists
+          if (prevRegion) {
+            const prevRegionRef = firebase.firestore().collection('regions').doc(prevRegion);
             // decrease
             prevRegionRef.update({
               count: firebase.firestore.FieldValue.increment(-1)
             });
-
-            // increase the count by 1
-            regionRef.update({
-              count: firebase.firestore.FieldValue.increment(1)
-            })
-          } else {
-            // create region
-            regionRef.set({
-              count: 1
-            });
           }
-        })
-        .catch(error => console.log(error));  
-      }
-    })
-    .catch(error => console.log(error));
+
+          // increase the count by 1
+          regionRef.update({
+            count: firebase.firestore.FieldValue.increment(1)
+          })
+        } else {
+          // create region
+          regionRef.set({
+            count: 1
+          });
+        }
+      })
+      .catch(error => console.log(error));  
+    }
   }
 };
 
@@ -332,7 +345,6 @@ const updateRegionState = async (dispatch, latitude, longitude, language) => {
   let response, data;
   try {
     response = await fetch(url);
-    console.log('geocoding fetching response', response);
   } catch(error) {
     throw {
       code: Geocoder.Errors.FETCHING,
@@ -343,7 +355,6 @@ const updateRegionState = async (dispatch, latitude, longitude, language) => {
   // parse data
   try {
     data = await response.json();
-    console.log('geocoding data', data);
   } catch(error) {
     throw {
       code: Geocoder.Errors.PARSING,
@@ -352,7 +363,6 @@ const updateRegionState = async (dispatch, latitude, longitude, language) => {
     };
   }
   if (data.status === 'OK') {
-    console.log('english geocoding', data.results);
     // update region state
     const region = data.results[0].address_components[2].short_name;
     dispatch({
@@ -365,7 +375,7 @@ const updateRegionState = async (dispatch, latitude, longitude, language) => {
 
 // delete location; just make it empty
 const deleteLocation = dispatch => {
-  return async ({ id, userId }) => {
+  return async ({ id, userId, language }) => {
     if (__DEV__) console.log('[deleteLocation] userId and id', userId, id);
     // check sanity
     if (!userId) return;
@@ -411,11 +421,27 @@ const deleteLocation = dispatch => {
       // update the region
       userRef.update({
         regions: firebase.firestore.FieldValue.arrayRemove(district),
-      });  
-      // update the location coordinate, geopoint
-      userRef.update({
         coordinates: []
-      });   
+      });        
+      
+      //// update the regions in english
+      // if the local language is english, just copy the address.district
+      if (language === 'en') {
+        userRef.update({
+          regionsEN: firebase.firestore.FieldValue.arrayRemove(district),
+        });
+      } else {
+        // get region in english
+        updateRegionState(dispatch, coordinate[0], coordinate[1], 'en')
+        .then(district => {
+          console.log('remove region', district);
+          // update the db
+          userRef.update({
+            regionsEN: firebase.firestore.FieldValue.arrayRemove(district),
+          });
+        })
+        .catch(error => console.log(error));
+      }
     })
     .catch(error => {
       console.log(error);
