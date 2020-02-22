@@ -454,9 +454,10 @@ const initRegions = () => {
 
         // loop over locations
         snapshot.forEach(async doc => {
-          if (!doc.exists)
+          if (!doc.exists) {
             console.log('[userScreen|initRegions] doc does not exist', doc);
-
+            return;
+          }
           // get coordinate
           const coordinate = doc.data().coordinate;
           // check undefined

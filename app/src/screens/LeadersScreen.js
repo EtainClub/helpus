@@ -207,7 +207,7 @@ const LeadersScreen = ({ navigation }) => {
             setIndicator(doc.data()[property]);
             // set user region
             console.log('update user rank, region', doc.data().regions[0]);
-            setUserRegion(doc.data().regions[0]);
+            setUserRegion(doc.data().regionsEN[0]);
             return;
           }
           order++;
