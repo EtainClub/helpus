@@ -66,7 +66,7 @@ const ChatListScreen = ({ navigation }) => {
 
 
     /*
-    //// @test update add newChat field to all cases
+    //// @DB update add newChat field to all cases
     casesRef.get()
     .then(snapshot => {
       snapshot.forEach(async doc => {

@@ -40,6 +40,9 @@ const UsersScreen = ({ navigation }) => {
   // componentDidMount
   useEffect(() => {
     console.log('UserScreen');
+    // @DB: initialize regions collection
+    //if (0) initRegions();
+
     // get current location
     const watchId = Geolocation.watchPosition(
       pos => {
@@ -419,5 +422,101 @@ const styles = StyleSheet.create({
     right: '3%'
   }
 });
+
+// @DB: initialize the regions collection from user's coordinate
+const initRegions = () => {
+  // get users ref
+  const usersRef = firebase.firestore().collection('users');
+  usersRef.get()
+  .then(snapshot => {
+    snapshot.forEach(async doc => {
+      // @todo remove test accounts
+      const userRef = firebase.firestore().doc(`users/${doc.id}`);
+      let testAccount = false;
+      await userRef.get()
+      .then(doc => {
+        if (doc.data().tester) testAccount = true;
+      })
+      .catch(error => console.log(error));
+      // skip the loop if the user is a tester
+      if (testAccount) return;
+
+      // get user location collection ref      
+      const locationsRef = userRef.collection('locations');
+      locationsRef.get()
+      .then(snapshot => {
+        // check empty
+        if (snapshot.empty) {
+          return;
+        }
+        if (typeof snapshot === 'undefined')
+          console.log('[userScreen|initRegions] undefined snapshot', snapshot);
+
+        // loop over locations
+        snapshot.forEach(async doc => {
+          if (!doc.exists)
+            console.log('[userScreen|initRegions] doc does not exist', doc);
+
+          // get coordinate
+          const coordinate = doc.data().coordinate;
+          // check undefined
+          if (typeof coordinate === 'undefined')
+            return;
+          //console.log('[userScreen|initRegions] coordinate', coordinate);
+          
+          const queryParams = `latlng=${coordinate[0]},${coordinate[1]}&language='en'&key=${GEOCODING_API_KEY}`;
+          const url = `https://maps.googleapis.com/maps/api/geocode/json?${queryParams}`;
+          let response, data;
+          try {
+            response = await fetch(url);
+//            console.log('geocoding fetching response', response);
+          } catch(error) {
+            throw {
+              code: Geocoder.Errors.FETCHING,
+              message: "Error while fetching. Check your network",
+              origin: error
+            };
+          }
+          // parse data
+          try {
+            data = await response.json();
+//            console.log('geocoding data', data);
+          } catch(error) {
+            throw {
+              code: Geocoder.Errors.PARSING,
+              message : "Error while parsing response's body into JSON. The response is in the error's 'origin' field. Try to parse it yourself.",
+              origin : response,
+            };
+          }
+          if (data.status === 'OK') {
+            // update region state
+            const district = data.results[0].address_components[2].short_name;
+            console.log('english region', district);
+            // get regions ref
+            const regionRef = firebase.firestore().collection('regions').doc(district);
+            regionRef.get()
+            .then(docSnapshot => {
+              console.log('[english region] doc snapshot', docSnapshot);
+              if (docSnapshot.exists) {
+                // increase the count by 1
+                regionRef.update({
+                  count: firebase.firestore.FieldValue.increment(1)
+                })
+              } else {
+                // create region
+                regionRef.set({
+                  count: 1,
+                  coordinate: coordinate
+                });
+              }
+            })
+            .catch(error => console.log(error));
+          }
+        });
+      })
+      .catch(error => console.log(error));
+    });
+  });
+}
 
 export default UsersScreen;

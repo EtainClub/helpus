@@ -172,10 +172,9 @@ const LocationScreen = ({ navigation }) => {
       prevRegion = doc.data().regions[locationId];
     })
     .catch(error => console.log(error));
-    console.log('previous region', prevRegion);
-    console.log('address district', address.district);
 
     // check if the location is a new location
+    // @note currentLocation is from navigation param, which is in local lanugage
     if (currentLocation == '') {
       // update location
       verifyLocation({ id: locationId, address: address, userId, newVerify: true, prevRegion });

@@ -16,16 +16,6 @@ const LeadersScreen = ({ navigation }) => {
   const { t } = useTranslation();
   // get reference to the current user
   const { currentUser } = firebase.auth();
-  // test accounts
-  const testAccounts = [
-    'E5Yuo3CmmHf8qRlfuhuGd5AaSwH3',
-    'Yt9I8EKVsJRAOTYAK62MwCEZ9EU2',
-    'VBqWN80r7DPLMqRBh1YtDa9SjGm1',
-    'eHtWShuvY2f65HzezsbufRt184M2',
-    'MXWX9PZjdFdA3aFKNE1dn0aYnru2',
-    '0bmeKTsmlGeAOdOne2wQCwhLp7t1',
-    'PzuWvkV0sWhzrXRrEsYgwPBvSFI3' 
-  ];
   const userId = currentUser.uid;
   // use context
   const { state } = useContext(ProfileContext);
@@ -39,6 +29,8 @@ const LeadersScreen = ({ navigation }) => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [userIndex, setUserIndex] = useState(null);
   const [userItem, setUserItem] = useState(null);
+  const [showRegionRanking, setShowRegionRanking] = useState(false);
+  const [regionBoardData, setRegionBoardData] = useState([]);
 
   // componentDidMount
   useEffect(() => {
@@ -70,12 +62,31 @@ const LeadersScreen = ({ navigation }) => {
     // set field
     let property = '';
     switch (select) {
-      case 0: property = "helpCount"; break;
-      case 1: property = "askCount"; break;
-      case 2: property = "votes"; break;
-      default: property = "helpCount"; break;
+      case 0: 
+        property = "helpCount"; 
+        break;
+      case 1: 
+        property = "askCount"; 
+        break;
+      case 2: 
+        property = "votes"; 
+        break;
+      default: 
+        break;
     }
-    setField(property);
+    // return if the region board is selected
+    if (select === 3) {
+      setShowRegionRanking(true);
+      // @todo fetch data
+      console.log('fetching region data');
+      fetchRegionData();
+      // @todo update header for region
+//      fetchData('votes');
+      return;
+    }
+    // reset the region ranking board
+    setShowRegionRanking(false);
+//    setField(property);
     // fetch new data
     fetchData(property);
     // update user rank
@@ -104,7 +115,6 @@ const LeadersScreen = ({ navigation }) => {
     // users on firestore
     const usersRef = firebase.firestore().collection('users');
 
-    // @todo how to use db instead of static testAccounts?: 
     // count number of test accounts
     let numTesters = 0;
     await usersRef.where("tester", "==", true).get()
@@ -140,7 +150,7 @@ const LeadersScreen = ({ navigation }) => {
             console.log('No matching docs');
             return;
           }
-          console.log('[LeadersScreen|fetchData] got skills', snapshot2);  
+//          console.log('[LeadersScreen|fetchData] got skills', snapshot2);  
           snapshot2.forEach(doc => {
             skills.push(doc.data());
           });
@@ -167,7 +177,7 @@ const LeadersScreen = ({ navigation }) => {
           languages: doc.data().languages
         })];
       });
-      console.log('[LeadersScreen|fetchData] data', data);
+//      console.log('[LeadersScreen|fetchData] data', data);
       // set data
       setBoardData(data);
     });
@@ -194,6 +204,29 @@ const LeadersScreen = ({ navigation }) => {
           order++;
         }
       });
+    });
+  };
+
+  // fetch region data from regions collection
+  const fetchRegionData = async () => {
+    // get regions collection ref
+    const regionsRef = firebase.firestore().collection('regions');
+    // get ordered data
+    regionsRef.orderBy('count', "desc")
+    .onSnapshot(snapshot => {
+      // region data
+      let data = [];
+      snapshot.docs.forEach(doc => {
+        // @todo convert the region in local language
+        // we need coordinate
+        console.log('[fetchRegionData] region, count', doc.id, doc.data().count);
+        data = [...data, ({
+          name: doc.id,
+          score: doc.data().count
+        })];
+      });
+      // set region data
+      setRegionBoardData(data);
     });
   };
 
@@ -337,11 +370,11 @@ const LeadersScreen = ({ navigation }) => {
           {userItem && renderUserCard()}
         </Overlay>
         <Leaderboard 
-          data={boardData} 
+          data={ showRegionRanking ? regionBoardData :boardData } 
           sortBy='score' 
           labelBy='name'
-          icon="iconUrl"
-          onRowPress={renderUserInfo}
+          icon={ showRegionRanking ? null : "iconUrl" }
+          onRowPress={ showRegionRanking ? null : renderUserInfo }
         />
       </ScrollView>
     </SafeAreaView>
