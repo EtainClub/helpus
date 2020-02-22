@@ -95,6 +95,8 @@ const LeadersScreen = ({ navigation }) => {
 
   // calculate the average rating
   const calucateAverageRating = (ratings) => {
+    // check sanity
+    if (!ratings) return 0;
     let sumRatings = 0;
     let ratingCount = 0;
     for( let i=0; i<ratings.length; i++) {
@@ -126,13 +128,17 @@ const LeadersScreen = ({ navigation }) => {
     console.log('number of testers', numTesters);
 
     //// get data
-    const maxElem = 10;
+    const maxElem = 100;
     // ordering and showing only top users
     usersRef.orderBy(property, "desc").limit(maxElem+numTesters)
     .onSnapshot(snapshot => {
       let data = [];
       // build data array
       snapshot.docs.forEach(doc => {
+        // check doc exists
+        if (!doc.exists) {
+          return;
+        }
         // do not include test accounts
         if (doc.data().tester) {
           return;
@@ -212,7 +218,8 @@ const LeadersScreen = ({ navigation }) => {
     // get regions collection ref
     const regionsRef = firebase.firestore().collection('regions');
     // get ordered data
-    regionsRef.orderBy('count', "desc")
+    const maxElem = 100;
+    regionsRef.orderBy('count', "desc").limit(maxElem)
     .onSnapshot(snapshot => {
       // region data
       let data = [];
