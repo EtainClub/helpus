@@ -9,14 +9,18 @@ import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
 import Leaderboard from 'react-native-leaderboard';
+import Geocoder from 'react-native-geocoding';
+import { GEOCODING_API_KEY } from 'react-native-dotenv';
 import { Context as ProfileContext } from '../context/ProfileContext';
 
 const LeadersScreen = ({ navigation }) => {
   // setup language
   const { t } = useTranslation();
+  const language = i18next.language;
   // get reference to the current user
   const { currentUser } = firebase.auth();
   const userId = currentUser.uid;
+  const maxElem = 100;
   // use context
   const { state } = useContext(ProfileContext);
   // use state
@@ -128,7 +132,7 @@ const LeadersScreen = ({ navigation }) => {
     console.log('number of testers', numTesters);
 
     //// get data
-    const maxElem = 100;
+
     // ordering and showing only top users
     usersRef.orderBy(property, "desc").limit(maxElem+numTesters)
     .onSnapshot(snapshot => {
@@ -222,18 +226,43 @@ const LeadersScreen = ({ navigation }) => {
     regionsRef.orderBy('count', "desc").limit(maxElem)
     .onSnapshot(snapshot => {
       // region data
-      let data = [];
-      snapshot.docs.forEach(doc => {
-        // @todo convert the region in local language
-        // we need coordinate
-        console.log('[fetchRegionData] region, count', doc.id, doc.data().count);
-        data = [...data, ({
-          name: doc.id,
-          score: doc.data().count
-        })];
+      let regionData = [];
+      snapshot.docs.forEach(async doc => {
+        // convert the region in local language
+        const coordinate = doc.data().coordinate;
+        const queryParams = `latlng=${coordinate[0]},${coordinate[1]}&language=${language}&key=${GEOCODING_API_KEY}`;
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?${queryParams}`;
+        let response, data;
+        try {
+          response = await fetch(url);
+        } catch(error) {
+          throw {
+            code: Geocoder.Errors.FETCHING,
+            message: "Error while fetching. Check your network",
+            origin: error
+          };
+        }
+        // parse data
+        try {
+          data = await response.json();
+        } catch(error) {
+          throw {
+            code: Geocoder.Errors.PARSING,
+            message : "Error while parsing response's body into JSON. The response is in the error's 'origin' field. Try to parse it yourself.",
+            origin : response,
+          };
+        }
+        if (data.status === 'OK') {
+          // update region state
+          const district = data.results[0].address_components[2].short_name;
+          regionData = [...regionData, ({
+            name: district,
+            score: doc.data().count
+          })];
+          // set region data
+          setRegionBoardData(regionData);
+        }
       });
-      // set region data
-      setRegionBoardData(data);
     });
   };
 
