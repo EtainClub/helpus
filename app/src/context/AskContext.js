@@ -16,7 +16,6 @@ const askReducer = (state, action) => {
         totalCases: action.payload.totalCases
       };
     case 'set_region':
-      console.log('[set_region]', action.payload);
       return {
         ...state,
         region: action.payload
@@ -24,7 +23,6 @@ const askReducer = (state, action) => {
     case 'set_loading':
       return {...state, loading: true};
     case 'request_help':
-      console.log('request_help payload', action.payload);
       return { 
         ...state, loading: true, errorMessage: '',
         message: action.payload.message,
@@ -108,7 +106,6 @@ const checkRegion = dispatch => {
     .get()
     .then(doc => {
       region = doc.data().regions[0];
-      console.log('[checkRegion] region', region);
       dispatch({
         type: 'set_region',
         payload: region
