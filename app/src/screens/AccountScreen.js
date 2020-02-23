@@ -79,7 +79,7 @@ const AccountScreen = ({ navigation }) => {
     });
 
     // @test
-    console.log('[accountScreen] state locations', state.locations);
+    if (__DEV__) console.log('[accountScreen] state locations', state.locations);
   }
 
   countAskHelpCases = async () => {

@@ -76,7 +76,6 @@ const ChatScreen = ({ navigation }) => {
     const userRef = firebase.firestore().doc(`users/${userId}`);
     await userRef.get()
     .then(doc => {
-      console.log('user doc', doc.data());
       setUserInfo(doc.data());
     })
     .catch(error => {
@@ -94,7 +93,7 @@ const ChatScreen = ({ navigation }) => {
     .onSnapshot(snapshot => {
       let messages = [];
       snapshot.docs.forEach(doc => {
-        console.log('[ChatScreen] doc data', doc.data());
+        if (__DEV__) console.log('[ChatScreen] doc data', doc.data());
         const createdAt = doc.data().createdAt.toDate();
         messages = [
           ...messages,({
@@ -107,7 +106,6 @@ const ChatScreen = ({ navigation }) => {
       });
       // update the message state
       setChats(messages);
-      console.log('chats', messages);
     });
     console.log('[listenChat]unsubrribe', unsubscribe);
   }
@@ -215,7 +213,7 @@ const ChatScreen = ({ navigation }) => {
   // user clicks the attachment icon
   onFilePickerPress = async () => {
     ImagePicker.showImagePicker(pickerOptions, (response) => {
-      console.log('image response', response);
+      if (__DEV__) console.log('image response', response);
       if (response.didCancel) {
         // alert for canceling avatar picking
         Alert.alert(
@@ -239,7 +237,7 @@ const ChatScreen = ({ navigation }) => {
         );
       } else {
         const source = {uri: response.uri};
-        console.log('source', source);
+        if (__DEV__) console.log('source', source);
         setImgSource(source);
         setImgUri(response.uri);
         // upload image
@@ -297,7 +295,6 @@ const ChatScreen = ({ navigation }) => {
     // get vote field
     await caseRef.get()
     .then(doc => {
-      console.log('[ChatScreen|onVotePress] doc', doc);
       if (typeof doc.data().voted != 'undefined') {
         if (!doc.data().voted) {
           // show the rating modal

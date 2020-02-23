@@ -93,7 +93,6 @@ const ChatListScreen = ({ navigation }) => {
           console.log('No matching docs');
           return;
         }
-        console.log('snapshot', snapshot);
         snapshot.forEach(doc => {
           let docItem = doc.data();
           // check sanity, acceptance
@@ -104,7 +103,7 @@ const ChatListScreen = ({ navigation }) => {
             docItem.docId = doc.id;
             docItem.createdAt = moment(docItem.createdAt.toDate()).format('ll');
             matchedCases.push(docItem);
-            console.log(doc.id, '=>', docItem);
+            if (__DEV__) console.log(doc.id, '=>', docItem);
           }
         });
         // update state

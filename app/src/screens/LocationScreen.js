@@ -80,17 +80,16 @@ const LocationScreen = ({ navigation }) => {
 
   // convert the location to address using geocoding
   const onRegionChange = (event) => {
-    console.log('on region change event', event);
-    console.log('lat', latitude);
-    console.log('long', longitude);
+    if (__DEV__) console.log('on region change event', event);
+    if (__DEV__) console.log('lat', latitude);
+    if (__DEV__) console.log('long', longitude);
   };
 
   const onRegionChangeComplete = () => {
-    console.log('onRegionChangeComplete');
+    if (__DEV__) console.log('onRegionChangeComplete');
     // get intial address
     Geocoder.from(latitude, longitude)
     .then(json => {
-      console.log('[onRegionChangeComplete] json', json);
       const name = json.results[0].address_components[1].short_name;
       const district = json.results[0].address_components[2].short_name;
       const city = json.results[0].address_components[3].short_name;
@@ -121,8 +120,8 @@ const LocationScreen = ({ navigation }) => {
   };
 
   const onMapPress = (event) => {
-    console.log('map press coordinate', event.nativeEvent.coordinate);
-    console.log('language', language);
+    if (__DEV__) console.log('map press coordinate', event.nativeEvent.coordinate);
+    if (__DEV__) console.log('language', language);
 
     // get intial address
     // @todo change lat and long if you want to update the address with map press event
@@ -206,69 +205,6 @@ const LocationScreen = ({ navigation }) => {
       );            
     }
   };
-
-  /*
-  // update region DB
-  const updateRegionDB = async (currentRegion) => {
-    const queryParams = `latlng=${latitude},${longitude}&language='en'&key=${GEOCODING_API_KEY}`;
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?${queryParams}`;
-    let response, data;
-    try {
-      response = await fetch(url);
-      console.log('geocoding fetching response', response);
-    } catch(error) {
-      throw {
-        code: Geocoder.Errors.FETCHING,
-        message: "Error while fetching. Check your network",
-        origin: error
-      };
-    }
-    // parse data
-    try {
-      data = await response.json();
-      console.log('geocoding data', data);
-    } catch(error) {
-      throw {
-        code: Geocoder.Errors.PARSING,
-        message : "Error while parsing response's body into JSON. The response is in the error's 'origin' field. Try to parse it yourself.",
-        origin : response,
-      };
-    }
-    if (data.status === 'OK') {
-      console.log('english geocoding', data.results);
-      //// update db
-      // district
-      const district = data.results[0].address_components[2].short_name;
-      // get regions ref
-      const regionRef = firebase.firestore().collection('regions').doc(district);
-      regionRef.get()
-      .then(docSnapshot => {
-        console.log('[english region] doc snapshot', docSnapshot);
-        if (docSnapshot.exists) {
-          console.log('[english region] doc exist');
-          //// decrease the previous region by 1
-          // get previous region
-          prevRegionRef = firebase.firestore().collection('regions').doc(currentRegion);
-          // decrease
-          prevRegionRef.update({
-            count: firebase.firestore.FieldValue.increment(-1)
-          });
-
-          // increase the count by 1
-          regionRef.update({
-            count: firebase.firestore.FieldValue.increment(1)
-          })
-        } else {
-          // create region
-          regionRef.set({
-            count: 1
-          });
-        }
-      })
-      .catch(error => console.log(error));
-    }
-  };
-  */
 
   const showMap = () => {
     if (Platform.OS === 'android') {

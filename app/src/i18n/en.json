@@ -154,8 +154,8 @@
     },
     "LeadersScreen": {
       "header": "Leaderboard",
-      "helped": "Helped",
-      "gotHelped": "Got Helped",
+      "helped": "Help",
+      "gotHelped": "Ask",
       "voted": "Voted",
       "userInfo": "User Profile",
       "region": "Region",

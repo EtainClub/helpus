@@ -78,8 +78,6 @@ const UsersScreen = ({ navigation }) => {
     Geocoder.from(region.latitude, region.longitude)
       .then(json => {
         const addrComponent = json.results[0].address_components[1];
-        console.log('addr json', json);
-        console.log('addr', addrComponent);
       })
       .catch(error => console.warn(error));
   };
@@ -87,7 +85,6 @@ const UsersScreen = ({ navigation }) => {
   // convert the location to address using geocoding
   const onRegionChange = (regionEvent) => {
     // @todo consider use set timer to make updated less
-    console.log('on region change event', regionEvent);
     setRegion(regionEvent)
   };
 
@@ -96,7 +93,6 @@ const UsersScreen = ({ navigation }) => {
     // get intial address
     Geocoder.from(region.latitude, region.longitude)
     .then(async json => {
-      console.log('[onRegionChangeComplete] json', json);
       const name = json.results[0].address_components[1].short_name;
       const district = json.results[0].address_components[2].short_name;
       const city = json.results[0].address_components[3].short_name;
@@ -139,7 +135,6 @@ const UsersScreen = ({ navigation }) => {
         let response, data;
         try {
           response = await fetch(url);
-          console.log('geocoding fetching response', response);
         } catch(error) {
           throw {
             code: Geocoder.Errors.FETCHING,
@@ -150,7 +145,6 @@ const UsersScreen = ({ navigation }) => {
         // parse data
         try {
           data = await response.json();
-          console.log('geocoding data', data);
         } catch(error) {
           throw {
             code: Geocoder.Errors.PARSING,
@@ -355,7 +349,6 @@ const UsersScreen = ({ navigation }) => {
   );
 
   const renderUserList = () => {
-    console.log('state.userlist.length', state.userList.length);
     if (state.userList.length == 0) {
       return ( 
         <View style={{ marginTop: 50 }}>
@@ -450,12 +443,12 @@ const initRegions = () => {
           return;
         }
         if (typeof snapshot === 'undefined')
-          console.log('[userScreen|initRegions] undefined snapshot', snapshot);
+        if (__DEV__) console.log('[userScreen|initRegions] undefined snapshot', snapshot);
 
         // loop over locations
         snapshot.forEach(async doc => {
           if (!doc.exists) {
-            console.log('[userScreen|initRegions] doc does not exist', doc);
+            if (__DEV__) console.log('[userScreen|initRegions] doc does not exist', doc);
             return;
           }
           // get coordinate
@@ -494,12 +487,10 @@ const initRegions = () => {
               regionsEN: firebase.firestore.FieldValue.arrayUnion(district)   
             });
 
-            console.log('english region', district);
             // get regions ref
             const regionRef = firebase.firestore().collection('regions').doc(district);
             regionRef.get()
             .then(docSnapshot => {
-              console.log('[english region] doc snapshot', docSnapshot);
               if (docSnapshot.exists) {
                 // increase the count by 1
                 regionRef.update({

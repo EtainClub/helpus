@@ -156,7 +156,6 @@ const LeadersScreen = ({ navigation }) => {
             console.log('No matching docs');
             return;
           }
-//          console.log('[LeadersScreen|fetchData] got skills', snapshot2);  
           snapshot2.forEach(doc => {
             skills.push(doc.data());
           });
@@ -183,7 +182,6 @@ const LeadersScreen = ({ navigation }) => {
           languages: doc.data().languages
         })];
       });
-//      console.log('[LeadersScreen|fetchData] data', data);
       // set data
       setBoardData(data);
     });
@@ -206,7 +204,6 @@ const LeadersScreen = ({ navigation }) => {
             // set indicator
             setIndicator(doc.data()[property]);
             // set user region
-            console.log('update user rank, region', doc.data().regions[0]);
             setUserRegion(doc.data().regionsEN[0]);
             return;
           }
@@ -321,7 +318,6 @@ const LeadersScreen = ({ navigation }) => {
   };
 
   const renderUserInfo = async (item, index) => {
-    console.log('[LeadersScreen] show user info', item, index);
     // set user index and item to show
     setUserIndex(index);
     setUserItem(item);

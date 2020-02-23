@@ -10,7 +10,6 @@ const ItemForm = (props) => {
   const id = props.id + 1;
 
   updateItem = (value) => {
-    console.log('[ItemForm] value', value);
     setItem(value);
     props.handleStateChange(props.id, value);
   }

@@ -34,7 +34,6 @@ const NoticeListScreen = ({ navigation }) => {
     console.log('getting notice list');
     // notices ref
     const noticesRef = firebase.firestore().collection('notices');
-    console.log('[getNoticeList] notices ref', noticesRef);
     noticesRef.orderBy('createdAt', "desc").limit(10)
     .onSnapshot(snapshot => {
       let data = [];
@@ -46,7 +45,6 @@ const NoticeListScreen = ({ navigation }) => {
           createdAt: moment(doc.data().createdAt.toDate()).format('ll'),
           subject: doc.data()[subject]
         })];
-        console.log('notice data', data);
         setNoticeData(data);
       });
     });

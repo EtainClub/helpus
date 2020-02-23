@@ -25,12 +25,12 @@ const SettingScreen = ({ navigation }) => {
   const forceUpdate = useCallback(() => updateState({}), []);
   */
 
-  const APPSTORE = 'https://apps.apple.com/us/app/helpus-instant-help-in-town/id1496615309?app=itunes&ign-mpt=uo%3D4';  
+  const APPSTORE = 'https://apps.apple.com/us/app/helpus-instant-help-in-town/id1496615309';  
   const GOOGLEPLAY = 'https://play.google.com/store/apps/details?id=club.etain.helpus';
 
   //// initial values
   // app version
-  const appVersion = '1.9.0';
+  const appVersion = '2.0.0';
   // setting list
   const settingList = [
     {
@@ -68,8 +68,8 @@ const SettingScreen = ({ navigation }) => {
     },
     {
       title: t('SettingScreen.facebookGroup'),
-      url: 'https://www.facebook.com/groups/497453057500529/',
-      icon: 'facebook-official'
+      url: 'https://steemit.com/trending/hive-101100',
+      icon: 'group'
     },
     {
       title: t('SettingScreen.github'),

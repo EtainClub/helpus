@@ -76,7 +76,6 @@ const profileReducer = (state, action) => {
         needUpdateContract: true
       };
     case 'update_region':
-      console.log('[update_region] payload', action.payload );
       return { ...state, region: action.payload };  
     case 'update_location':
       return {
@@ -109,7 +108,6 @@ const profileReducer = (state, action) => {
     case 'delete_user_list':
       return { ...state, userList: [] }
     case 'update_user_list': 
-      console.log('[update_user_list] payload', action.payload);
       // check if the user is in the list (multi-language user)
       for (let i=0; i<state.userList.length; i++) {
         if (state.userList[i].userId == action.payload.userId) {
@@ -136,7 +134,6 @@ const profileReducer = (state, action) => {
 // find nearby users
 const findUsers = dispatch => {
   return async ({ district, userId, multiLang }) => {
-    console.log('dispatch find users', district, userId);
     if (!multiLang) {
       // delete userlist
       dispatch({
@@ -160,7 +157,7 @@ const findUsers = dispatch => {
           // get skill
           getSkillsLocations({ userId: doc.id })
           .then(userData => {
-            console.log('[findUsers] user data', userData);   
+//            console.log('[findUsers] user data', userData);   
             // calculate the average rating
             const avgRating = calucateAverageRating(doc.data().ratings);           
             dispatch({
@@ -204,7 +201,7 @@ const getSkillsLocations = async ({ userId }) => {
       console.log('No matching docs');
       return;
     }
-    console.log('[getSkillsLocations] got skills', snapshot);  
+//    console.log('[getSkillsLocations] got skills', snapshot);  
     snapshot.forEach(doc => {
       skills.push(doc.data());
     });
@@ -221,7 +218,7 @@ const getSkillsLocations = async ({ userId }) => {
       console.log('No matching docs');
       return;
     }  
-    console.log('[getSkillsLocations] got locations', snapshot);  
+//    console.log('[getSkillsLocations] got locations', snapshot);  
     snapshot.forEach(doc => {
       locations.push(doc.data());
     });
@@ -231,7 +228,7 @@ const getSkillsLocations = async ({ userId }) => {
   }); 
   
   const userData = { skills, locations };
-  console.log('[getSkillsLocations] userData', userData);
+//  console.log('[getSkillsLocations] userData', userData);
 
   return userData;
 };
@@ -250,13 +247,13 @@ const updateSkill = dispatch => {
 // verify location with id and update on DB
 const verifyLocation = dispatch => {
   return ({ id, address, userId, newVerify, prevRegion, language }) => {
-    console.log('[dispatch verify location]', id, Object.entries(address).length, userId);
-    console.log('[dispatch verify location] prevRegion', prevRegion);
+//    console.log('[dispatch verify location]', id, Object.entries(address).length, userId);
+//    console.log('[dispatch verify location] prevRegion', prevRegion);
     // sanity check
     if (!userId) return;
     if (typeof id === 'undefined') return; 
     if (Object.entries(address).length === 0) return;
-    console.log('[verifyLocation] address length', Object.entries(address).length);
+//    console.log('[verifyLocation] address length', Object.entries(address).length);
 
     dispatch({
       type: 'verify_location',
@@ -295,7 +292,7 @@ const verifyLocation = dispatch => {
       // get region in english
       updateRegionState(dispatch, address.coordinate[0], address.coordinate[1], 'en')
       .then(district => {
-        console.log('update region', district);
+//        console.log('update region', district);
         region = district;
         // update the db
         userRef.update({
@@ -339,7 +336,7 @@ const verifyLocation = dispatch => {
 };
 
 const updateRegionState = async (dispatch, latitude, longitude, language) => {
-  console.log('[updateRegionState] lat, long', latitude, longitude, typeof latitude);
+//  console.log('[updateRegionState] lat, long', latitude, longitude, typeof latitude);
   const queryParams = `latlng=${latitude},${longitude}&language=${language}&key=${GEOCODING_API_KEY}`;
   const url = `https://maps.googleapis.com/maps/api/geocode/json?${queryParams}`;
   let response, data;
@@ -404,7 +401,7 @@ const deleteLocation = dispatch => {
     // get the district
     userRef.collection('locations').doc(`${id}`).get()
     .then(snapshot => {
-      console.log('delete location snapshot data', snapshot.data());
+//      console.log('delete location snapshot data', snapshot.data());
       const district = snapshot.data().district;
       const coordinate = snapshot.data().coordinate;
       userRef.collection('locations').doc(`${id}`).update({
@@ -434,7 +431,7 @@ const deleteLocation = dispatch => {
         // get region in english
         updateRegionState(dispatch, coordinate[0], coordinate[1], 'en')
         .then(district => {
-          console.log('remove region', district);
+//          console.log('remove region', district);
           // update the db
           userRef.update({
             regionsEN: firebase.firestore.FieldValue.arrayRemove(district),
@@ -470,7 +467,7 @@ const updateAvatarState = dispatch => {
 const updateAccount = dispatch => {
   return async ({ userId, name, avatarUrl, navigation }) => {
     const userInfo = { userId, name, avatarUrl };
-    console.log('[updateUserInfo]', userInfo);
+//    console.log('[updateUserInfo]', userInfo);
     //// update db
     // reference to user info
     const userRef = firebase.firestore().doc(`users/${userId}`);
@@ -508,7 +505,7 @@ const calucateAverageRating = (ratings) => {
 // update user info state
 const updateUserInfoState = dispatch => {
   return ( userInfo ) => {
-    console.log('[updateUserInfoState]', userInfo);
+    if (__DEV__) console.log('[updateUserInfoState]', userInfo);
     // calculate average rating
     const avgRating = calucateAverageRating(userInfo.ratings);
     // update state
@@ -555,7 +552,7 @@ const updateSkills = dispatch => {
 // update locations state
 const updateLocations = dispatch => {
   return ({ locations }) => {
-    console.log('[updateLocations] locations', locations);
+    if (__DEV__) console.log('[updateLocations] locations', locations);
     dispatch({ 
       type: 'update_locations',
       payload: locations,
@@ -566,7 +563,7 @@ const updateLocations = dispatch => {
 // update db
 const updateSkillsDB = dispatch => {
   return async ({ userId, skills }) => {
-    console.log('[updateSkillsDB]');
+    if (__DEV__) console.log('[updateSkillsDB]');
 
     // check sanity
     if (__DEV__) console.log('[deleteLocation] userId', userId);
@@ -578,7 +575,7 @@ const updateSkillsDB = dispatch => {
     // map over the skills and override the current skills
     // @todo update only the ones that need to be updated
     skills.map(async (skill, id) => {
-      console.log('[updateSkillsDB] skill, id', skill.name, id);
+      if (__DEV__) console.log('[updateSkillsDB] skill, id', skill.name, id);
       // add new doc under the id
       userRef.collection('skills').doc(`${id}`).set({
         name: skill.name,
@@ -591,16 +588,13 @@ const updateSkillsDB = dispatch => {
 // update smart contract
 const updateContract = dispatch => {
   return async ({ userId, skills, locations }) => {
-    console.log('[updateContract]');
     dispatch({ type: 'update_contract' });
     //// put skills and locations on firestore
     // get the firebase doc ref
     const userRef = firebase.firestore().doc(`users/${userId}`);
-    console.log('[updateContract] userRef', userRef );
     // map over the skills and override the current skills
     // @todo update only the ones that need to be updated
     skills.map(async (skill, id) => {
-      console.log('[updateContract] skill, id', skill.name, id);
       // add new doc under the id
       userRef.collection('skills').doc(`${id}`).set({
         name: skill.name,
@@ -611,7 +605,6 @@ const updateContract = dispatch => {
     // map over the locations and override current locations
     // @todo update only the ones that need to be updated
     locations.map(async (location, id) => {
-      console.log('[updateContract] location, id', location.name, id);
       // add new doc under the id
       userRef.collection('locations').doc(`${id}`).set({
         name: location.name,

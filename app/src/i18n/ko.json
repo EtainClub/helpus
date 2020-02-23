@@ -156,7 +156,7 @@
     "LeadersScreen": {
       "header": "도움순위",
       "helped": "도움",
-      "gotHelped": "도움 요청",
+      "gotHelped": "요청",
       "voted": "추천",
       "userInfo": "사용자 프로필",
       "region": "지역",

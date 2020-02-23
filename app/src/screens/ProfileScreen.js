@@ -49,7 +49,6 @@ const ProfileScreen = ({ navigation }) => {
     const userId = currentUser.uid;
     // reference to user 
     const userRef = firebase.firestore().doc(`users/${userId}`);
-    console.log('[ProfileScreen] userRef', userRef);
     // get skills
     let skills = [];
     await userRef.collection('skills').get()
@@ -150,7 +149,7 @@ const ProfileScreen = ({ navigation }) => {
   // delete the location
   onDeleteLocation = (id) => {
     // @test
-    console.log('[ondeletelocation] userid, id', state.userInfo.userId, id);
+    if (__DEV__) console.log('[ondeletelocation] userid, id', state.userInfo.userId, id);
     // alert
     Alert.alert(
       t('ProfileScreen.deleteLocation'),

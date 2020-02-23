@@ -14,7 +14,6 @@ const LocationForm = (props) => {
   const id = props.id + 1;
 
   const updateLocation = (value) => {
-    console.log('[LocationForm] value', value);
     setLocation(value);
     props.handleStateChange(props.id, value);
   }
