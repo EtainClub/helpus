@@ -41,7 +41,7 @@ const UsersScreen = ({ navigation }) => {
   useEffect(() => {
     console.log('UserScreen');
     // @DB: initialize regions collection
-    //if (0) initRegions();
+//    if (0) initRegions();
 
     // get current location
     const watchId = Geolocation.watchPosition(
@@ -423,7 +423,7 @@ const initRegions = () => {
   usersRef.get()
   .then(snapshot => {
     snapshot.forEach(async doc => {
-      // @todo remove test accounts
+      // remove test accounts
       const userRef = firebase.firestore().doc(`users/${doc.id}`);
       let testAccount = false;
       await userRef.get()

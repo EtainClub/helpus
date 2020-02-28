@@ -426,7 +426,7 @@ const LeadersScreen = ({ navigation }) => {
           {userItem && renderUserCard()}
         </Overlay>
         <Leaderboard 
-          data={ showRegionRanking ? regionBoardData :boardData } 
+          data={ showRegionRanking ? regionBoardData: boardData } 
           sortBy='score' 
           labelBy='name'
           icon={ showRegionRanking ? null : "iconUrl" }

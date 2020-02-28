@@ -246,7 +246,7 @@ const updateSkill = dispatch => {
 
 // verify location with id and update on DB
 const verifyLocation = dispatch => {
-  return ({ id, address, userId, newVerify, prevRegion, language }) => {
+  return ({ id, address, userId, newVerify, language }) => {
 //    console.log('[dispatch verify location]', id, Object.entries(address).length, userId);
 //    console.log('[dispatch verify location] prevRegion', prevRegion);
     // sanity check
@@ -285,6 +285,11 @@ const verifyLocation = dispatch => {
     // if the local language is english, just copy the address.district
     let region = address.district;
     if (language === 'en') {
+      // update state
+      dispatch({
+        type: 'update_region',
+        payload: region
+      });
       userRef.update({
         regionsEN: firebase.firestore.FieldValue.arrayUnion(address.district),
       });
@@ -301,39 +306,42 @@ const verifyLocation = dispatch => {
       })
       .catch(error => console.log(error));
     }
-
-    //// update the regions DB if the region is new or the empty previously
-    if (newVerify) {
-      // get regions ref
-      const regionRef = firebase.firestore().collection('regions').doc(region);
-      regionRef.get()
-      .then(docSnapshot => {
-        if (docSnapshot.exists) {
-          //// decrease the previous region by 1
-          // decrease previous region if it exists
-          if (prevRegion) {
-            const prevRegionRef = firebase.firestore().collection('regions').doc(prevRegion);
-            // decrease
-            prevRegionRef.update({
-              count: firebase.firestore.FieldValue.increment(-1)
-            });
-          }
-
-          // increase the count by 1
-          regionRef.update({
-            count: firebase.firestore.FieldValue.increment(1)
-          })
-        } else {
-          // create region
-          regionRef.set({
-            count: 1
-          });
-        }
-      })
-      .catch(error => console.log(error));  
-    }
   }
 };
+
+const updateRegionDB = dispatch => {
+  return ({ prevRegion, region }) => {
+    //// update the regions DB if the region is new or the empty previously
+    // get regions ref
+    const regionRef = firebase.firestore().collection('regions').doc(region);
+    regionRef.get()
+    .then(docSnapshot => {
+      if (docSnapshot.exists) {
+        //// decrease the previous region by 1
+        // decrease previous region if it exists
+        if (prevRegion) {
+          const prevRegionRef = firebase.firestore().collection('regions').doc(prevRegion);
+          // decrease
+          prevRegionRef.update({
+            count: firebase.firestore.FieldValue.increment(-1)
+          });
+        }
+
+        // increase the count by 1
+        regionRef.update({
+          count: firebase.firestore.FieldValue.increment(1)
+        })
+      } else {
+        // create region
+        regionRef.set({
+          count: 1
+        });
+      }
+    })
+    .catch(error => console.log(error));  
+  }
+}
+
 
 const updateRegionState = async (dispatch, latitude, longitude, language) => {
 //  console.log('[updateRegionState] lat, long', latitude, longitude, typeof latitude);
@@ -622,7 +630,7 @@ export const { Provider, Context } = createDataContext(
   profileReducer,
   { updateContract,
     updateUserInfoState, updateAccount, updateAvatarState,
-    updateSkill, verifyLocation, updateProfileInfo,
+    updateSkill, verifyLocation, updateRegionDB, updateProfileInfo,
     updateSkills, updateSkillsDB, updateLocations, deleteLocation,
     findUsers
   },

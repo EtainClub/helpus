@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Platform, SnapshotViewIOS} from 'react-native';
 import { NavigationEvents, SafeAreaView } from 'react-navigation';
-import { Button, Icon, AirbnbRating, Overlay } from 'react-native-elements';
+import { Button, Icon, Badge, AirbnbRating, Overlay, Card, ListItem, Avatar, Text } from 'react-native-elements';
+import Flag from 'react-native-flags';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { GiftedChat } from 'react-native-gifted-chat';
@@ -9,11 +10,15 @@ import firebase from 'react-native-firebase';
 import ImagePicker from 'react-native-image-picker';
 import uuid from 'uuid/v4'; // Import UUID to generate UUID
 
+import { Context as ProfileContext } from '../context/ProfileContext';
+
 const ChatScreen = ({ navigation }) => {
   console.log('chat screen');
   // setup language
   const { t } = useTranslation();
 
+  // use context
+  const { state } = useContext(ProfileContext);
   // use state
   const [chats, setChats] = useState([]);
   const [userInfo, setUserInfo] = useState('');
@@ -25,6 +30,8 @@ const ChatScreen = ({ navigation }) => {
 //  const [unsubscribeChat, setUnsubscribeChat] = useState(null);
   const [showRating, setShowRating] = useState(false);
   const [rating, setRating] = useState(0);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [helperData, setHelperData] = useState(null);
 
   // get navigation params
   const caseId = navigation.getParam('caseId');
@@ -368,6 +375,176 @@ const ChatScreen = ({ navigation }) => {
     .catch(error => console.log(error));
   };
 
+  // calculate the average rating
+  const calucateAverageRating = (ratings) => {
+    let sumRatings = 0;
+    let ratingCount = 0;
+    for( let i=0; i<ratings.length; i++) {
+      sumRatings += (i+1)*ratings[i];
+      ratingCount += ratings[i];
+    }
+    // check sanity and compute average
+    let avgRating = 0;
+    if (ratingCount > 0) {
+      // average
+      avgRating = (sumRatings/ratingCount).toFixed(1);
+    } 
+    return avgRating;
+  }
+
+  // fetch user data and build data
+  const fetchUserData = async (helper) => {
+    // helper ref
+    const userRef = firebase.firestore().doc(`users/${helper}`);
+    // get skills
+    let skills = [];
+    userRef.collection('skills').get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        skills.push(doc.data());
+      });
+    })
+    .catch(error => {
+      console.log('cannot get skill data', error);
+    });
+    // get locations
+    let locations = [];
+    await userRef.collection('locations').get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        locations.push(doc.data());
+      });
+    })
+    .catch(error => {
+      console.log('cannot get location data', error);
+    });   
+    // get helper data
+    userRef.get()
+    .then(doc => {
+      // calculate average rating
+      const avgRating = calucateAverageRating(doc.data().ratings);
+      data = {
+        username: doc.data().name,
+        iconUrl: doc.data().avatarUrl,
+        helpCount: doc.data().helpCount,
+        askCount: doc.data().askCount,
+        votes: doc.data().votes,
+        rating: avgRating,
+        skills: skills,
+        languages: doc.data().languages,
+        locations: locations
+      };
+      // set user data
+      setHelperData(data);
+    })
+    .catch(error => console.log(error));
+
+  };
+
+  const renderHelperCard = () => {
+    return (
+      <Card
+        containerStyle={{ margin: 0, padding: 0 }}
+        title={t('LeadersScreen.userInfo')}
+      >
+        <ListItem
+          leftAvatar={
+            <View>
+              <Avatar size="large" rounded
+                source={{
+                  uri: helperData.iconUrl,
+                }} 
+              />
+              <Text style={{ textAlign: 'center' }}>{helperData.username}</Text>
+            </View>
+          }
+          title={
+            <View>
+              <View style={{ flexDirection: 'row' }}>
+                <Icon 
+                  type='font-awesome' 
+                  name='gift' 
+                  size={20} 
+                  color={'#353535'}
+                />
+                <View>
+                  {
+                    helperData.skills.map((skill, id) => {
+                      if (skill.name !== '') {
+                        return (
+                          <Text key={id} style={{ marginLeft: 6 }}>{skill.name}</Text>
+                        );
+                      }
+                    }) 
+                  }
+                </View>
+              </View>
+    
+              <View style={{ flexDirection: 'row' }}>
+                <Icon type='font-awesome' name='hand-o-left' size={20} color={'#353535'}/>
+                <Text style={{ marginLeft: 6 }}>{helperData.askCount}</Text>
+              </View>
+    
+              <View style={{ flexDirection: 'row' }}>
+                <Icon type='font-awesome' name='hand-o-right' size={20} color={'#353535'}/>
+                <Text style={{ marginLeft: 6 }}>{helperData.helpCount}</Text>
+              </View>
+    
+              <View style={{ flexDirection: 'row' }}>
+                <Icon type='font-awesome' name='thumbs-o-up' size={20} color={'#353535'}/>
+                <Text style={{ marginLeft: 8 }}>{helperData.rating} ({helperData.votes})</Text>
+              </View>
+
+              <View style={{ flexDirection: 'row' }}>
+                <Icon type='font-awesome' name='map-marker' size={20} color={'#353535'}/>
+                <View>
+                  {
+                    helperData.locations.map((location, id) => {
+                      if (location.name !== '') {
+                        return (
+                          <View key={id} style={{ flexDirection: 'row' }}>
+                            <Text style={{ marginLeft: 10 }}>{location.name}</Text>
+                            <Badge value={location.votes} badgeStyle={{ height: 20 }}/>
+                          </View>
+                        );
+                      }
+                    }) 
+                  }
+                </View>
+              </View>
+
+              <View style={{ flexDirection: 'row' }}>
+                <Icon type='font-awesome' name='language' size={20} color={'#353535'}/>
+                {
+                  helperData.languages[0] == 'ko' ? 
+                  <Flag
+                    style={ Platform.OS == 'ios' ? { marginLeft: 8, marginTop: 0, paddingTop: 0 } 
+                      : { marginLeft: 8 }
+                    } 
+                    code="KR" size={24}
+                  />
+                   : 
+                  <Flag
+                    style={ Platform.OS == 'ios' ? { marginLeft: 8, marginTop: 0, paddingTop: 0 } 
+                      : { marginLeft: 8 } 
+                    }
+                    code="GB" size={24}
+                  />
+                }
+                {
+                  typeof helperData.languages[1] == 'undefined' ? null :
+                  helperData.languages[1] == 'ko' ? <Flag code="KR" size={24}/>
+                   : <Flag code="GB" size={24}/>
+                }
+              </View>
+
+            </View>
+          }      
+        />
+      </Card>
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <NavigationEvents
@@ -383,7 +560,23 @@ const ChatScreen = ({ navigation }) => {
           avatar: userInfo.avatarUrl
         }}
         renderActions={this.renderCustomActions}
+        onPressAvatar={(user) => {
+          fetchUserData(user._id);
+          setShowUserModal(true)}
+        }
       />
+
+      <Overlay
+        isVisible={showUserModal}
+        height={300}
+        width='90%'
+        overlayBackgroundColor="lightgrey"
+        windowBackgroundColor="rgba(255, 255, 255, .5)"
+        onBackdropPress={() => setShowUserModal(false)}
+      >
+        {helperData && renderHelperCard()}
+      </Overlay>
+
       <Overlay
         isVisible={showRating}
         height={200}

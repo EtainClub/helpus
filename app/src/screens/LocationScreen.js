@@ -21,7 +21,7 @@ const LocationScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const language = i18next.language;
   // use context
-  const { state, verifyLocation } = useContext(ProfileContext);
+  const { state, verifyLocation, updateRegionDB } = useContext(ProfileContext);
   // use state
   const [mapMargin, setMapMargin] = useState(1);
 //  const [position, setPosition] = useState({ latitude: 0, longitude: 0 });
@@ -179,12 +179,13 @@ const LocationScreen = ({ navigation }) => {
     // @note currentLocation is from navigation param, which is in local lanugage
     if (currentLocation == '') {
       // update location
-      verifyLocation({ id: locationId, address: address, userId, newVerify: true, prevRegion, language });
+      await verifyLocation({ id: locationId, address: address, userId, newVerify: true, language });
+      updateRegionDB({ prevRegion, region: state.region });
       // navigate to profile screen
       navigation.navigate('ProfileContract');      
     } else if (address.display === currentLocation) { // same as the previous location
       // update location
-      verifyLocation({ id: locationId, address: address, userId, newVerify: false, prevRegion, language });
+      verifyLocation({ id: locationId, address: address, userId, newVerify: false, language });
       // navigate to profile screen
       navigation.navigate('ProfileContract');
     } else {
@@ -194,9 +195,10 @@ const LocationScreen = ({ navigation }) => {
         t('LocationScreen.verifyText'),
         [
           { text: t('no'), style: 'cancel' },
-          { text: t('yes'), onPress: () => {
+          { text: t('yes'), onPress: async () => {
             // verify location 
-            verifyLocation({ id: locationId, address: address, userId, newVerify: true, prevRegion, language });
+            await verifyLocation({ id: locationId, address: address, userId, newVerify: true, language });
+            updateRegionDB({ prevRegion, region: state.region });
             // navigate to profile screen
             navigation.navigate('ProfileContract');
           }}
