@@ -76,6 +76,7 @@ const profileReducer = (state, action) => {
         needUpdateContract: true
       };
     case 'update_region':
+      console.log('update_region, payload', action.payload);
       return { ...state, region: action.payload };  
     case 'update_location':
       return {
@@ -246,7 +247,7 @@ const updateSkill = dispatch => {
 
 // verify location with id and update on DB
 const verifyLocation = dispatch => {
-  return ({ id, address, userId, newVerify, prevRegion, prevRegionEN, language }) => {
+  return async ({ id, address, userId, newVerify, prevRegion, prevRegionEN, language }) => {
 //    console.log('[dispatch verify location]', id, Object.entries(address).length, userId);
 //    console.log('[dispatch verify location] prevRegion', prevRegion);
     // sanity check
@@ -292,19 +293,15 @@ const verifyLocation = dispatch => {
     // if the local language is english, just copy the address.district
     let region = address.district;
     if (language === 'en') {
-      // update state
-      dispatch({
-        type: 'update_region',
-        payload: region
-      });
       userRef.update({
         regionsEN: firebase.firestore.FieldValue.arrayUnion(address.district),
       });
     } else {
       // get region in english
-      updateRegionState(dispatch, address.coordinate[0], address.coordinate[1], 'en')
+      await updateRegionState(dispatch, address.coordinate[0], address.coordinate[1], 'en')
       .then(district => {
 //        console.log('update region', district);
+        // set region in english
         region = district;
         // update the db
         userRef.update({
@@ -313,44 +310,39 @@ const verifyLocation = dispatch => {
       })
       .catch(error => console.log(error));
     }
-  }
-};
 
-// update regions in english DB
-// decrease the count of the previous region
-// increase the count of the current region
-// create a new region if it is a new 
-const updateRegionDB = dispatch => {
-  return ({ prevRegionEN, region }) => {
     //// update the regions DB if the region is new or the empty previously
-    // get regions ref
-    const regionRef = firebase.firestore().collection('regions').doc(region);
-    regionRef.get()
-    .then(docSnapshot => {
-      if (docSnapshot.exists) {
-        //// decrease the previous region by 1
-        // decrease previous region if it exists
-        if (prevRegionEN) {
-          const prevRegionRef = firebase.firestore().collection('regions').doc(prevRegionEN);
-          // decrease
-          prevRegionRef.update({
-            count: firebase.firestore.FieldValue.increment(-1)
+    if (newVerify) {
+      // get regions ref
+      const regionRef = firebase.firestore().collection('regions').doc(region);
+      regionRef.get()
+      .then(docSnapshot => {
+        if (docSnapshot.exists) {
+          //// decrease the previous region by 1
+          // decrease previous region if it exists
+          if (prevRegionEN) {
+            const prevRegionRef = firebase.firestore().collection('regions').doc(prevRegionEN);
+            // decrease
+            prevRegionRef.update({
+              count: firebase.firestore.FieldValue.increment(-1)
+            });
+          }
+          // increase the count by 1
+          regionRef.update({
+            count: firebase.firestore.FieldValue.increment(1)
+          })
+        } else {
+          // create region
+          regionRef.set({
+            count: 1,
+            coordinate: address.coordinate
           });
         }
-        // increase the count by 1
-        regionRef.update({
-          count: firebase.firestore.FieldValue.increment(1)
-        })
-      } else {
-        // create region
-        regionRef.set({
-          count: 1
-        });
-      }
-    })
-    .catch(error => console.log(error));  
+      })
+      .catch(error => console.log(error));  
+    }
   }
-}
+};
 
 const updateRegionState = async (dispatch, latitude, longitude, language) => {
 //  console.log('[updateRegionState] lat, long', latitude, longitude, typeof latitude);
@@ -417,7 +409,7 @@ const deleteLocation = dispatch => {
     const userRef = firebase.firestore().doc(`users/${userId}`);
     // get the district
     userRef.collection('locations').doc(`${id}`).get()
-    .then(snapshot => {
+    .then(async snapshot => {
 //      console.log('delete location snapshot data', snapshot.data());
       const district = snapshot.data().district;
       const coordinate = snapshot.data().coordinate;
@@ -446,7 +438,7 @@ const deleteLocation = dispatch => {
         });
       } else {
         // get region in english
-        updateRegionState(dispatch, coordinate[0], coordinate[1], 'en')
+        await updateRegionState(dispatch, coordinate[0], coordinate[1], 'en')
         .then(district => {
 //          console.log('remove region', district);
           // update the db
@@ -639,7 +631,7 @@ export const { Provider, Context } = createDataContext(
   profileReducer,
   { updateContract,
     updateUserInfoState, updateAccount, updateAvatarState,
-    updateSkill, verifyLocation, updateRegionDB, updateProfileInfo,
+    updateSkill, verifyLocation, updateProfileInfo,
     updateSkills, updateSkillsDB, updateLocations, deleteLocation,
     findUsers
   },

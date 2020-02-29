@@ -21,7 +21,7 @@ const LocationScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const language = i18next.language;
   // use context
-  const { state, verifyLocation, updateRegionDB, deleteLocation } = useContext(ProfileContext);
+  const { state, verifyLocation } = useContext(ProfileContext);
   // use state
   const [mapMargin, setMapMargin] = useState(1);
 //  const [position, setPosition] = useState({ latitude: 0, longitude: 0 });
@@ -44,7 +44,7 @@ const LocationScreen = ({ navigation }) => {
         // @test: set default location
         let INIT_REGION = null;
         if (0) {
-          if(1) {
+          if(0) {
             INIT_REGION = {  // yeongtong-gu
               latitude: 37.25949,
               latitudeDelta: 0.01,
@@ -192,7 +192,6 @@ const LocationScreen = ({ navigation }) => {
       // update location
       await verifyLocation({ id: locationId, address: address, userId, newVerify: true, 
                              prevRegion: null, prevRegionEN: null, language });
-      updateRegionDB({ prevRegionEN, region: state.region });
       // navigate to profile screen
       navigation.navigate('ProfileContract');      
     } else if (address.display === currentLocation) { // same as the previous location
@@ -210,9 +209,8 @@ const LocationScreen = ({ navigation }) => {
           { text: t('no'), style: 'cancel' },
           { text: t('yes'), onPress: async () => {
             // verify location 
-            await verifyLocation({ id: locationId, address: address, userId, newVerify: true, 
+            verifyLocation({ id: locationId, address: address, userId, newVerify: true, 
                                    prevRegion, prevRegionEN, language });
-            updateRegionDB({ prevRegionEN, region: state.region });
             // navigate to profile screen
             navigation.navigate('ProfileContract');
           }}
