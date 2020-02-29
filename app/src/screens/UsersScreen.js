@@ -437,22 +437,22 @@ const initRegions = () => {
       // get user location collection ref      
       const locationsRef = userRef.collection('locations');
       locationsRef.get()
-      .then(snapshot => {
+      .then(snapshot2 => {
         // check empty
-        if (snapshot.empty) {
+        if (snapshot2.empty) {
           return;
         }
-        if (typeof snapshot === 'undefined')
-        if (__DEV__) console.log('[userScreen|initRegions] undefined snapshot', snapshot);
+        if (typeof snapshot2 === 'undefined')
+        if (__DEV__) console.log('[userScreen|initRegions] undefined snapshot', snapshot2);
 
         // loop over locations
-        snapshot.forEach(async doc => {
-          if (!doc.exists) {
-            if (__DEV__) console.log('[userScreen|initRegions] doc does not exist', doc);
+        snapshot2.forEach(async locationDoc => {
+          if (!locationDoc.exists) {
+            if (__DEV__) console.log('[userScreen|initRegions] doc does not exist', locationDoc);
             return;
           }
           // get coordinate
-          const coordinate = doc.data().coordinate;
+          const coordinate = locationDoc.data().coordinate;
           // check undefined
           if (typeof coordinate === 'undefined')
             return;
@@ -489,7 +489,7 @@ const initRegions = () => {
 
             // get region ref
             const regionRef = firebase.firestore().collection('regions').doc(district);
-            await regionRef.get()
+            regionRef.get()
             .then(docSnapshot => {
               if (docSnapshot.exists) {
                 // increase the count by 1
