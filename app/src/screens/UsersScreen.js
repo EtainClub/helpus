@@ -41,7 +41,7 @@ const UsersScreen = ({ navigation }) => {
   useEffect(() => {
     console.log('UserScreen');
     // @DB: initialize regions collection
-//    if (0) initRegions();
+    //if (0) initRegions();
 
     // get current location
     const watchId = Geolocation.watchPosition(
@@ -483,13 +483,13 @@ const initRegions = () => {
             // update region state
             const district = data.results[0].address_components[2].short_name;
             // update the new region field with english district
-            userRef.update({
-              regionsEN: firebase.firestore.FieldValue.arrayUnion(district)   
-            });
+//            userRef.update({
+//              regionsEN: firebase.firestore.FieldValue.arrayUnion(district)   
+//            });
 
-            // get regions ref
+            // get region ref
             const regionRef = firebase.firestore().collection('regions').doc(district);
-            regionRef.get()
+            await regionRef.get()
             .then(docSnapshot => {
               if (docSnapshot.exists) {
                 // increase the count by 1
@@ -512,5 +512,72 @@ const initRegions = () => {
     });
   });
 }
+
+/*
+// @DB: initialize the regions collection from regionEN
+const initRegions0 = () => {
+  // get users ref
+  const usersRef = firebase.firestore().collection('users');
+  usersRef.get()
+  .then(snapshot => {
+    snapshot.forEach(async doc => {
+      // skip test accounts
+      const userRef = firebase.firestore().doc(`users/${doc.id}`);
+      await userRef.get()
+      .then(doc => {
+        if (!doc.data().tester) {
+          // get user location collection ref      
+          const locationsRef = userRef.collection('locations');
+          locationsRef.get()
+          .then(snapshot => {
+            // check empty
+            if (snapshot.empty) {
+              return;
+            }
+            if (typeof snapshot === 'undefined')
+            if (__DEV__) console.log('[userScreen|initRegions] undefined snapshot', snapshot);
+
+            // loop over locations
+            snapshot.forEach(async locationDoc => {
+              if (!locationDoc.exists) {
+                if (__DEV__) console.log('[userScreen|initRegions] doc does not exist', locationDoc);
+                return;
+              }
+              // get coordinate
+              const coordinate = locationDoc.data().coordinate;
+              // check undefined
+              if (typeof coordinate === 'undefined')
+                return;
+              // get district
+              const district = doc.data().regionEN;
+
+          // get coordinate
+          const coordinates = doc.data().coordinates;
+          // get region ref
+          const regionRef = firebase.firestore().collection('regions').doc(district);
+          regionRef.get()
+          .then(docSnapshot => {
+            if (docSnapshot.exists) {
+              // increase the count by 1
+              regionRef.update({
+                count: firebase.firestore.FieldValue.increment(1)
+              })
+            } else {
+              // create region
+              regionRef.set({
+                count: 1,
+                coordinate: coordinates
+              });
+            }
+          })
+          .catch(error => console.log(error));
+        }
+      })
+      .catch(error => console.log(error));
+    }) // end of forEach
+  }) // end of users.get()
+  .catch(error => console.log(error));
+}
+*/
 
 export default UsersScreen;

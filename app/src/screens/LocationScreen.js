@@ -21,7 +21,7 @@ const LocationScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const language = i18next.language;
   // use context
-  const { state, verifyLocation, updateRegionDB } = useContext(ProfileContext);
+  const { state, verifyLocation, updateRegionDB, deleteLocation } = useContext(ProfileContext);
   // use state
   const [mapMargin, setMapMargin] = useState(1);
 //  const [position, setPosition] = useState({ latitude: 0, longitude: 0 });
@@ -42,18 +42,27 @@ const LocationScreen = ({ navigation }) => {
         setLatitude(pos.coords.latitude);
         setLongitude(pos.coords.longitude);
         // @test: set default location
-        if (0)
-        {
-        const INIT_REGION = {
-          latitude: 37.25949,
-          latitudeDelta: 0.01,
-          longitude: 127.046638,
-          longitudeDelta: 0.01
-        };
-        setLatitude(INIT_REGION.latitude);
-        setLongitude(INIT_REGION.longitude);
-        console.log('latitude', latitude);
-        console.log('longitude', longitude);
+        let INIT_REGION = null;
+        if (0) {
+          if(1) {
+            INIT_REGION = {  // yeongtong-gu
+              latitude: 37.25949,
+              latitudeDelta: 0.01,
+              longitude: 127.046638,
+              longitudeDelta: 0.01
+            };
+          } else {
+            INIT_REGION = { // yeongdungpo-gu
+              latitude: 37.515618,
+              latitudeDelta: 0.01,
+              longitude: 126.907086,
+              longitudeDelta: 0.01
+            }
+          }
+          setLatitude(INIT_REGION.latitude);
+          setLongitude(INIT_REGION.longitude);
+          console.log('latitude', latitude);
+          console.log('longitude', longitude);
         } // end of test
       },
       error => setError(error.message)
@@ -164,13 +173,15 @@ const LocationScreen = ({ navigation }) => {
     //// get current region
     // user ref
     const userRef = firebase.firestore().doc(`users/${userId}`);
-    // get previous region in english
+    // get previous region in local and english languages
     let prevRegion = null;
+    let prevRegionEN = null;
     await userRef.get()
     .then(doc => {
-      const temp = doc.data().regionsEN[locationId];
+      const temp = doc.data().regions[locationId];
       if (typeof temp !== 'undefined') {
-        prevRegion = doc.data().regionsEN[locationId];
+        prevRegion = temp;
+        prevRegionEN = doc.data().regionsEN[locationId];
       }
     })
     .catch(error => console.log(error));
@@ -179,13 +190,15 @@ const LocationScreen = ({ navigation }) => {
     // @note currentLocation is from navigation param, which is in local lanugage
     if (currentLocation == '') {
       // update location
-      await verifyLocation({ id: locationId, address: address, userId, newVerify: true, language });
-      updateRegionDB({ prevRegion, region: state.region });
+      await verifyLocation({ id: locationId, address: address, userId, newVerify: true, 
+                             prevRegion: null, prevRegionEN: null, language });
+      updateRegionDB({ prevRegionEN, region: state.region });
       // navigate to profile screen
       navigation.navigate('ProfileContract');      
     } else if (address.display === currentLocation) { // same as the previous location
       // update location
-      verifyLocation({ id: locationId, address: address, userId, newVerify: false, language });
+      verifyLocation({ id: locationId, address: address, userId, newVerify: false, 
+                       prevRegion, prevRegionEN, language });
       // navigate to profile screen
       navigation.navigate('ProfileContract');
     } else {
@@ -197,8 +210,9 @@ const LocationScreen = ({ navigation }) => {
           { text: t('no'), style: 'cancel' },
           { text: t('yes'), onPress: async () => {
             // verify location 
-            await verifyLocation({ id: locationId, address: address, userId, newVerify: true, language });
-            updateRegionDB({ prevRegion, region: state.region });
+            await verifyLocation({ id: locationId, address: address, userId, newVerify: true, 
+                                   prevRegion, prevRegionEN, language });
+            updateRegionDB({ prevRegionEN, region: state.region });
             // navigate to profile screen
             navigation.navigate('ProfileContract');
           }}
