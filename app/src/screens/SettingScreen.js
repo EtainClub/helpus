@@ -400,11 +400,10 @@ const SettingScreen = ({ navigation }) => {
       console.log('[onLinkPress] newUrl', newUrl);
     }
     // handle feedback
+    // build email title and body    
+    const template = `mailto:etainclub@gmail.com?subject=${t('SettingScreen.feedbackTitle')}&body=${t('SettingScreen.feedbackMsg')}`;
     if (icon === 'commenting-o') {
-      await Share.share({
-        title: t('SettingScreen.feedbackTitle'),
-        message: t('SettingScreen.feedbackMsg'),
-      });
+      Linking.openURL(template);
     } else if (icon === 'bullhorn') {
       // navigate to notice screen
       navigation.navigate('NoticeList');
